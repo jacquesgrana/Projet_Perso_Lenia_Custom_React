@@ -9,7 +9,7 @@ const CustomCanvas = () => {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [isRunning, setIsRunning] = useState(false);
-
+    const [genCounter, setGenCounter] = useState(0);
     const [coords, handleCoords] = UseMousePosition(true);
     const width = CanvasConfig.CANVAS_WIDTH;
     const height = CanvasConfig.CANVAS_HEIGHT;
@@ -38,6 +38,7 @@ const CustomCanvas = () => {
             //randomizeCells();
             generateNext();
             drawCells();
+            setGenCounter((prev: number) => prev + 1);
             intervalRef.current = setTimeout(fct, delay);
         };
   
@@ -54,6 +55,7 @@ const CustomCanvas = () => {
 
     const initCells = () => {
         cellsRef.current = cellService.init();
+        setGenCounter(0);
         /*
         for(let i = 0; i < maxI; i++){ 
             cellsRef.current[i] = new Array<ICell>(maxJ);
@@ -66,6 +68,7 @@ const CustomCanvas = () => {
 
     const randomizeCells = () => {
         cellsRef.current = cellService.getRandomizedCells();
+        setGenCounter(0);
         //cellsRef.current = cellService.getCells();
         /*
         for(let i = 0; i < maxI; i++){ 
@@ -157,12 +160,13 @@ const CustomCanvas = () => {
     return (
         <div className="d-flex flex-column align-items-center gap-3">
             <h2 className="text-center">CustomCanvas</h2>
+           
             <canvas
             ref={canvasRef}
             width={width}
             height={height}
             style={{ border: "1px solid black" }}
-            onClick={handleClick}
+            //onClick={handleClick}
             /*
             onClick={(e) => {
                 handleCoords((e as unknown) as MouseEvent);
@@ -173,6 +177,7 @@ const CustomCanvas = () => {
               }}
               */
             />
+            <h3 className="text-center">Génération : {genCounter}</h3>
             <button
             type="button"
             onClick={() => {
