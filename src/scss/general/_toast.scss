@@ -1,0 +1,41 @@
+#custom-toast {
+    transition: 0.3s;
+    position: fixed;
+    top: 40px;
+    right: 40px;
+    z-index: 1000;
+    background-color: $color-bg-dark;
+    color: $color-white;
+    border: 1px solid $color-white;
+    
+    
+    .custom-toast-success {
+        color: $color-success;
+    }
+    
+    .custom-toast-danger {
+        color: $color-danger;
+    }
+
+    .custom-toast-warning {
+        color: $color-warning;
+    }
+
+    .custom-toast-info {
+        color: $color-info;
+    }
+    
+    .toast-header {
+        background-color: $color-bg-secondary;
+        color: $color-white;
+        border: 1px solid $color-white;
+    }
+    
+    button.btn-close {
+        transition: 0.3s;
+        color: $color-white !important;
+        background-color: $color-bg-secondary-dark;
+        padding: 5px;
+        content: "X";
+    }
+}

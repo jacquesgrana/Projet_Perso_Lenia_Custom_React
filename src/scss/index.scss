@@ -1,0 +1,13 @@
+//Import de Boostrap
+@import "~bootstrap/scss/bootstrap";
+
+//General => reset, variable, body, mixins...
+@import "./general/color";
+@import "./general/reset";
+@import "./general/body";
+@import "./general/toast";
+
+
+//Components => header, footer, main, ...
+@import "./component/header";
+@import "./component/footer";
