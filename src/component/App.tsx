@@ -19,7 +19,8 @@ function App() {
         title: "Test.",
         subtitle: "Test.",
         message: "Test d'affichage d'un toast.",
-        mode: "success"
+        mode: "success",
+        delay: 2000
     }
   );
 

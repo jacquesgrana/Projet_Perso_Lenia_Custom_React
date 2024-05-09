@@ -4,12 +4,14 @@ import CanvasConfig from "../../../config/CanvasConfig";
 import ICell from "../../../interface/ICell";
 import CellConfig from "../../../config/CellConfig";
 import CellService from "../../../service/CellService";
+import IToast from "../../../interface/IToast";
+import { format } from "path";
 
-const CustomCanvas = () => {
+const CustomCanvas = (props: any) => {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [isRunning, setIsRunning] = useState(false);
-    const [genCounter, setGenCounter] = useState(0);
+    const [virtTimeCounter, setVirtTimeCounter] = useState(0);
     const [coords, handleCoords] = UseMousePosition(true);
     const width = CanvasConfig.CANVAS_WIDTH;
     const height = CanvasConfig.CANVAS_HEIGHT;
@@ -38,7 +40,7 @@ const CustomCanvas = () => {
             //randomizeCells();
             generateNext();
             drawCells();
-            setGenCounter((prev: number) => prev + 1);
+            setVirtTimeCounter((prev: number) => prev + CellConfig.CELL_GENERATION_DELTA_T);
             intervalRef.current = setTimeout(fct, delay);
         };
   
@@ -55,7 +57,7 @@ const CustomCanvas = () => {
 
     const initCells = () => {
         cellsRef.current = cellService.init();
-        setGenCounter(0);
+        setVirtTimeCounter(0);
         /*
         for(let i = 0; i < maxI; i++){ 
             cellsRef.current[i] = new Array<ICell>(maxJ);
@@ -68,7 +70,7 @@ const CustomCanvas = () => {
 
     const randomizeCells = () => {
         cellsRef.current = cellService.getRandomizedCells();
-        setGenCounter(0);
+        setVirtTimeCounter(0);
         //cellsRef.current = cellService.getCells();
         /*
         for(let i = 0; i < maxI; i++){ 
@@ -82,6 +84,11 @@ const CustomCanvas = () => {
                 }
             }
         }*/
+    }
+
+    const clearCells = () => {
+        cellsRef.current = cellService.init();
+        setVirtTimeCounter(0);
     }
 
     const drawCells = () => {
@@ -130,10 +137,44 @@ const CustomCanvas = () => {
             //console.log('isRunning button :', !prev);
             const btn = document.getElementById("button-run");
             //console.log('btn :', btn);
-            if (btn) btn.innerText = !prev ? "STOP" : "RUN";
-            return !prev
+            if (btn) btn.innerText = !prev ? "PAUSE" : "RUN";
+            !prev ? displayRunToast() : displayStopToast();
+            return !prev;
         });
         
+    }
+
+    const displayRunToast = () => {
+        const toastToDisplay: IToast = {
+            title: "RUN",
+            subtitle: "Running",
+            message: "The simulation is runnning",
+            mode: "success",
+            delay: 1500
+        };
+        //props.displayToast(toastToDisplay);
+    }
+
+    const displayStopToast = () => {
+        const toastToDisplay: IToast = {
+            title: "STOP",
+            subtitle: "Stopped",
+            message: "The simulation is stopped",
+            mode: "danger",
+            delay: 1500
+        };
+        //props.displayToast(toastToDisplay);
+    }
+
+    const displayResetToast = () => {
+        const toastToDisplay: IToast = {
+            title: "RESET",
+            subtitle: "Reset",
+            message: "The simulation is reset",
+            mode: "warning",
+            delay: 1500
+        };
+        //props.displayToast(toastToDisplay);
     }
 
     const handleClick = (e: any) => {
@@ -146,9 +187,10 @@ const CustomCanvas = () => {
                 const mouseI = Math.floor(mouseX / CellConfig.CELL_SIZE);
                 const mouseJ = Math.floor(mouseY / CellConfig.CELL_SIZE);
                 //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
-                const radius = CellConfig.CELL_CONV_FILTER_RADIUS;
+                const radius = 32;
                 if(mouseI >= radius && mouseI < maxI - radius && mouseJ >= radius && mouseJ < maxJ - radius){
-                    cellsRef.current = cellService.testConvolFilter(mouseI, mouseJ);
+                    //console.log('clic')
+                    cellsRef.current = cellService.drawRandowSquare(mouseI, mouseJ);
                     drawCells();
                 }
                 
@@ -166,7 +208,7 @@ const CustomCanvas = () => {
             width={width}
             height={height}
             style={{ border: "1px solid black" }}
-            //onClick={handleClick}
+            onClick={handleClick}
             /*
             onClick={(e) => {
                 handleCoords((e as unknown) as MouseEvent);
@@ -177,23 +219,40 @@ const CustomCanvas = () => {
               }}
               */
             />
-            <h3 className="text-center">Génération : {genCounter}</h3>
-            <button
-            type="button"
-            onClick={() => {
-                randomizeCells();
-                drawCells();
-            }}
-            >
-                RESET
-            </button>
-            <button
-            id="button-run"
-            type="button"
-            onClick={() => toggleIsRunning()}
-            >
-                RUN
-            </button>
+            <h3 className="text-center mt-2">Virtual time counter : {virtTimeCounter.toFixed(2)} (s)</h3>
+            <div className="d-flex gap-3 justify-content-center mb-5">
+                <button
+                className="btn-1"
+                type="button"
+                onClick={() => {
+                    displayResetToast();
+                    randomizeCells();
+                    drawCells();
+                }}
+                >
+                    RANDOM
+                </button>
+                <button
+                className="btn-1"
+                type="button"
+                onClick={() => {
+                    //displayResetToast();
+                    clearCells();
+                    drawCells();
+                }}
+                >
+                    CLEAR
+                </button>
+                <button
+                className="btn-1" 
+                id="button-run"
+                type="button"
+                onClick={() => toggleIsRunning()}
+                >
+                    RUN
+                </button>  
+            </div>
+
         </div>
     );
 }

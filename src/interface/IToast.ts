@@ -3,4 +3,5 @@ export default interface IToast {
     subtitle: string;
     message: string;
     mode: string;
+    delay: number;
 }

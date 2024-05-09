@@ -7,14 +7,14 @@ interface CustomToastProps {
     toggleShow: () => void
 }
 const CustomToast = (props: CustomToastProps) => {
-    const TOAST_DELAY = 5000;
+    const TOAST_DELAY = 2000;
     return(
         <Toast 
         show={props.show} 
         onClose={props.toggleShow}
         className={`custom-toast-${props.toast.mode} custom-toast`}
         id="custom-toast"
-        delay={TOAST_DELAY} 
+        delay={props.toast.delay} 
         autohide
         >
             <Toast.Header>
