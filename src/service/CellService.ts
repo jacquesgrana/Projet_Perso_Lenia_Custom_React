@@ -98,16 +98,29 @@ export default class CellService {
     }
 
     // a mettre dans une lib ?
-    private getFilterResult(x: number, y: number): number {
-        const coefRed = 1;
-        const coefGreen = 1;
-        const coefBlue = 1;
+    private getFilterResult(x: number, y: number): any {
+        const coefRedRed = 3;
+        const coefRedGreen = 2;
+        const coefRedBlue = 1;
+        const coefGreenRed = 1;
+        const coefGreenGreen = 3;
+        const coefGreenBlue = 2;
+        const coefBlueRed = 2;
+        const coefBlueGreen = 1;
+        const coefBlueBlue = 3;
         const x0 = Math.floor(x - this._convolFilter.length / 2) + 1;
         const y0 = Math.floor(y - this._convolFilter.length / 2) + 1;
-        let average = 0;
-        let sum = 0;
-        let cpt = 0;
-        const floor = 0.1;
+        let averages = {};
+        let sumR = 0;
+        let sumG = 0;
+        let sumB = 0;
+        let cptR = 0;
+        let cptG = 0;
+        let cptB = 0;
+        const floorR = 0.1;
+        const floorG = 0.15;
+        const floorB = 0.20;
+
         // boucles dans le convolFilter
         for(let i = 0; i < this._convolFilter.length; i++) {
             for(let j = 0; j < this._convolFilter.length; j++) {
@@ -120,13 +133,23 @@ export default class CellService {
                 x1 = x1 >= this._maxI ? x1 - this._maxI : x1;
                 y1 = y1 < 0 ? this._maxJ + y1 : y1;
                 y1 = y1 >= this._maxJ ? y1 - this._maxJ : y1;
-                const value2 = (this._cells[x1][y1].stateR * coefRed + this._cells[x1][y1].stateG * coefGreen + this._cells[x1][y1].stateB * coefBlue) / (coefRed + coefGreen + coefBlue);
-                sum += value * value2;
-                if(value > floor) cpt++;
+                const valueR = (this._cells[x1][y1].stateR * coefRedRed + this._cells[x1][y1].stateG * coefRedGreen + this._cells[x1][y1].stateB * coefRedBlue) / (coefRedRed + coefRedGreen + coefRedBlue);
+                const valueG = (this._cells[x1][y1].stateR * coefGreenRed + this._cells[x1][y1].stateG * coefGreenGreen + this._cells[x1][y1].stateB * coefGreenBlue) / (coefGreenRed + coefGreenGreen + coefGreenBlue);
+                const valueB = (this._cells[x1][y1].stateR * coefBlueRed + this._cells[x1][y1].stateG * coefBlueGreen + this._cells[x1][y1].stateB * coefBlueBlue) / (coefBlueRed + coefBlueGreen + coefBlueBlue);
+                sumR += value * valueR;
+                sumG += value * valueG;
+                sumB += value * valueB;
+                if(value > floorR) cptR++;
+                if(value > floorG) cptG++;
+                if(value > floorB) cptB++;
             }
         }
-        average = sum / (cpt); //this._convolFilter.length * this._convolFilter.length
-        return average;
+        averages = {
+            'red' : (sumR / (cptR)),
+            'green' : (sumG / (cptG)),
+            'blue' : (sumB / (cptB))
+        }; //this._convolFilter.length * this._convolFilter.length
+        return averages;
     }
 
     public generateNextCells(): ICell[][] {
@@ -138,14 +161,14 @@ export default class CellService {
             newCells[i] = [];
             for(let j = 0; j < this._maxJ; j++) {
                 // boucle sur j de j =13 à maxJ - 13
-                const value = this.getFilterResult(i, j);
-                let newR = this.getEvolve(this._cells[i][j].stateR, value);
+                const values = this.getFilterResult(i, j);
+                let newR = this.getEvolve(this._cells[i][j].stateR, values.red);
                 newR = newR < 0 ? 0 : newR;
                 newR = newR > 1 ? 1 : newR;
-                let newG = this.getEvolve(this._cells[i][j].stateG, value);
+                let newG = this.getEvolve(this._cells[i][j].stateG, values.green);
                 newG = newG < 0 ? 0 : newG;
                 newG = newG > 1 ? 1 : newG;
-                let newB = this.getEvolve(this._cells[i][j].stateB, value);
+                let newB = this.getEvolve(this._cells[i][j].stateB, values.blue);
                 newB = newB < 0 ? 0 : newB;
                 newB = newB > 1 ? 1 : newB;
                 //this._cells[i][j].stateR = newR;

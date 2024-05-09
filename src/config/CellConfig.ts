@@ -1,5 +1,5 @@
 export default class CellConfig {
-    public static readonly CELL_SIZE = 8;
+    public static readonly CELL_SIZE = 10;
 
     public static readonly CELL_BRUSH_SIZE = 32; // nombre pair !!!
 
