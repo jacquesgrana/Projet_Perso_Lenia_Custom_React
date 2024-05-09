@@ -190,7 +190,7 @@ export default class CellService {
     }
 
     public drawGaussianBlur(i: number, j: number): ICell[][] {
-        const blurSize = 32;
+        const blurSize = Math.floor(CellConfig.CELL_BRUSH_SIZE/2);
         const x0 = Math.floor(i - blurSize / 2);
         const y0 = Math.floor(j - blurSize / 2);
         for(let x = 0; x < blurSize; x++) {
@@ -214,26 +214,49 @@ export default class CellService {
         return this._cells;
     }
 
-    public drawRandowSquare(i: number, j: number): ICell[][] {
-        const size = 64;
+    public drawRandowCircle(i: number, j: number): ICell[][] {
+        const size = CellConfig.CELL_BRUSH_SIZE;
         const x0 = Math.floor(i - size / 2);
         const y0 = Math.floor(j - size / 2);
         for(let x = 0; x < size; x++) {
             for(let y = 0; y < size; y++) {
+                const dist = Math.sqrt((x - size / 2) * (x - size / 2) + (y - size / 2) * (y - size / 2)) / size;
+                //console.log('dist :', dist);
                 //const value = Math.random();
-                let newRed = Math.random();
-                let newGreen = Math.random();
-                let newBlue = Math.random();
-                newRed = newRed > 1 ? 1 : newRed;
-                newGreen = newGreen > 1 ? 1 : newGreen;
-                newBlue = newBlue > 1 ? 1 : newBlue;
-                this._cells[x0 + x][y0 + y].stateR = newRed;
-                this._cells[x0 + x][y0 + y].stateG = newGreen;
-                this._cells[x0 + x][y0 + y].stateB = newBlue;
+                if(dist <= 0.5) {
+                    let newRed = Math.random();
+                    let newGreen = Math.random();
+                    let newBlue = Math.random();
+                    newRed = newRed > 1 ? 1 : newRed;
+                    newGreen = newGreen > 1 ? 1 : newGreen;
+                    newBlue = newBlue > 1 ? 1 : newBlue;
+                    this._cells[x0 + x][y0 + y].stateR = newRed;
+                    this._cells[x0 + x][y0 + y].stateG = newGreen;
+                    this._cells[x0 + x][y0 + y].stateB = newBlue;  
+                }
             }
         }
         return this._cells;
     }
+
+    public clearCircle(i: number, j: number): ICell[][] {
+        const size = CellConfig.CELL_BRUSH_SIZE;
+        const x0 = Math.floor(i - size / 2);
+        const y0 = Math.floor(j - size / 2);
+        for(let x = 0; x < size; x++) {
+            for(let y = 0; y < size; y++) {
+                const dist = Math.sqrt((x - size / 2) * (x - size / 2) + (y - size / 2) * (y - size / 2)) / size;
+                if(dist <= 0.5) {
+                    this._cells[x0 + x][y0 + y].stateR = 0;
+                    this._cells[x0 + x][y0 + y].stateG = 0;
+                    this._cells[x0 + x][y0 + y].stateB = 0;
+                }
+            }
+        }
+        return this._cells;
+    }
+
+    
 
     public getCells(): ICell[][] {
         return this._cells;

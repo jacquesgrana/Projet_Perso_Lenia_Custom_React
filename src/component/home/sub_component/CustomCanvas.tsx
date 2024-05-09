@@ -177,7 +177,7 @@ const CustomCanvas = (props: any) => {
         //props.displayToast(toastToDisplay);
     }
 
-    const handleClick = (e: any) => {
+    const handleMouseDown = (e: any) => {
             handleCoords((e as unknown) as MouseEvent);
             if (canvasRef.current) {
                 // récupérer les coordonnées du clic
@@ -187,17 +187,66 @@ const CustomCanvas = (props: any) => {
                 const mouseI = Math.floor(mouseX / CellConfig.CELL_SIZE);
                 const mouseJ = Math.floor(mouseY / CellConfig.CELL_SIZE);
                 //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
-                const radius = 32;
-                if(mouseI >= radius && mouseI < maxI - radius && mouseJ >= radius && mouseJ < maxJ - radius){
-                    //console.log('clic')
-                    cellsRef.current = cellService.drawRandowSquare(mouseI, mouseJ);
-                    drawCells();
+                const radius = Math.floor(CellConfig.CELL_BRUSH_SIZE/2);
+                if(mouseI >= radius && mouseI <= maxI - radius && mouseJ >= radius && mouseJ <= maxJ - radius){
+                    //console.log('e.button :', e.button);
+                    if (e.button === 0) {
+                        const ctx = canvasRef.current.getContext("2d");
+                        ctx?.ellipse(mouseX, mouseY, radius * CellConfig.CELL_SIZE, radius * CellConfig.CELL_SIZE, 0, 0, 2 * Math.PI);
+                        //console.log('clic')
+                        
+                        cellsRef.current = cellService.drawRandowCircle(mouseI, mouseJ);
+                        drawCells();
+                    }
+                    else if (e.button === 2) {
+                        //e.preventDefault();
+                        //console.log('clic droit')
+                        cellsRef.current = cellService.clearCircle(mouseI, mouseJ);
+                        drawCells();
+                    }
+                    
                 }
                 
                 //cellsRef.current = cellService.getCells();
             }
           }
-    
+
+          // marche pas correctement : ajouter state de type booleen pour gerer le survol et gerer l'event onMouseLeave
+/*
+          const handleMouseOver = (e: any) => {
+            console.log('mouse over');
+            handleCoords((e as unknown) as MouseEvent);
+            if (canvasRef.current) {
+              const ctx = canvasRef.current.getContext("2d");
+
+              const mouseX = coords.x;
+              const mouseY = coords.y;
+              //console.log("MouseX : ", mouseX, " MouseY : ", mouseY);
+              const mouseI = Math.floor(mouseX / CellConfig.CELL_SIZE);
+              const mouseJ = Math.floor(mouseY / CellConfig.CELL_SIZE);
+              //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
+              const radius = 32;
+              if(mouseI >= radius && mouseI <= maxI - radius && mouseJ >= radius && mouseJ <= maxJ - radius){
+                    const ctx = canvasRef.current.getContext("2d");
+                    if(ctx){
+                        ctx?.beginPath(); // Commencez un nouveau chemin
+                        ctx.ellipse(mouseX, mouseY, radius * CellConfig.CELL_SIZE, radius * CellConfig.CELL_SIZE, 0, 0, 2 * Math.PI); // Dessinez l'ellipse
+
+                        // Définissez la couleur de remplissage
+                        ctx.fillStyle = 'rgba(255, 165, 0, 0.4)'; // Orange transparent à 40%
+                        ctx.fill(); // Remplissez l'ellipse avec la couleur de remplissage
+
+                        // Définissez la couleur du trait
+                        ctx.strokeStyle = 'rgba(255, 165, 0, 1)'; // Orange à 100%
+                        ctx.lineWidth = 2; // Définissez l'épaisseur du trait (ajustez selon vos besoins)
+                        ctx.stroke(); // Dessinez le contour de l'ellipse avec la couleur du trait
+                  }
+
+              }
+              
+            }
+          }
+*/
 
     return (
         <div className="d-flex flex-column align-items-center gap-3">
@@ -208,7 +257,8 @@ const CustomCanvas = (props: any) => {
             width={width}
             height={height}
             style={{ border: "1px solid black" }}
-            onClick={handleClick}
+            onMouseDown={handleMouseDown}
+            //onMouseOver={handleMouseOver}
             /*
             onClick={(e) => {
                 handleCoords((e as unknown) as MouseEvent);
