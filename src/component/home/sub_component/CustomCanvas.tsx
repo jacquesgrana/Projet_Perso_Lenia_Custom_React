@@ -37,6 +37,9 @@ const CustomCanvas = (props: any) => {
         initCells();
         randomizeCells();
         drawCells();
+        if (firsloadRef.current) {
+            firsloadRef.current = false;
+        }
         //generateRandomImage();  
     }, []);
 
@@ -63,12 +66,8 @@ const CustomCanvas = (props: any) => {
     }, [isRunning, delay]);
 
     useEffect(() => {
-        if (firsloadRef.current) {
-            firsloadRef.current = false;
-        }
-        else {
-            isRunning ? displayRunToast() : displayStopToast();
-        }
+
+        !firsloadRef.current && isRunning ? displayRunToast() : displayStopToast();
     }, [isRunning]);
 
     const initCells = () => {
