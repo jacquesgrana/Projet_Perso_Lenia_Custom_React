@@ -7,7 +7,23 @@ export default class CellService {
 
     private static _instance: CellService | null = null;
     private _cells: ICell[][] = [];
-    private _convolFilter: number[][] = [];
+
+    private _convolFilterR: number[][] = [];
+    private _convolFilterG: number[][] = [];
+    private _convolFilterB: number[][] = [];
+
+    private _convolRadiusR: number = CellConfig.CELL_CONV_FILTER_RADIUS;
+    private _convolMuR: number = CellConfig.CELL_CONV_FILTER_MU;
+    private _convolSigmaR: number = CellConfig.CELL_CONV_FILTER_SIGMA;
+
+    private _convolRadiusG: number = CellConfig.CELL_CONV_FILTER_RADIUS;
+    private _convolMuG: number = CellConfig.CELL_CONV_FILTER_MU;
+    private _convolSigmaG: number = CellConfig.CELL_CONV_FILTER_SIGMA;
+
+    private _convolRadiusB: number = CellConfig.CELL_CONV_FILTER_RADIUS;
+    private _convolMuB: number = CellConfig.CELL_CONV_FILTER_MU;
+    private _convolSigmaB: number = CellConfig.CELL_CONV_FILTER_SIGMA;
+
     private _maxI: number = 0;
     private _maxJ: number = 0;
 
@@ -27,7 +43,9 @@ export default class CellService {
         if (this._instance === null) {
             this._instance = new CellService();
             this._instance.init();
-            this._instance.initConvolFilter();
+            this._instance.initConvolFilterR();
+            this._instance.initConvolFilterG();
+            this._instance.initConvolFilterB();
         }
         return this._instance;
       }
@@ -35,6 +53,18 @@ export default class CellService {
     public init() {
         this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / CellConfig.CELL_SIZE);
         this._maxJ = Math.floor(CanvasConfig.CANVAS_HEIGHT / CellConfig.CELL_SIZE);
+
+        this._convolRadiusR = CellConfig.CELL_CONV_FILTER_RADIUS;
+        this._convolMuR = CellConfig.CELL_CONV_FILTER_MU;
+        this._convolSigmaR = CellConfig.CELL_CONV_FILTER_SIGMA;
+
+        this._convolRadiusG = CellConfig.CELL_CONV_FILTER_RADIUS;
+        this._convolMuG = CellConfig.CELL_CONV_FILTER_MU;
+        this._convolSigmaG = CellConfig.CELL_CONV_FILTER_SIGMA;
+
+        this._convolRadiusB = CellConfig.CELL_CONV_FILTER_RADIUS;
+        this._convolMuB = CellConfig.CELL_CONV_FILTER_MU;
+        this._convolSigmaB = CellConfig.CELL_CONV_FILTER_SIGMA;
 
         this._brushSize = CellConfig.CELL_BRUSH_SIZE;
         this._countingFloorR = CellConfig.CELL_FILTER_COUNT_FLOOR_RED;
@@ -63,6 +93,12 @@ export default class CellService {
         return this._cells;
     }
 
+    public initConvolFilters(): void {
+        this.initConvolFilterR();
+        this.initConvolFilterG();
+        this.initConvolFilterB();
+    }
+
     public getRandomizedCells(): ICell[][] {
         for(let i = 0; i < this._maxI; i++){ 
             for(let j = 0; j < this._maxJ; j++){
@@ -78,25 +114,55 @@ export default class CellService {
         return this._cells;
     }
 
-    private initConvolFilter() {
-        const r = CellConfig.CELL_CONV_FILTER_RADIUS;
+    public initConvolFilterR() {
+        const r = this._convolRadiusR;
         const x0 = r;
         const y0 = r;
-        const mu = CellConfig.CELL_CONV_FILTER_MU;
-        const sigma = CellConfig.CELL_CONV_FILTER_SIGMA;
-
+        const mu = this._convolMuR;
+        const sigma = this._convolSigmaR;
+        this._convolFilterR = [];
         for(let x = 0; x < 2 * r + 1; x++) {
-            this._convolFilter[x] = [];
+            this._convolFilterR[x] = [];
             for(let y = 0; y < 2 * r + 1; y++) {
                 const dist = Math.sqrt((x - x0) * (x - x0) + (y - y0) * (y - y0))/r;
-                //console.log('dist :', dist);
                 const convolValue = Math.exp( -1 * ((dist - mu) * (dist - mu)) / (2 * sigma * sigma) );
-                this._convolFilter[x][y] = convolValue;
-                //this._convolFilter[x][j] = Math.exp( -((i - x0) * (i - x0) + (j - y0) * (j - y0)) / (2 * sigma * sigma) ) * (1 / (2 * Math.PI * sigma * sigma));
+                this._convolFilterR[x][y] = convolValue;
             }
         }
+    }
 
-        //console.log(this._convolFilter);
+    public initConvolFilterG() {
+        const r = this._convolRadiusG;
+        const x0 = r;
+        const y0 = r;
+        const mu = this._convolMuG;
+        const sigma = this._convolSigmaG;
+        this._convolFilterG = [];
+        for(let x = 0; x < 2 * r + 1; x++) {
+            this._convolFilterG[x] = [];
+            for(let y = 0; y < 2 * r + 1; y++) {
+                const dist = Math.sqrt((x - x0) * (x - x0) + (y - y0) * (y - y0))/r;
+                const convolValue = Math.exp( -1 * ((dist - mu) * (dist - mu)) / (2 * sigma * sigma) );
+                this._convolFilterG[x][y] = convolValue;
+            }
+        }
+    }
+
+    public initConvolFilterB() {
+        const r = this._convolRadiusB;
+        const x0 = r;
+        const y0 = r;
+        const mu = this._convolMuB;
+        const sigma = this._convolSigmaB;
+        this._convolFilterB = [];
+        for(let x = 0; x < 2 * r + 1; x++) {
+            this._convolFilterB[x] = [];
+            for(let y = 0; y < 2 * r + 1; y++) {
+                const dist = Math.sqrt((x - x0) * (x - x0) + (y - y0) * (y - y0))/r;
+                const convolValue = Math.exp( -1 * ((dist - mu) * (dist - mu)) / (2 * sigma * sigma) );
+                this._convolFilterB[x][y] = convolValue;
+            }
+        }
     }
 
     // a mettre dans une lib !
@@ -126,8 +192,8 @@ export default class CellService {
         const coefBlueRed = this._colorSensibilityB[0];
         const coefBlueGreen = this._colorSensibilityB[1];
         const coefBlueBlue = this._colorSensibilityB[2];
-        const x0 = Math.floor(x - this._convolFilter.length / 2) + 1;
-        const y0 = Math.floor(y - this._convolFilter.length / 2) + 1;
+        const x0 = Math.floor(x - this._convolFilterR.length / 2) + 1;
+        const y0 = Math.floor(y - this._convolFilterR.length / 2) + 1;
         let averages = {};
         let sumR = 0;
         let sumG = 0;
@@ -140,9 +206,11 @@ export default class CellService {
         //const countingFloorB = CellConfig.CELL_FILTER_COUNT_FLOOR_BLUE;
 
         // boucles dans le convolFilter
-        for(let i = 0; i < this._convolFilter.length; i++) {
-            for(let j = 0; j < this._convolFilter.length; j++) {
-                const value = this._convolFilter[i][j];
+        for(let i = 0; i < this._convolFilterR.length; i++) {
+            for(let j = 0; j < this._convolFilterR.length; j++) {
+                const filterResultR = this._convolFilterR[i][j];
+                const filterResultG = this._convolFilterG[i][j];
+                const filterResultB = this._convolFilterB[i][j];
                 let x1 = x0 + i;
                 let y1 = y0 + j;
                 // gerer les bords du tableau de 0 a maxI : reboucler
@@ -154,12 +222,12 @@ export default class CellService {
                 const valueR = (this._cells[x1][y1].stateR * coefRedRed + this._cells[x1][y1].stateG * coefRedGreen + this._cells[x1][y1].stateB * coefRedBlue) / (coefRedRed + coefRedGreen + coefRedBlue);
                 const valueG = (this._cells[x1][y1].stateR * coefGreenRed + this._cells[x1][y1].stateG * coefGreenGreen + this._cells[x1][y1].stateB * coefGreenBlue) / (coefGreenRed + coefGreenGreen + coefGreenBlue);
                 const valueB = (this._cells[x1][y1].stateR * coefBlueRed + this._cells[x1][y1].stateG * coefBlueGreen + this._cells[x1][y1].stateB * coefBlueBlue) / (coefBlueRed + coefBlueGreen + coefBlueBlue);
-                sumR += value * valueR;
-                sumG += value * valueG;
-                sumB += value * valueB;
-                if(value > this._countingFloorR) cptR++;
-                if(value > this._countingFloorG) cptG++;
-                if(value > this._countingFloorB) cptB++;
+                sumR += filterResultR * valueR;
+                sumG += filterResultG * valueG;
+                sumB += filterResultB * valueB;
+                if(filterResultR > this._countingFloorR) cptR++;
+                if(filterResultG > this._countingFloorG) cptG++;
+                if(filterResultB > this._countingFloorB) cptB++;
             }
         }
         averages = {
@@ -214,13 +282,13 @@ export default class CellService {
 
 
     public testConvolFilter(i: number, j: number): ICell[][] {
-        const i0 = Math.floor(i - this._convolFilter.length / 2);
-        const j0 = Math.floor(j - this._convolFilter.length / 2);
+        const i0 = Math.floor(i - this._convolFilterR.length / 2);
+        const j0 = Math.floor(j - this._convolFilterR.length / 2);
         //console.log('i0 :', i0, ' j0 :', j0);
-        for(let x = 0; x < this._convolFilter.length; x++) {
-            for(let y = 0; y < this._convolFilter.length; y++) {
-                //console.log(this._convolFilter[x][y]);
-                const value = this._convolFilter[x][y];
+        for(let x = 0; x < this._convolFilterR.length; x++) {
+            for(let y = 0; y < this._convolFilterR.length; y++) {
+                //console.log(this._convolFilterR[x][y]);
+                const value = this._convolFilterR[x][y];
                 
                 this._cells[i0 + x][j0 + y].stateR = value;
                 this._cells[i0 + x][j0 + y].stateG = value;
@@ -297,6 +365,42 @@ export default class CellService {
         return this._cells;
     }
 
+    public setConvolRadiusR(convolRadius: number) {
+        this._convolRadiusR = convolRadius;
+    }
+
+    public setConvolMuR(convolMu: number) {
+        this._convolMuR = convolMu;
+    }
+
+    public setConvolSigmaR(convolSigma: number) {
+        this._convolSigmaR = convolSigma;
+    }
+
+    public setConvolRadiusG(convolRadius: number) {
+        this._convolRadiusG = convolRadius;
+    }
+
+    public setConvolMuG(convolMu: number) {
+        this._convolMuG = convolMu;
+    }
+
+    public setConvolSigmaG(convolSigma: number) {
+        this._convolSigmaG = convolSigma;
+    }
+
+    public setConvolRadiusB(convolRadius: number) {
+        this._convolRadiusB = convolRadius;
+    }
+
+    public setConvolMuB(convolMu: number) {
+        this._convolMuB = convolMu;
+    }
+
+    public setConvolSigmaB(convolSigma: number) {
+        this._convolSigmaB = convolSigma;
+    }
+
     public setBrushSize(brushSize: number) {
         this._brushSize = brushSize;
     }
@@ -323,6 +427,42 @@ export default class CellService {
 
     public setColorSensibilityB(colorSensibilityB: [number, number, number]) {
         this._colorSensibilityB = colorSensibilityB;
+    }
+
+    public getConvolRadiusR(): number {
+        return this._convolRadiusR;
+    }
+
+    public getConvolMuR(): number {
+        return this._convolMuR;
+    }
+
+    public getConvolSigmaR(): number {
+        return this._convolSigmaR;
+    }
+
+    public getConvolRadiusG(): number {
+        return this._convolRadiusG;
+    }
+
+    public getConvolMuG(): number {
+        return this._convolMuG;
+    }
+
+    public getConvolSigmaG(): number {
+        return this._convolSigmaG;
+    }
+
+    public getConvolRadiusB(): number {
+        return this._convolRadiusB;
+    }
+
+    public getConvolMuB(): number {
+        return this._convolMuB;
+    }
+
+    public getConvolSigmaB(): number {
+        return this._convolSigmaB;
     }
 
     public getBrushSize(): number {

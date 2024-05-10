@@ -14,12 +14,23 @@ const CustomCanvas = (props: any) => {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [isRunning, setIsRunning] = useState(false);
+    //const [isMouseOver, setIsMouseOver] = useState(false);
     const [virtTimeCounter, setVirtTimeCounter] = useState(0);
     const [coords, handleCoords] = UseMousePosition(true);
     const width = CanvasConfig.CANVAS_WIDTH;
     const height = CanvasConfig.CANVAS_HEIGHT;
     const delay = AppConfig.APP_DELAY;
     const cellService = CellService.getInstance();
+
+    const [convFilterRadiusR, setConvFilterRadiusR] = useState<number>(cellService.getConvolRadiusR());
+    const [convFilterMuR, setConvFilterMuR] = useState<number>(cellService.getConvolMuR());
+    const [convFilterSigmaR, setConvFilterSigmaR] = useState<number>(cellService.getConvolSigmaR());
+    const [convFilterRadiusG, setConvFilterRadiusG] = useState<number>(cellService.getConvolRadiusG());
+    const [convFilterMuG, setConvFilterMuG] = useState<number>(cellService.getConvolMuG());
+    const [convFilterSigmaG, setConvFilterSigmaG] = useState<number>(cellService.getConvolSigmaG());
+    const [convFilterRadiusB, setConvFilterRadiusB] = useState<number>(cellService.getConvolRadiusB());
+    const [convFilterMuB, setConvFilterMuB] = useState<number>(cellService.getConvolMuB());
+    const [convFilterSigmaB, setConvFilterSigmaB] = useState<number>(cellService.getConvolSigmaB());
 
     const [brushSize, setBrushSize] = useState<number>(cellService.getBrushSize());
     const [floorR, setFloorR] = useState<number>(cellService.getCountingFloorR());
@@ -80,12 +91,9 @@ const CustomCanvas = (props: any) => {
 
     const initCells = () => {
         cellsRef.current = cellService.init();
+        cellService.initConvolFilters();
         updateSliders();
         setVirtTimeCounter(0);
-        /*
-        for(let i = 0; i < maxI; i++){ 
-            cellsRef.current[i] = new Array<ICell>(maxJ);
-        }*/
         updateSliders();
     }
 
@@ -95,7 +103,7 @@ const CustomCanvas = (props: any) => {
 
     const randomizeCells = () => {
         cellsRef.current = cellService.init();
-        updateSliders();
+        cellService.initConvolFilters();
         cellsRef.current = cellService.getRandomizedCells();
         setVirtTimeCounter(0);
         updateSliders();
@@ -103,6 +111,7 @@ const CustomCanvas = (props: any) => {
 
     const clearCells = () => {
         cellsRef.current = cellService.init();
+        cellService.initConvolFilters();
         updateSliders();
         setVirtTimeCounter(0);
     }
@@ -243,25 +252,21 @@ const CustomCanvas = (props: any) => {
             }
           }
 
-          // marche pas correctement : ajouter state de type booleen pour gerer le survol et gerer l'event onMouseLeave
-/*
-          const handleMouseOver = (e: any) => {
-            console.log('mouse over');
-            handleCoords((e as unknown) as MouseEvent);
-            if (canvasRef.current) {
-              const ctx = canvasRef.current.getContext("2d");
+    const drawBrush = (e: any) => {
+        handleCoords((e as unknown) as MouseEvent);
+        if (canvasRef.current) {
+            const ctx = canvasRef.current.getContext("2d");
 
-              const mouseX = coords.x;
-              const mouseY = coords.y;
-              //console.log("MouseX : ", mouseX, " MouseY : ", mouseY);
-              const mouseI = Math.floor(mouseX / CellConfig.CELL_SIZE);
-              const mouseJ = Math.floor(mouseY / CellConfig.CELL_SIZE);
-              //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
-              const radius = 32;
-              if(mouseI >= radius && mouseI <= maxI - radius && mouseJ >= radius && mouseJ <= maxJ - radius){
-                    const ctx = canvasRef.current.getContext("2d");
+            const mouseX = coords.x;
+            const mouseY = coords.y;
+            //console.log("MouseX : ", mouseX, " MouseY : ", mouseY);
+            const mouseI = Math.floor(mouseX / CellConfig.CELL_SIZE);
+            const mouseJ = Math.floor(mouseY / CellConfig.CELL_SIZE);
+            //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
+            const radius = Math.floor(brushSize/2);
+            if(mouseI >= radius && mouseI <= maxI - radius && mouseJ >= radius && mouseJ <= maxJ - radius){
+                    //const ctx = canvasRef.current.getContext("2d");
                     if(ctx){
-                        ctx?.beginPath(); // Commencez un nouveau chemin
                         ctx.ellipse(mouseX, mouseY, radius * CellConfig.CELL_SIZE, radius * CellConfig.CELL_SIZE, 0, 0, 2 * Math.PI); // Dessinez l'ellipse
 
                         // Définissez la couleur de remplissage
@@ -272,23 +277,91 @@ const CustomCanvas = (props: any) => {
                         ctx.strokeStyle = 'rgba(255, 165, 0, 1)'; // Orange à 100%
                         ctx.lineWidth = 2; // Définissez l'épaisseur du trait (ajustez selon vos besoins)
                         ctx.stroke(); // Dessinez le contour de l'ellipse avec la couleur du trait
-                  }
 
-              }
-              
+                }
+
             }
-          }
-*/
+        
+        }
+    }
 
 const updateSliders = () => {
+    setConvFilterRadiusR(cellService.getConvolRadiusR());
+    setConvFilterMuR(cellService.getConvolMuR());
+    setConvFilterSigmaR(cellService.getConvolSigmaR());
+
+    setConvFilterRadiusG(cellService.getConvolRadiusG());
+    setConvFilterMuG(cellService.getConvolMuG());
+    setConvFilterSigmaG(cellService.getConvolSigmaG());
+
+    setConvFilterRadiusB(cellService.getConvolRadiusB());
+    setConvFilterMuB(cellService.getConvolMuB());
+    setConvFilterSigmaB(cellService.getConvolSigmaB());
+
     setBrushSize(cellService.getBrushSize());
+
     setFloorR(cellService.getCountingFloorR());
     setFloorG(cellService.getCountingFloorG());
     setFloorB(cellService.getCountingFloorB());
+
     setColorSensibilityR(cellService.getColorSensibilityR());
     setColorSensibilityG(cellService.getColorSensibilityG());
     setColorSensibilityB(cellService.getColorSensibilityB());
   };
+
+  const handleOnChangeConvFilterRadiusSliderR = (value: any) => {
+    setConvFilterRadiusR(value);
+    cellService.setConvolRadiusR(value);
+    cellService.initConvolFilterR();
+  }
+
+  const handleOnChangeConvFilterMuSliderR = (value: any) => {
+    setConvFilterMuR(value);
+    cellService.setConvolMuR(value);
+    cellService.initConvolFilterR();
+  }
+
+  const handleOnChangeConvFilterSigmaSliderR = (value: any) => {
+    setConvFilterSigmaR(value);
+    cellService.setConvolSigmaR(value);
+    cellService.initConvolFilterR();
+  }
+
+  const handleOnChangeConvFilterRadiusSliderG = (value: any) => {
+    setConvFilterRadiusG(value);
+    cellService.setConvolRadiusG(value);
+    cellService.initConvolFilterG();
+  }
+
+  const handleOnChangeConvFilterMuSliderG = (value: any) => {
+    setConvFilterMuG(value);
+    cellService.setConvolMuG(value);
+    cellService.initConvolFilterG();
+  }
+
+  const handleOnChangeConvFilterSigmaSliderG = (value: any) => {
+    setConvFilterSigmaG(value);
+    cellService.setConvolSigmaG(value);
+    cellService.initConvolFilterG();
+  }
+
+  const handleOnChangeConvFilterRadiusSliderB = (value: any) => {
+    setConvFilterRadiusB(value);
+    cellService.setConvolRadiusB(value);
+    cellService.initConvolFilterB();
+  }
+
+  const handleOnChangeConvFilterMuSliderB = (value: any) => {
+    setConvFilterMuB(value);
+    cellService.setConvolMuB(value);
+    cellService.initConvolFilterB();
+  }
+
+  const handleOnChangeConvFilterSigmaSliderB = (value: any) => {
+    setConvFilterSigmaB(value);
+    cellService.setConvolSigmaB(value);
+    cellService.initConvolFilterB();
+  }
 
   const handleOnChangeBrushSizeSlider = (value: any) => {
     setBrushSize(value);
@@ -369,6 +442,34 @@ const updateSliders = () => {
     cellService.setColorSensibilityB(tab);
   }
 
+  /*
+  const handleMouseEnter = () => {
+    setIsMouseOver((prev) => {
+      console.log('isMouseOver :', !prev);
+      return !prev;
+    });
+    //drawBrush();
+  }
+
+  const handleMouseLeave = () => {
+    setIsMouseOver((prev) => {
+      console.log('isMouseOver :', !prev);
+      return !prev;
+    });
+  }
+*/
+
+  const handleMouseOver = (e: any) => {
+    console.log('mouseOver');
+    drawBrush(e);
+    /*
+      if(isMouseOver){
+        console.log('isMouseOver 2 :', isMouseOver);
+
+        drawBrush(e);
+      }*/
+  }
+
     return (
         <div className="d-flex flex-column align-items-center gap-3">
             <h2 className="text-center">CustomCanvas</h2>
@@ -380,6 +481,9 @@ const updateSliders = () => {
             style={{ border: "1px solid black" }}
             onMouseDown={handleMouseDown}
             //onMouseOver={handleMouseOver}
+            //onMouseMove={handleMouseOver}
+            //onMouseEnter={handleMouseEnter}
+            //onMouseLeave={handleMouseLeave}
             />
             <p>left-click : add circle / right-click : clear circle</p>
             <h3 className="text-center mt-2">Virtual time counter : {virtTimeCounter.toFixed(2)} (s)</h3>
@@ -434,6 +538,35 @@ const updateSliders = () => {
                             onChange={handleOnChangeFloorSliderR}
                             className="slider-floor" 
                             />
+
+                            <label>Conv. radius : {convFilterRadiusR}</label>
+                            <Slider 
+                            min = {8}
+                            max = {26}
+                            step = {1}
+                            value= {convFilterRadiusR}
+                            onChange={handleOnChangeConvFilterRadiusSliderR}
+                            className="slider-floor" 
+                            />
+                            <label>Conv. mu : {convFilterMuR}</label>
+                            <Slider 
+                            min = {0.1}
+                            max = {0.9}
+                            step = {0.01}
+                            value= {convFilterMuR}
+                            onChange={handleOnChangeConvFilterMuSliderR}
+                            className="slider-floor" 
+                            />
+                            <label>Conv. sigma : {convFilterSigmaR}</label>
+                            <Slider 
+                            min = {0.05}
+                            max = {0.5}
+                            step = {0.01}
+                            value= {convFilterSigmaR}
+                            onChange={handleOnChangeConvFilterSigmaSliderR}
+                            className="slider-floor" 
+                            />
+
                             <label>Sensibility Red : {colorSensibilityR[0]}</label>
                             <Slider 
                             min = {0}
@@ -473,6 +606,35 @@ const updateSliders = () => {
                             onChange={handleOnChangeFloorSliderG}
                             className="slider-floor"
                             />
+
+                            <label>Conv. radius : {convFilterRadiusG}</label>
+                            <Slider
+                            min = {8}
+                            max = {26}
+                            step = {1}
+                            value= {convFilterRadiusG}
+                            onChange={handleOnChangeConvFilterRadiusSliderG}
+                            className="slider-floor"
+                            />
+                            <label>Conv. mu : {convFilterMuG}</label>
+                            <Slider
+                            min = {0.1}
+                            max = {0.9}
+                            step = {0.01}
+                            value= {convFilterMuG}
+                            onChange={handleOnChangeConvFilterMuSliderG}
+                            className="slider-floor"
+                            />
+                            <label>Conv. sigma : {convFilterSigmaG}</label>
+                            <Slider
+                            min = {0.05}
+                            max = {0.5}
+                            step = {0.01}
+                            value= {convFilterSigmaG}
+                            onChange={handleOnChangeConvFilterSigmaSliderG}
+                            className="slider-floor"
+                            />
+
                             <label>Sensibility Red : {colorSensibilityG[0]}</label>
                             <Slider 
                             min = {0}
@@ -512,6 +674,35 @@ const updateSliders = () => {
                             onChange={handleOnChangeFloorSliderB}
                             className="slider-floor"
                             />
+
+                            <label>Conv. radius : {convFilterRadiusB}</label>
+                            <Slider
+                            min = {8}
+                            max = {26}
+                            step = {1}
+                            value= {convFilterRadiusB}
+                            onChange={handleOnChangeConvFilterRadiusSliderB}
+                            className="slider-floor"
+                            />
+                            <label>Conv. mu : {convFilterMuB}</label>
+                            <Slider
+                            min = {0.1}
+                            max = {0.9}
+                            step = {0.01}
+                            value= {convFilterMuB}
+                            onChange={handleOnChangeConvFilterMuSliderB}
+                            className="slider-floor"
+                            />
+                            <label>Conv. sigma : {convFilterSigmaB}</label>
+                            <Slider
+                            min = {0.05}
+                            max = {0.5}
+                            step = {0.01}
+                            value= {convFilterSigmaB}
+                            onChange={handleOnChangeConvFilterSigmaSliderB}
+                            className="slider-floor"
+                            />
+
                             <label>Sensibility Red : {colorSensibilityB[0]}</label>
                             <Slider 
                             min = {0}
