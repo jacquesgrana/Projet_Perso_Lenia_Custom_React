@@ -86,3 +86,5 @@
  *
  * @license MIT
  */
+
+//!prev ? displayRunToast() : displayStopToast();
