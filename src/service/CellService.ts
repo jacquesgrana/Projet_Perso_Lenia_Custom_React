@@ -2,7 +2,6 @@ import { cp } from "fs";
 import CanvasConfig from "../config/CanvasConfig";
 import CellConfig from "../config/CellConfig";
 import ICell from "../interface/ICell";
-import { countReset } from "console";
 
 export default class CellService {
 
@@ -11,6 +10,10 @@ export default class CellService {
     private _convolFilter: number[][] = [];
     private _maxI: number = 0;
     private _maxJ: number = 0;
+
+    private _countingFloorR: number = CellConfig.CELL_FILTER_COUNT_FLOOR_RED;
+    private _countingFloorG: number = CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN;
+    private _countingFloorB: number = CellConfig.CELL_FILTER_COUNT_FLOOR_BLUE;
 
     private constructor() {}
 
@@ -26,6 +29,10 @@ export default class CellService {
     public init() {
         this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / CellConfig.CELL_SIZE);
         this._maxJ = Math.floor(CanvasConfig.CANVAS_HEIGHT / CellConfig.CELL_SIZE);
+
+        this._countingFloorR = CellConfig.CELL_FILTER_COUNT_FLOOR_RED;
+        this._countingFloorG = CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN;
+        this._countingFloorB = CellConfig.CELL_FILTER_COUNT_FLOOR_BLUE;
         for(let i = 0; i < this._maxI; i++){ 
             this._cells[i] = new Array<ICell>(this._maxJ);
         }
@@ -99,15 +106,15 @@ export default class CellService {
 
     // a mettre dans une lib ?
     private getFilterResult(x: number, y: number): any {
-        const coefRedRed = 3;
-        const coefRedGreen = 2;
+        const coefRedRed = 4;
+        const coefRedGreen = 1;
         const coefRedBlue = 1;
         const coefGreenRed = 1;
-        const coefGreenGreen = 3;
-        const coefGreenBlue = 2;
-        const coefBlueRed = 2;
+        const coefGreenGreen = 4;
+        const coefGreenBlue = 1;
+        const coefBlueRed = 1;
         const coefBlueGreen = 1;
-        const coefBlueBlue = 3;
+        const coefBlueBlue = 4;
         const x0 = Math.floor(x - this._convolFilter.length / 2) + 1;
         const y0 = Math.floor(y - this._convolFilter.length / 2) + 1;
         let averages = {};
@@ -117,9 +124,9 @@ export default class CellService {
         let cptR = 0;
         let cptG = 0;
         let cptB = 0;
-        const floorR = 0.1;
-        const floorG = 0.15;
-        const floorB = 0.20;
+        //const countingFloorR = CellConfig.CELL_FILTER_COUNT_FLOOR_RED;
+        //const countingFloorG = CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN;
+        //const countingFloorB = CellConfig.CELL_FILTER_COUNT_FLOOR_BLUE;
 
         // boucles dans le convolFilter
         for(let i = 0; i < this._convolFilter.length; i++) {
@@ -139,9 +146,9 @@ export default class CellService {
                 sumR += value * valueR;
                 sumG += value * valueG;
                 sumB += value * valueB;
-                if(value > floorR) cptR++;
-                if(value > floorG) cptG++;
-                if(value > floorB) cptB++;
+                if(value > this._countingFloorR) cptR++;
+                if(value > this._countingFloorG) cptG++;
+                if(value > this._countingFloorB) cptB++;
             }
         }
         averages = {
@@ -279,7 +286,29 @@ export default class CellService {
         return this._cells;
     }
 
-    
+    public setCountingFloorR(countingFloorR: number) {
+        this._countingFloorR = countingFloorR;
+    }
+
+    public setCountingFloorG(countingFloorG: number) {
+        this._countingFloorG = countingFloorG;
+    }
+
+    public setCountingFloorB(countingFloorB: number) {
+        this._countingFloorB = countingFloorB;
+    }
+
+    public getCountingFloorR(): number {
+        return this._countingFloorR;
+    }
+
+    public getCountingFloorG(): number {
+        return this._countingFloorG;
+    }
+
+    public getCountingFloorB(): number {
+        return this._countingFloorB;
+    }
 
     public getCells(): ICell[][] {
         return this._cells;

@@ -5,7 +5,9 @@ import ICell from "../../../interface/ICell";
 import CellConfig from "../../../config/CellConfig";
 import CellService from "../../../service/CellService";
 import IToast from "../../../interface/IToast";
-import { format } from "path";
+import { Accordion } from "react-bootstrap";
+import Slider from 'rc-slider';
+//import 'rc-slider/assets/index.css';
 
 const CustomCanvas = (props: any) => {
 
@@ -17,6 +19,10 @@ const CustomCanvas = (props: any) => {
     const height = CanvasConfig.CANVAS_HEIGHT;
     const delay = CanvasConfig.CANVAS_DELAY;
     const cellService = CellService.getInstance();
+
+    const [floorR, setFloorR] = useState<number>(cellService.getCountingFloorR());
+    const [floorG, setFloorG] = useState<number>(cellService.getCountingFloorG());
+    const [floorB, setFloorB] = useState<number>(cellService.getCountingFloorB());
 
     const intervalRef = useRef<null | any>(null);
 
@@ -57,11 +63,13 @@ const CustomCanvas = (props: any) => {
 
     const initCells = () => {
         cellsRef.current = cellService.init();
+        updateFloors();
         setVirtTimeCounter(0);
         /*
         for(let i = 0; i < maxI; i++){ 
             cellsRef.current[i] = new Array<ICell>(maxJ);
         }*/
+        updateSliders();
     }
 
     const generateNext = () => {
@@ -69,26 +77,23 @@ const CustomCanvas = (props: any) => {
     }
 
     const randomizeCells = () => {
+        cellsRef.current = cellService.init();
+        updateFloors();
         cellsRef.current = cellService.getRandomizedCells();
         setVirtTimeCounter(0);
-        //cellsRef.current = cellService.getCells();
-        /*
-        for(let i = 0; i < maxI; i++){ 
-            for(let j = 0; j < maxJ; j++){
-                cellsRef.current[i][j] = {
-                    i: i,
-                    j: j,
-                    stateR: Math.random(),
-                    stateG:Math.random(),
-                    stateB: Math.random()
-                }
-            }
-        }*/
+        updateSliders();
     }
 
     const clearCells = () => {
         cellsRef.current = cellService.init();
+        updateFloors();
         setVirtTimeCounter(0);
+    }
+
+    const updateFloors = () => {
+        setFloorR(cellService.getCountingFloorR());
+        setFloorG(cellService.getCountingFloorG());
+        setFloorB(cellService.getCountingFloorB());
     }
 
     const drawCells = () => {
@@ -248,6 +253,26 @@ const CustomCanvas = (props: any) => {
           }
 */
 
+const updateSliders = () => {
+    setFloorR(cellService.getCountingFloorR());
+    setFloorG(cellService.getCountingFloorG());
+    setFloorB(cellService.getCountingFloorB());
+  };
+  const handleOnChangeFloorSliderR = (value: any) => {
+    setFloorR(value);
+    cellService.setCountingFloorR(value);
+  };
+  
+  const handleOnChangeFloorSliderG = (value: any) => {
+    setFloorG(value);
+    cellService.setCountingFloorG(value);
+  };
+  
+  const handleOnChangeFloorSliderB = (value: any) => {
+    setFloorB(value);
+    cellService.setCountingFloorB(value);
+  };
+
     return (
         <div className="d-flex flex-column align-items-center gap-3">
             <h2 className="text-center">CustomCanvas</h2>
@@ -259,18 +284,10 @@ const CustomCanvas = (props: any) => {
             style={{ border: "1px solid black" }}
             onMouseDown={handleMouseDown}
             //onMouseOver={handleMouseOver}
-            /*
-            onClick={(e) => {
-                handleCoords((e as unknown) as MouseEvent);
-                if (canvasRef.current) {
-                  const ctx = canvasRef.current.getContext("2d");
-                  ctx?.strokeRect(coords.x, coords.y, 40, 40);
-                }
-              }}
-              */
             />
+            <p>left-click : add circle / right-click : clear circle</p>
             <h3 className="text-center mt-2">Virtual time counter : {virtTimeCounter.toFixed(2)} (s)</h3>
-            <div className="d-flex gap-3 justify-content-center mb-5">
+            <div className="d-flex gap-3 justify-content-center mb-2">
                 <button
                 className="btn-1"
                 type="button"
@@ -302,7 +319,54 @@ const CustomCanvas = (props: any) => {
                     RUN
                 </button>  
             </div>
-
+            <Accordion 
+            defaultActiveKey={null}
+            className="accordion-container mb-5"
+            >
+                <Accordion.Item eventKey="0" >
+                    <Accordion.Header>Settings</Accordion.Header>
+                    <Accordion.Body>
+                    <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center">
+                        <div className="settings-color-column">
+                            <p><strong>Red</strong></p>
+                            <label>Counting floor : {floorR}</label>
+                            <Slider 
+                            min = {0}
+                            max = {1}
+                            step = {0.01}
+                            value= {floorR}
+                            onChange={handleOnChangeFloorSliderR}
+                            className="slider-floor" 
+                            />
+                        </div>
+                        <div className="settings-color-column">
+                            <p><strong>Green</strong></p>
+                            <label>Counting floor : {floorG}</label>
+                            <Slider 
+                            min = {0}
+                            max = {1}
+                            step = {0.01}
+                            value= {floorG}
+                            onChange={handleOnChangeFloorSliderG}
+                            className="slider-floor"
+                            />
+                        </div>
+                        <div className="settings-color-column">
+                            <p><strong>Blue</strong></p>
+                            <label>Counting floor : {floorB}</label>
+                            <Slider 
+                            min = {0}
+                            max = {1}
+                            step = {0.01}
+                            value= {floorB}
+                            onChange={handleOnChangeFloorSliderB}
+                            className="slider-floor"
+                            />
+                        </div>
+                    </div>
+                    </Accordion.Body>
+                </Accordion.Item>
+            </Accordion>
         </div>
     );
 }

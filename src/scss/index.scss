@@ -1,14 +1,20 @@
 //Import de Boostrap
 @import "~bootstrap/scss/bootstrap";
 
+//Import rc-slider
+@import 'rc-slider/assets/index.css';
+
+
 //General => reset, variable, body, mixins...
 @import "./general/color";
 @import "./general/reset";
 @import "./general/body";
 @import "./general/toast";
 @import "./general/button";
+@import "./general/accordion";
 
 
 //Components => header, footer, main, ...
 @import "./component/header";
 @import "./component/footer";
+@import "./component/home";

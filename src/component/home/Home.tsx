@@ -8,7 +8,7 @@ const Home = () => {
 
     
     return (
-        <div>
+        <div id="app-home">
             <h1 className="text-center">Home</h1>
             <CustomCanvas 
                 displayToast={displayToast}
