@@ -31,6 +31,7 @@ const CustomCanvas = (props: any) => {
 
     //const cells: ICell[][] = [];
     const cellsRef = useRef<ICell[][]>([]);
+    let firsloadRef = useRef<boolean>(true);
 
     useEffect(() => {
         initCells();
@@ -60,6 +61,15 @@ const CustomCanvas = (props: any) => {
         };
 
     }, [isRunning, delay]);
+
+    useEffect(() => {
+        if (firsloadRef.current) {
+            firsloadRef.current = false;
+        }
+        else {
+            isRunning ? displayRunToast() : displayStopToast();
+        }
+    }, [isRunning]);
 
     const initCells = () => {
         cellsRef.current = cellService.init();
@@ -143,31 +153,36 @@ const CustomCanvas = (props: any) => {
             const btn = document.getElementById("button-run");
             //console.log('btn :', btn);
             if (btn) btn.innerText = !prev ? "PAUSE" : "RUN";
-            !prev ? displayRunToast() : displayStopToast();
+            //!prev ? displayRunToast() : displayStopToast();
+            //!prev ? displayRunToast() : displayStopToast();
             return !prev;
         });
-        
+        //!isRunning ? displayRunToast() : displayStopToast();
     }
 
-    const displayRunToast = () => {
+    const displayRunToast = async () => {
         const toastToDisplay: IToast = {
             title: "RUN",
             subtitle: "Running",
             message: "The simulation is runnning",
             mode: "success",
-            delay: 1500
+            delay: 1000
         };
+        
+        props.displayToast(toastToDisplay);
         //props.displayToast(toastToDisplay);
     }
 
-    const displayStopToast = () => {
+    const displayStopToast = async () => {
         const toastToDisplay: IToast = {
             title: "STOP",
             subtitle: "Stopped",
             message: "The simulation is stopped",
             mode: "danger",
-            delay: 1500
+            delay: 1000
         };
+
+        props.displayToast(toastToDisplay);
         //props.displayToast(toastToDisplay);
     }
 
@@ -179,7 +194,18 @@ const CustomCanvas = (props: any) => {
             mode: "warning",
             delay: 1500
         };
-        //props.displayToast(toastToDisplay);
+        props.displayToast(toastToDisplay);
+    }
+
+    const displayRandomizeToast = () => {
+        const toastToDisplay: IToast = {
+            title: "RANDOMIZE",
+            subtitle: "Randomize",
+            message: "The simulation is randomized",
+            mode: "info",
+            delay: 1500
+        };
+        props.displayToast(toastToDisplay);   
     }
 
     const handleMouseDown = (e: any) => {
@@ -292,7 +318,7 @@ const updateSliders = () => {
                 className="btn-1"
                 type="button"
                 onClick={() => {
-                    displayResetToast();
+                    displayRandomizeToast();
                     randomizeCells();
                     drawCells();
                 }}
@@ -303,7 +329,7 @@ const updateSliders = () => {
                 className="btn-1"
                 type="button"
                 onClick={() => {
-                    //displayResetToast();
+                    displayResetToast();
                     clearCells();
                     drawCells();
                 }}
