@@ -7,4 +7,13 @@
         justify-content: center;
         width: 30%;
     }
+
+    .settings-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        gap: 20px;
+    }
 }

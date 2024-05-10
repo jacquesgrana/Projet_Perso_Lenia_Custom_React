@@ -25,20 +25,26 @@ const CustomCanvas = (props: any) => {
     const [convFilterRadiusR, setConvFilterRadiusR] = useState<number>(cellService.getConvolRadiusR());
     const [convFilterMuR, setConvFilterMuR] = useState<number>(cellService.getConvolMuR());
     const [convFilterSigmaR, setConvFilterSigmaR] = useState<number>(cellService.getConvolSigmaR());
+
     const [convFilterRadiusG, setConvFilterRadiusG] = useState<number>(cellService.getConvolRadiusG());
     const [convFilterMuG, setConvFilterMuG] = useState<number>(cellService.getConvolMuG());
     const [convFilterSigmaG, setConvFilterSigmaG] = useState<number>(cellService.getConvolSigmaG());
+
     const [convFilterRadiusB, setConvFilterRadiusB] = useState<number>(cellService.getConvolRadiusB());
     const [convFilterMuB, setConvFilterMuB] = useState<number>(cellService.getConvolMuB());
     const [convFilterSigmaB, setConvFilterSigmaB] = useState<number>(cellService.getConvolSigmaB());
 
     const [brushSize, setBrushSize] = useState<number>(cellService.getBrushSize());
+
     const [floorR, setFloorR] = useState<number>(cellService.getCountingFloorR());
     const [floorG, setFloorG] = useState<number>(cellService.getCountingFloorG());
     const [floorB, setFloorB] = useState<number>(cellService.getCountingFloorB());
+
     const [colorSensibilityR, setColorSensibilityR] = useState(cellService.getColorSensibilityR());
     const [colorSensibilityG, setColorSensibilityG] = useState(cellService.getColorSensibilityG());
     const [colorSensibilityB, setColorSensibilityB] = useState(cellService.getColorSensibilityB());
+
+    const [cellEvolutionDeltaT, setCellEvolutionDeltaT] = useState(cellService.getCellEvolutionDeltaT());
     //const [sensibilityR, setSensibilityR] = useState([10, 1, 1]);
 
     const intervalRef = useRef<null | any>(null);
@@ -67,7 +73,7 @@ const CustomCanvas = (props: any) => {
             //randomizeCells();
             generateNext();
             drawCells();
-            setVirtTimeCounter((prev: number) => prev + CellConfig.CELL_GENERATION_DELTA_T);
+            setVirtTimeCounter((prev: number) => prev + cellEvolutionDeltaT);
             intervalRef.current = setTimeout(fct, delay);
         };
   
@@ -92,7 +98,6 @@ const CustomCanvas = (props: any) => {
     const initCells = () => {
         cellsRef.current = cellService.init();
         cellService.initConvolFilters();
-        updateSliders();
         setVirtTimeCounter(0);
         updateSliders();
     }
@@ -112,8 +117,8 @@ const CustomCanvas = (props: any) => {
     const clearCells = () => {
         cellsRef.current = cellService.init();
         cellService.initConvolFilters();
-        updateSliders();
         setVirtTimeCounter(0);
+        updateSliders();
     }
 
     const drawCells = () => {
@@ -307,6 +312,8 @@ const updateSliders = () => {
     setColorSensibilityR(cellService.getColorSensibilityR());
     setColorSensibilityG(cellService.getColorSensibilityG());
     setColorSensibilityB(cellService.getColorSensibilityB());
+
+    setCellEvolutionDeltaT(cellService.getCellEvolutionDeltaT());
   };
 
   const handleOnChangeConvFilterRadiusSliderR = (value: any) => {
@@ -440,6 +447,11 @@ const updateSliders = () => {
     const tab: [number, number, number] = [cellService.getColorSensibilityB()[0], cellService.getColorSensibilityB()[1], value];
     setColorSensibilityB(tab);
     cellService.setColorSensibilityB(tab);
+  }
+
+  const handleOnChangeCellEvolutionDeltaTSlider = (value: any) => {
+      setCellEvolutionDeltaT(value);
+      cellService.setCellEvolutionDeltaT(value);
   }
 
   /*
@@ -733,16 +745,30 @@ const updateSliders = () => {
                         </div>
                     </div>
                     <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center">
-                        <div className="settings-column mt-4">
-                            <label>Brush size : {brushSize}</label>
-                            <Slider 
-                            min = {10}
-                            max = {64}
-                            step = {2}
-                            value= {brushSize}
-                            onChange={handleOnChangeBrushSizeSlider}
-                            className="slider-floor"
-                            />
+                        <div className="settings-row mt-4">
+                            <div className="settings-column">
+                                <label>Brush size : {brushSize}</label>
+                                <Slider 
+                                min = {10}
+                                max = {64}
+                                step = {2}
+                                value= {brushSize}
+                                onChange={handleOnChangeBrushSizeSlider}
+                                className="slider-floor"
+                                />
+                            </div>
+                            <div className="settings-column">
+                                <label>Delta t : {cellEvolutionDeltaT}</label>
+                                <Slider
+                                min = {0.01}
+                                max = {0.125}
+                                step = {0.01}
+                                value= {cellEvolutionDeltaT}
+                                onChange={handleOnChangeCellEvolutionDeltaTSlider}
+                                className="slider-floor"
+                                />
+                            </div>
+
                         </div>
                     </div>
                     </Accordion.Body>

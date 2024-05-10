@@ -27,6 +27,8 @@ export default class CellService {
     private _maxI: number = 0;
     private _maxJ: number = 0;
 
+    private _cellEvolutionDeltaT: number = CellConfig.CELL_EVOLUTION_DELTA_T;
+
     private _countingFloorR: number = CellConfig.CELL_FILTER_COUNT_FLOOR_RED;
     private _countingFloorG: number = CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN;
     private _countingFloorB: number = CellConfig.CELL_FILTER_COUNT_FLOOR_BLUE;
@@ -43,9 +45,10 @@ export default class CellService {
         if (this._instance === null) {
             this._instance = new CellService();
             this._instance.init();
-            this._instance.initConvolFilterR();
-            this._instance.initConvolFilterG();
-            this._instance.initConvolFilterB();
+            //this._instance.initConvolFilterR();
+            //this._instance.initConvolFilterG();
+            //this._instance.initConvolFilterB();
+            this._instance.initConvolFilters();
         }
         return this._instance;
       }
@@ -67,6 +70,7 @@ export default class CellService {
         this._convolSigmaB = CellConfig.CELL_CONV_FILTER_SIGMA;
 
         this._brushSize = CellConfig.CELL_BRUSH_SIZE;
+
         this._countingFloorR = CellConfig.CELL_FILTER_COUNT_FLOOR_RED;
         this._countingFloorG = CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN;
         this._countingFloorB = CellConfig.CELL_FILTER_COUNT_FLOOR_BLUE;
@@ -74,6 +78,8 @@ export default class CellService {
         this._colorSensibilityR = CellConfig.CELL_COLOR_SENSIBILITY_RED;
         this._colorSensibilityG = CellConfig.CELL_COLOR_SENSIBILITY_GREEN;
         this._colorSensibilityB = CellConfig.CELL_COLOR_SENSIBILITY_BLUE;
+
+        this._cellEvolutionDeltaT = CellConfig.CELL_EVOLUTION_DELTA_T;
 
         for(let i = 0; i < this._maxI; i++){ 
             this._cells[i] = new Array<ICell>(this._maxJ);
@@ -175,7 +181,7 @@ export default class CellService {
 
     // a mettre dans une lib !
     private getEvolve(x: number, u: number): number {
-        const dt = CellConfig.CELL_GENERATION_DELTA_T;
+        const dt = this._cellEvolutionDeltaT;
         x += dt * this.getGrowth(u);
         return x;
         
@@ -429,6 +435,10 @@ export default class CellService {
         this._colorSensibilityB = colorSensibilityB;
     }
 
+    public setCellEvolutionDeltaT(cellEvolutionDeltaT: number) {
+        this._cellEvolutionDeltaT = cellEvolutionDeltaT;
+    }
+
     public getConvolRadiusR(): number {
         return this._convolRadiusR;
     }
@@ -495,5 +505,9 @@ export default class CellService {
 
     public getColorSensibilityB(): [number, number, number] {
         return this._colorSensibilityB;
+    }
+
+    public getCellEvolutionDeltaT(): number {
+        return this._cellEvolutionDeltaT;
     }
 }
