@@ -18,12 +18,17 @@ const CustomCanvas = (props: any) => {
     const [coords, handleCoords] = UseMousePosition(true);
     const width = CanvasConfig.CANVAS_WIDTH;
     const height = CanvasConfig.CANVAS_HEIGHT;
-    const delay = CanvasConfig.CANVAS_DELAY;
+    const delay = AppConfig.APP_DELAY;
     const cellService = CellService.getInstance();
 
+    const [brushSize, setBrushSize] = useState<number>(cellService.getBrushSize());
     const [floorR, setFloorR] = useState<number>(cellService.getCountingFloorR());
     const [floorG, setFloorG] = useState<number>(cellService.getCountingFloorG());
     const [floorB, setFloorB] = useState<number>(cellService.getCountingFloorB());
+    const [colorSensibilityR, setColorSensibilityR] = useState(cellService.getColorSensibilityR());
+    const [colorSensibilityG, setColorSensibilityG] = useState(cellService.getColorSensibilityG());
+    const [colorSensibilityB, setColorSensibilityB] = useState(cellService.getColorSensibilityB());
+    //const [sensibilityR, setSensibilityR] = useState([10, 1, 1]);
 
     const intervalRef = useRef<null | any>(null);
 
@@ -32,14 +37,14 @@ const CustomCanvas = (props: any) => {
 
     //const cells: ICell[][] = [];
     const cellsRef = useRef<ICell[][]>([]);
-    const firsloadRef = useRef<number>(0);
+    const loadCountRef = useRef<number>(0);
 
     useEffect(() => {
         initCells();
         randomizeCells();
         drawCells();
-        if (firsloadRef.current < AppConfig.APP_LOAD_COUNT_MAX) {
-            firsloadRef.current++;
+        if (loadCountRef.current < AppConfig.APP_LOAD_COUNT_MAX) {
+            loadCountRef.current++;
         }
         //generateRandomImage();  
     }, []);
@@ -68,14 +73,14 @@ const CustomCanvas = (props: any) => {
 
     useEffect(() => {
         //console.log('firsloadRef.current :', firsloadRef.current);
-        console.log('load count :', AppConfig.APP_LOAD_COUNT_MAX);
-        if(firsloadRef.current > AppConfig.APP_LOAD_COUNT_MAX) isRunning ? displayRunToast() : displayStopToast();
-        else firsloadRef.current++;
+        //console.log('load count :', AppConfig.APP_LOAD_COUNT_MAX);
+        if(loadCountRef.current > AppConfig.APP_LOAD_COUNT_MAX) isRunning ? displayRunToast() : displayStopToast();
+        else loadCountRef.current++;
     }, [isRunning]);
 
     const initCells = () => {
         cellsRef.current = cellService.init();
-        updateFloors();
+        updateSliders();
         setVirtTimeCounter(0);
         /*
         for(let i = 0; i < maxI; i++){ 
@@ -90,7 +95,7 @@ const CustomCanvas = (props: any) => {
 
     const randomizeCells = () => {
         cellsRef.current = cellService.init();
-        updateFloors();
+        updateSliders();
         cellsRef.current = cellService.getRandomizedCells();
         setVirtTimeCounter(0);
         updateSliders();
@@ -98,14 +103,8 @@ const CustomCanvas = (props: any) => {
 
     const clearCells = () => {
         cellsRef.current = cellService.init();
-        updateFloors();
+        updateSliders();
         setVirtTimeCounter(0);
-    }
-
-    const updateFloors = () => {
-        setFloorR(cellService.getCountingFloorR());
-        setFloorG(cellService.getCountingFloorG());
-        setFloorB(cellService.getCountingFloorB());
     }
 
     const drawCells = () => {
@@ -220,7 +219,7 @@ const CustomCanvas = (props: any) => {
                 const mouseI = Math.floor(mouseX / CellConfig.CELL_SIZE);
                 const mouseJ = Math.floor(mouseY / CellConfig.CELL_SIZE);
                 //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
-                const radius = Math.floor(CellConfig.CELL_BRUSH_SIZE/2);
+                const radius = Math.floor(brushSize/2);
                 if(mouseI >= radius && mouseI <= maxI - radius && mouseJ >= radius && mouseJ <= maxJ - radius){
                     //console.log('e.button :', e.button);
                     if (e.button === 0) {
@@ -282,10 +281,19 @@ const CustomCanvas = (props: any) => {
 */
 
 const updateSliders = () => {
+    setBrushSize(cellService.getBrushSize());
     setFloorR(cellService.getCountingFloorR());
     setFloorG(cellService.getCountingFloorG());
     setFloorB(cellService.getCountingFloorB());
+    setColorSensibilityR(cellService.getColorSensibilityR());
+    setColorSensibilityG(cellService.getColorSensibilityG());
+    setColorSensibilityB(cellService.getColorSensibilityB());
   };
+
+  const handleOnChangeBrushSizeSlider = (value: any) => {
+    setBrushSize(value);
+    cellService.setBrushSize(value);
+  }
   const handleOnChangeFloorSliderR = (value: any) => {
     setFloorR(value);
     cellService.setCountingFloorR(value);
@@ -300,6 +308,66 @@ const updateSliders = () => {
     setFloorB(value);
     cellService.setCountingFloorB(value);
   };
+
+  /*
+  const handleOnChangeSensibilitySliderR = (value: any) => {
+    setColorSensibilityR(value);
+    cellService.setColorSensibilityR(value);
+  }*/
+
+  const handleOnChangeSensibilitySliderRR = (value: any) => {
+    const tab: [number, number, number] = [value, cellService.getColorSensibilityR()[1], cellService.getColorSensibilityR()[2]];
+    setColorSensibilityR(tab);
+    cellService.setColorSensibilityR(tab);
+  }
+
+  const handleOnChangeSensibilitySliderRG = (value: any) => {
+    const tab: [number, number, number] = [cellService.getColorSensibilityR()[0], value, cellService.getColorSensibilityR()[2]];
+    setColorSensibilityR(tab);
+    cellService.setColorSensibilityR(tab);
+  }
+
+  const handleOnChangeSensibilitySliderRB = (value: any) => {
+    const tab: [number, number, number] = [cellService.getColorSensibilityR()[0], cellService.getColorSensibilityR()[1], value];
+    setColorSensibilityR(tab);
+    cellService.setColorSensibilityR(tab);
+  }
+
+  const handleOnChangeSensibilitySliderGR = (value: any) => {
+      const tab: [number, number, number] = [value, cellService.getColorSensibilityG()[1], cellService.getColorSensibilityG()[2]];
+      setColorSensibilityG(tab);
+      cellService.setColorSensibilityG(tab);
+  }
+
+  const handleOnChangeSensibilitySliderGG = (value: any) => {
+    const tab: [number, number, number] = [cellService.getColorSensibilityG()[0], value, cellService.getColorSensibilityG()[2]];
+    setColorSensibilityG(tab);
+    cellService.setColorSensibilityG(tab);
+  }
+
+  const handleOnChangeSensibilitySliderGB = (value: any) => {
+    const tab: [number, number, number] = [cellService.getColorSensibilityG()[0], cellService.getColorSensibilityG()[1], value];
+    setColorSensibilityG(tab);
+    cellService.setColorSensibilityG(tab);
+  }
+
+  const handleOnChangeSensibilitySliderBR = (value: any) => {
+    const tab: [number, number, number] = [value, cellService.getColorSensibilityB()[1], cellService.getColorSensibilityB()[2]];
+    setColorSensibilityB(tab);
+    cellService.setColorSensibilityB(tab);
+  }
+
+  const handleOnChangeSensibilitySliderBG = (value: any) => {
+    const tab: [number, number, number] = [cellService.getColorSensibilityB()[0], value, cellService.getColorSensibilityB()[2]];
+    setColorSensibilityB(tab);
+    cellService.setColorSensibilityB(tab);
+  }
+
+  const handleOnChangeSensibilitySliderBB = (value: any) => {
+    const tab: [number, number, number] = [cellService.getColorSensibilityB()[0], cellService.getColorSensibilityB()[1], value];
+    setColorSensibilityB(tab);
+    cellService.setColorSensibilityB(tab);
+  }
 
     return (
         <div className="d-flex flex-column align-items-center gap-3">
@@ -355,7 +423,7 @@ const updateSliders = () => {
                     <Accordion.Header>Settings</Accordion.Header>
                     <Accordion.Body>
                     <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center">
-                        <div className="settings-color-column">
+                        <div className="settings-column">
                             <p><strong>Red</strong></p>
                             <label>Counting floor : {floorR}</label>
                             <Slider 
@@ -366,8 +434,35 @@ const updateSliders = () => {
                             onChange={handleOnChangeFloorSliderR}
                             className="slider-floor" 
                             />
+                            <label>Sensibility Red : {colorSensibilityR[0]}</label>
+                            <Slider 
+                            min = {0}
+                            max = {24}
+                            step = {0.1}
+                            value= {colorSensibilityR[0]}
+                            onChange={handleOnChangeSensibilitySliderRR}
+                            className="slider-floor" 
+                            />
+                            <label>Sensibility Green : {colorSensibilityR[1]}</label>
+                            <Slider 
+                            min = {0}
+                            max = {24}
+                            step = {0.1}
+                            value= {colorSensibilityR[1]}
+                            onChange={handleOnChangeSensibilitySliderRG}
+                            className="slider-floor" 
+                            />
+                            <label>Sensibility Blue : {colorSensibilityR[2]}</label>
+                            <Slider
+                            min = {0}
+                            max = {24}
+                            step = {0.1}
+                            value= {colorSensibilityR[2]}
+                            onChange={handleOnChangeSensibilitySliderRB}
+                            className="slider-floor" 
+                            />
                         </div>
-                        <div className="settings-color-column">
+                        <div className="settings-column">
                             <p><strong>Green</strong></p>
                             <label>Counting floor : {floorG}</label>
                             <Slider 
@@ -378,8 +473,35 @@ const updateSliders = () => {
                             onChange={handleOnChangeFloorSliderG}
                             className="slider-floor"
                             />
+                            <label>Sensibility Red : {colorSensibilityG[0]}</label>
+                            <Slider 
+                            min = {0}
+                            max = {24}
+                            step = {0.1}
+                            value= {colorSensibilityG[0]}
+                            onChange={handleOnChangeSensibilitySliderGR}
+                            className="slider-floor" 
+                            />
+                            <label>Sensibility Green : {colorSensibilityG[1]}</label>
+                            <Slider 
+                            min = {0}
+                            max = {24}
+                            step = {0.1}
+                            value= {colorSensibilityG[1]}
+                            onChange={handleOnChangeSensibilitySliderGG}
+                            className="slider-floor" 
+                            />
+                            <label>Sensibility Blue : {colorSensibilityG[2]}</label>
+                            <Slider
+                            min = {0}
+                            max = {24}
+                            step = {0.1}
+                            value= {colorSensibilityG[2]}
+                            onChange={handleOnChangeSensibilitySliderGB}
+                            className="slider-floor" 
+                            />
                         </div>
-                        <div className="settings-color-column">
+                        <div className="settings-column">
                             <p><strong>Blue</strong></p>
                             <label>Counting floor : {floorB}</label>
                             <Slider 
@@ -388,6 +510,46 @@ const updateSliders = () => {
                             step = {0.01}
                             value= {floorB}
                             onChange={handleOnChangeFloorSliderB}
+                            className="slider-floor"
+                            />
+                            <label>Sensibility Red : {colorSensibilityB[0]}</label>
+                            <Slider 
+                            min = {0}
+                            max = {24}
+                            step = {0.1}
+                            value= {colorSensibilityB[0]}
+                            onChange={handleOnChangeSensibilitySliderBR}
+                            className="slider-floor" 
+                            />
+                            <label>Sensibility Green : {colorSensibilityB[1]}</label>
+                            <Slider 
+                            min = {0}
+                            max = {24}
+                            step = {0.1}
+                            value= {colorSensibilityB[1]}
+                            onChange={handleOnChangeSensibilitySliderBG}
+                            className="slider-floor" 
+                            />
+                            <label>Sensibility Blue : {colorSensibilityB[2]}</label>
+                            <Slider
+                            min = {0}
+                            max = {24}
+                            step = {0.1}
+                            value= {colorSensibilityB[2]}
+                            onChange={handleOnChangeSensibilitySliderBB}
+                            className="slider-floor" 
+                            />
+                        </div>
+                    </div>
+                    <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center">
+                        <div className="settings-column mt-4">
+                            <label>Brush size : {brushSize}</label>
+                            <Slider 
+                            min = {10}
+                            max = {64}
+                            step = {2}
+                            value= {brushSize}
+                            onChange={handleOnChangeBrushSizeSlider}
                             className="slider-floor"
                             />
                         </div>

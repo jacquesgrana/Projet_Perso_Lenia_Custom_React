@@ -15,6 +15,12 @@ export default class CellService {
     private _countingFloorG: number = CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN;
     private _countingFloorB: number = CellConfig.CELL_FILTER_COUNT_FLOOR_BLUE;
 
+    private _colorSensibilityR: [number, number, number] = CellConfig.CELL_COLOR_SENSIBILITY_RED;
+    private _colorSensibilityG: [number, number, number] = CellConfig.CELL_COLOR_SENSIBILITY_GREEN;
+    private _colorSensibilityB: [number, number, number] = CellConfig.CELL_COLOR_SENSIBILITY_BLUE;
+
+    private _brushSize: number = CellConfig.CELL_BRUSH_SIZE;
+    
     private constructor() {}
 
     public static getInstance(): CellService {
@@ -30,9 +36,15 @@ export default class CellService {
         this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / CellConfig.CELL_SIZE);
         this._maxJ = Math.floor(CanvasConfig.CANVAS_HEIGHT / CellConfig.CELL_SIZE);
 
+        this._brushSize = CellConfig.CELL_BRUSH_SIZE;
         this._countingFloorR = CellConfig.CELL_FILTER_COUNT_FLOOR_RED;
         this._countingFloorG = CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN;
         this._countingFloorB = CellConfig.CELL_FILTER_COUNT_FLOOR_BLUE;
+
+        this._colorSensibilityR = CellConfig.CELL_COLOR_SENSIBILITY_RED;
+        this._colorSensibilityG = CellConfig.CELL_COLOR_SENSIBILITY_GREEN;
+        this._colorSensibilityB = CellConfig.CELL_COLOR_SENSIBILITY_BLUE;
+
         for(let i = 0; i < this._maxI; i++){ 
             this._cells[i] = new Array<ICell>(this._maxJ);
         }
@@ -48,7 +60,6 @@ export default class CellService {
                 }
             }
         }
-        
         return this._cells;
     }
 
@@ -106,15 +117,15 @@ export default class CellService {
 
     // a mettre dans une lib ?
     private getFilterResult(x: number, y: number): any {
-        const coefRedRed = 4;
-        const coefRedGreen = 1;
-        const coefRedBlue = 1;
-        const coefGreenRed = 1;
-        const coefGreenGreen = 4;
-        const coefGreenBlue = 1;
-        const coefBlueRed = 1;
-        const coefBlueGreen = 1;
-        const coefBlueBlue = 4;
+        const coefRedRed = this._colorSensibilityR[0];
+        const coefRedGreen = this._colorSensibilityR[1];
+        const coefRedBlue = this._colorSensibilityR[2];
+        const coefGreenRed = this._colorSensibilityG[0];
+        const coefGreenGreen = this._colorSensibilityG[1];
+        const coefGreenBlue = this._colorSensibilityG[2];
+        const coefBlueRed = this._colorSensibilityB[0];
+        const coefBlueGreen = this._colorSensibilityB[1];
+        const coefBlueBlue = this._colorSensibilityB[2];
         const x0 = Math.floor(x - this._convolFilter.length / 2) + 1;
         const y0 = Math.floor(y - this._convolFilter.length / 2) + 1;
         let averages = {};
@@ -245,7 +256,7 @@ export default class CellService {
     }
 
     public drawRandowCircle(i: number, j: number): ICell[][] {
-        const size = CellConfig.CELL_BRUSH_SIZE;
+        const size = this._brushSize;
         const x0 = Math.floor(i - size / 2);
         const y0 = Math.floor(j - size / 2);
         for(let x = 0; x < size; x++) {
@@ -270,7 +281,7 @@ export default class CellService {
     }
 
     public clearCircle(i: number, j: number): ICell[][] {
-        const size = CellConfig.CELL_BRUSH_SIZE;
+        const size = this._brushSize;
         const x0 = Math.floor(i - size / 2);
         const y0 = Math.floor(j - size / 2);
         for(let x = 0; x < size; x++) {
@@ -286,6 +297,10 @@ export default class CellService {
         return this._cells;
     }
 
+    public setBrushSize(brushSize: number) {
+        this._brushSize = brushSize;
+    }
+
     public setCountingFloorR(countingFloorR: number) {
         this._countingFloorR = countingFloorR;
     }
@@ -296,6 +311,22 @@ export default class CellService {
 
     public setCountingFloorB(countingFloorB: number) {
         this._countingFloorB = countingFloorB;
+    }
+
+    public setColorSensibilityR(colorSensibilityR: [number, number, number]) {
+        this._colorSensibilityR = colorSensibilityR;
+    }
+
+    public setColorSensibilityG(colorSensibilityG: [number, number, number]) {
+        this._colorSensibilityG = colorSensibilityG;
+    }
+
+    public setColorSensibilityB(colorSensibilityB: [number, number, number]) {
+        this._colorSensibilityB = colorSensibilityB;
+    }
+
+    public getBrushSize(): number {
+        return this._brushSize;
     }
 
     public getCountingFloorR(): number {
@@ -312,5 +343,17 @@ export default class CellService {
 
     public getCells(): ICell[][] {
         return this._cells;
+    }
+
+    public getColorSensibilityR(): [number, number, number] {
+        return this._colorSensibilityR;
+    }
+
+    public getColorSensibilityG(): [number, number, number] {
+        return this._colorSensibilityG;
+    }
+
+    public getColorSensibilityB(): [number, number, number] {
+        return this._colorSensibilityB;
     }
 }

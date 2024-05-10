@@ -15,4 +15,8 @@ export default class CellConfig {
     public static readonly CELL_FILTER_COUNT_FLOOR_RED = 0.1;
     public static readonly CELL_FILTER_COUNT_FLOOR_GREEN = 0.15;
     public static readonly CELL_FILTER_COUNT_FLOOR_BLUE = 0.2;
+
+    public static readonly CELL_COLOR_SENSIBILITY_RED: [number, number, number] = [4,1,1];
+    public static readonly CELL_COLOR_SENSIBILITY_GREEN: [number, number, number] = [1,4,1];
+    public static readonly CELL_COLOR_SENSIBILITY_BLUE: [number, number, number] = [1,1,4];
 }
