@@ -31,14 +31,14 @@ const CustomCanvas = (props: any) => {
 
     //const cells: ICell[][] = [];
     const cellsRef = useRef<ICell[][]>([]);
-    let firsloadRef = useRef<boolean>(true);
+    const firsloadRef = useRef<number>(0);
 
     useEffect(() => {
         initCells();
         randomizeCells();
         drawCells();
-        if (firsloadRef.current) {
-            firsloadRef.current = false;
+        if (firsloadRef.current < 2) {
+            firsloadRef.current++;
         }
         //generateRandomImage();  
     }, []);
@@ -66,8 +66,9 @@ const CustomCanvas = (props: any) => {
     }, [isRunning, delay]);
 
     useEffect(() => {
-
-        !firsloadRef.current && isRunning ? displayRunToast() : displayStopToast();
+        console.log('firsloadRef.current :', firsloadRef.current);
+        if(firsloadRef.current > 2) isRunning ? displayRunToast() : displayStopToast();
+        else firsloadRef.current++;
     }, [isRunning]);
 
     const initCells = () => {
