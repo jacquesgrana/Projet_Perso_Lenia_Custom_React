@@ -7,6 +7,7 @@ import CellService from "../../../service/CellService";
 import IToast from "../../../interface/IToast";
 import { Accordion } from "react-bootstrap";
 import Slider from 'rc-slider';
+import AppConfig from "../../../config/AppConfig";
 //import 'rc-slider/assets/index.css';
 
 const CustomCanvas = (props: any) => {
@@ -37,7 +38,7 @@ const CustomCanvas = (props: any) => {
         initCells();
         randomizeCells();
         drawCells();
-        if (firsloadRef.current < 2) {
+        if (firsloadRef.current < AppConfig.APP_LOAD_COUNT_MAX) {
             firsloadRef.current++;
         }
         //generateRandomImage();  
@@ -66,8 +67,9 @@ const CustomCanvas = (props: any) => {
     }, [isRunning, delay]);
 
     useEffect(() => {
-        console.log('firsloadRef.current :', firsloadRef.current);
-        if(firsloadRef.current > 2) isRunning ? displayRunToast() : displayStopToast();
+        //console.log('firsloadRef.current :', firsloadRef.current);
+        console.log('load count :', AppConfig.APP_LOAD_COUNT_MAX);
+        if(firsloadRef.current > AppConfig.APP_LOAD_COUNT_MAX) isRunning ? displayRunToast() : displayStopToast();
         else firsloadRef.current++;
     }, [isRunning]);
 
