@@ -550,17 +550,17 @@ const updateSliders = () => {
                             onChange={handleOnChangeFloorSliderR}
                             className="slider-floor" 
                             />
-
-                            <label>Conv. radius : {convFilterRadiusR}</label>
+                            <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
+                            <label>Radius : {convFilterRadiusR}</label>
                             <Slider 
-                            min = {8}
+                            min = {6}
                             max = {16}
                             step = {1}
                             value= {convFilterRadiusR}
                             onChange={handleOnChangeConvFilterRadiusSliderR}
                             className="slider-floor" 
                             />
-                            <label>Conv. mu : {convFilterMuR}</label>
+                            <label>Mu : {convFilterMuR}</label>
                             <Slider 
                             min = {0.1}
                             max = {0.9}
@@ -569,7 +569,7 @@ const updateSliders = () => {
                             onChange={handleOnChangeConvFilterMuSliderR}
                             className="slider-floor" 
                             />
-                            <label>Conv. sigma : {convFilterSigmaR}</label>
+                            <label>Sigma : {convFilterSigmaR}</label>
                             <Slider 
                             min = {0.05}
                             max = {0.5}
@@ -578,8 +578,8 @@ const updateSliders = () => {
                             onChange={handleOnChangeConvFilterSigmaSliderR}
                             className="slider-floor" 
                             />
-
-                            <label>Sensibility Red : {colorSensibilityR[0]}</label>
+                            <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
+                            <label>Red : {colorSensibilityR[0]}</label>
                             <Slider 
                             min = {0}
                             max = {24}
@@ -588,7 +588,7 @@ const updateSliders = () => {
                             onChange={handleOnChangeSensibilitySliderRR}
                             className="slider-floor" 
                             />
-                            <label>Sensibility Green : {colorSensibilityR[1]}</label>
+                            <label>Green : {colorSensibilityR[1]}</label>
                             <Slider 
                             min = {0}
                             max = {24}
@@ -597,7 +597,7 @@ const updateSliders = () => {
                             onChange={handleOnChangeSensibilitySliderRG}
                             className="slider-floor" 
                             />
-                            <label>Sensibility Blue : {colorSensibilityR[2]}</label>
+                            <label>Blue : {colorSensibilityR[2]}</label>
                             <Slider
                             min = {0}
                             max = {24}
@@ -619,16 +619,17 @@ const updateSliders = () => {
                             className="slider-floor"
                             />
 
-                            <label>Conv. radius : {convFilterRadiusG}</label>
+                            <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
+                            <label>Radius : {convFilterRadiusG}</label>
                             <Slider
-                            min = {8}
+                            min = {6}
                             max = {16}
                             step = {1}
                             value= {convFilterRadiusG}
                             onChange={handleOnChangeConvFilterRadiusSliderG}
                             className="slider-floor"
                             />
-                            <label>Conv. mu : {convFilterMuG}</label>
+                            <label>Mu : {convFilterMuG}</label>
                             <Slider
                             min = {0.1}
                             max = {0.9}
@@ -637,7 +638,7 @@ const updateSliders = () => {
                             onChange={handleOnChangeConvFilterMuSliderG}
                             className="slider-floor"
                             />
-                            <label>Conv. sigma : {convFilterSigmaG}</label>
+                            <label>Sigma : {convFilterSigmaG}</label>
                             <Slider
                             min = {0.05}
                             max = {0.5}
@@ -647,7 +648,8 @@ const updateSliders = () => {
                             className="slider-floor"
                             />
 
-                            <label>Sensibility Red : {colorSensibilityG[0]}</label>
+                            <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
+                            <label>Red : {colorSensibilityG[0]}</label>
                             <Slider 
                             min = {0}
                             max = {24}
@@ -656,7 +658,7 @@ const updateSliders = () => {
                             onChange={handleOnChangeSensibilitySliderGR}
                             className="slider-floor" 
                             />
-                            <label>Sensibility Green : {colorSensibilityG[1]}</label>
+                            <label>Green : {colorSensibilityG[1]}</label>
                             <Slider 
                             min = {0}
                             max = {24}
@@ -665,7 +667,7 @@ const updateSliders = () => {
                             onChange={handleOnChangeSensibilitySliderGG}
                             className="slider-floor" 
                             />
-                            <label>Sensibility Blue : {colorSensibilityG[2]}</label>
+                            <label>Blue : {colorSensibilityG[2]}</label>
                             <Slider
                             min = {0}
                             max = {24}
@@ -687,16 +689,17 @@ const updateSliders = () => {
                             className="slider-floor"
                             />
 
-                            <label>Conv. radius : {convFilterRadiusB}</label>
+                            <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
+                            <label>Radius : {convFilterRadiusB}</label>
                             <Slider
-                            min = {8}
+                            min = {6}
                             max = {16}
                             step = {1}
                             value= {convFilterRadiusB}
                             onChange={handleOnChangeConvFilterRadiusSliderB}
                             className="slider-floor"
                             />
-                            <label>Conv. mu : {convFilterMuB}</label>
+                            <label>Mu : {convFilterMuB}</label>
                             <Slider
                             min = {0.1}
                             max = {0.9}
@@ -705,7 +708,7 @@ const updateSliders = () => {
                             onChange={handleOnChangeConvFilterMuSliderB}
                             className="slider-floor"
                             />
-                            <label>Conv. sigma : {convFilterSigmaB}</label>
+                            <label>Sigma : {convFilterSigmaB}</label>
                             <Slider
                             min = {0.05}
                             max = {0.5}
@@ -715,7 +718,8 @@ const updateSliders = () => {
                             className="slider-floor"
                             />
 
-                            <label>Sensibility Red : {colorSensibilityB[0]}</label>
+                            <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
+                            <label>Red : {colorSensibilityB[0]}</label>
                             <Slider 
                             min = {0}
                             max = {24}
@@ -724,7 +728,7 @@ const updateSliders = () => {
                             onChange={handleOnChangeSensibilitySliderBR}
                             className="slider-floor" 
                             />
-                            <label>Sensibility Green : {colorSensibilityB[1]}</label>
+                            <label>Green : {colorSensibilityB[1]}</label>
                             <Slider 
                             min = {0}
                             max = {24}
@@ -733,7 +737,7 @@ const updateSliders = () => {
                             onChange={handleOnChangeSensibilitySliderBG}
                             className="slider-floor" 
                             />
-                            <label>Sensibility Blue : {colorSensibilityB[2]}</label>
+                            <label>Blue : {colorSensibilityB[2]}</label>
                             <Slider
                             min = {0}
                             max = {24}
