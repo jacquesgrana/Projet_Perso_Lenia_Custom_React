@@ -97,6 +97,8 @@ const CustomCanvas = (props: any) => {
 
     const initCells = () => {
         cellsRef.current = cellService.init();
+
+        cellService.initValues();
         cellService.initConvolFilters();
         setVirtTimeCounter(0);
         updateSliders();
@@ -107,17 +109,23 @@ const CustomCanvas = (props: any) => {
     }
 
     const randomizeCells = () => {
-        cellsRef.current = cellService.init();
-        cellService.initConvolFilters();
+        //cellsRef.current = cellService.init();
+        //cellService.initConvolFilters();
         cellsRef.current = cellService.getRandomizedCells();
         setVirtTimeCounter(0);
-        updateSliders();
+        //updateSliders();
     }
 
     const clearCells = () => {
         cellsRef.current = cellService.init();
-        cellService.initConvolFilters();
+        //cellService.initConvolFilters();
         setVirtTimeCounter(0);
+        //updateSliders();
+    }
+
+    const resetValues = () => {
+        cellService.initValues();
+        cellService.initConvolFilters();
         updateSliders();
     }
 
@@ -537,8 +545,8 @@ const updateSliders = () => {
             >
                 <Accordion.Item eventKey="0" >
                     <Accordion.Header>Settings</Accordion.Header>
-                    <Accordion.Body>
-                    <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center">
+                    <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+                    <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center w-100">
                         <div className="settings-column">
                             <p><strong>Red</strong></p>
                             <label>Counting floor : {floorR}</label>
@@ -748,7 +756,7 @@ const updateSliders = () => {
                             />
                         </div>
                     </div>
-                    <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center">
+                    <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center w-100">
                         <div className="settings-row mt-4">
                             <div className="settings-column">
                                 <label>Brush size : {brushSize}</label>
@@ -775,6 +783,18 @@ const updateSliders = () => {
 
                         </div>
                     </div>
+                    <button
+                    className="btn-1"
+                    type="button"
+                    onClick={() => {
+                        //displayResetToast();
+                        //clearCells();
+                        //drawCells();
+                        resetValues();
+                    }}
+                    >
+                        RESET
+                    </button>
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
