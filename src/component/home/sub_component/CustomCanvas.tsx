@@ -34,6 +34,9 @@ const CustomCanvas = (props: any) => {
     const [convFilterMuB, setConvFilterMuB] = useState<number>(cellService.getConvolMuB());
     const [convFilterSigmaB, setConvFilterSigmaB] = useState<number>(cellService.getConvolSigmaB());
 
+    const [cellGrowthMu, setCellGrowthMu] = useState<number>(cellService.getCellGrowthMu());
+    const [cellGrowthSigma, setCellGrowthSigma] = useState<number>(cellService.getCellGrowthSigma());
+
     const [brushSize, setBrushSize] = useState<number>(cellService.getBrushSize());
 
     const [floorR, setFloorR] = useState<number>(cellService.getCountingFloorR());
@@ -311,6 +314,9 @@ const updateSliders = () => {
     setConvFilterMuB(cellService.getConvolMuB());
     setConvFilterSigmaB(cellService.getConvolSigmaB());
 
+    setCellGrowthMu(cellService.getCellGrowthMu());
+    setCellGrowthSigma(cellService.getCellGrowthSigma());
+
     setBrushSize(cellService.getBrushSize());
 
     setFloorR(cellService.getCountingFloorR());
@@ -376,6 +382,16 @@ const updateSliders = () => {
     setConvFilterSigmaB(value);
     cellService.setConvolSigmaB(value);
     cellService.initConvolFilterB();
+  }
+
+  const handleOnChangeCellGrowthMuSlider = (value: any) => {
+    setCellGrowthMu(value);
+    cellService.setCellGrowthMu(value);
+  }
+
+  const handleOnChangeCellGrowthSigmaSlider = (value: any) => {
+    setCellGrowthSigma(value);
+    cellService.setCellGrowthSigma(value);
   }
 
   const handleOnChangeBrushSizeSlider = (value: any) => {
@@ -782,14 +798,36 @@ const updateSliders = () => {
                             </div>
 
                         </div>
+
+                        <div className="settings-row mt-4">
+                            <div className="settings-column">
+                                <label>Growth function mu : {cellGrowthMu}</label>
+                                <Slider 
+                                min = {0.1}
+                                max = {0.2}
+                                step = {0.01}
+                                value= {cellGrowthMu}
+                                onChange={handleOnChangeCellGrowthMuSlider}
+                                className="slider-floor"
+                                />
+                            </div>
+                            <div className="settings-column">
+                                <label>Growth function sigma : {cellGrowthSigma}</label>
+                                <Slider
+                                min = {0.01}
+                                max = {0.03}
+                                step = {0.001}
+                                value= {cellGrowthSigma}
+                                onChange={handleOnChangeCellGrowthSigmaSlider}
+                                className="slider-floor"
+                                />
+                            </div>
+                        </div>
                     </div>
                     <button
                     className="btn-1"
                     type="button"
                     onClick={() => {
-                        //displayResetToast();
-                        //clearCells();
-                        //drawCells();
                         resetValues();
                     }}
                     >

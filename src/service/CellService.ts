@@ -37,6 +37,9 @@ export default class CellService {
     private _colorSensibilityG: [number, number, number] = CellConfig.CELL_COLOR_SENSIBILITY_GREEN;
     private _colorSensibilityB: [number, number, number] = CellConfig.CELL_COLOR_SENSIBILITY_BLUE;
 
+    private _cellGrowthMu: number = CellConfig.CELL_GROWTH_MU;
+    private _cellGrowthSigma: number = CellConfig.CELL_GROWTH_SIGMA;
+
     private _brushSize: number = CellConfig.CELL_BRUSH_SIZE;
     
     private constructor() {}
@@ -128,6 +131,9 @@ export default class CellService {
         this._colorSensibilityB = CellConfig.CELL_COLOR_SENSIBILITY_BLUE;
 
         this._cellEvolutionDeltaT = CellConfig.CELL_EVOLUTION_DELTA_T;
+
+        this._cellGrowthMu = CellConfig.CELL_GROWTH_MU;
+        this._cellGrowthSigma = CellConfig.CELL_GROWTH_SIGMA;
     }
 
     public initConvolFilters(): void {
@@ -204,8 +210,8 @@ export default class CellService {
 
     // a mettre dans une lib !
     private getGrowth(u: number): number {
-        const mu = CellConfig.CELL_GROWTH_MU;
-        const sigma = CellConfig.CELL_GROWTH_SIGMA;
+        const mu = this._cellGrowthMu;
+        const sigma = this._cellGrowthSigma;
         const value = 2 * Math.exp( -1 * ((u - mu) * (u - mu)) / (2 * sigma * sigma)) - 1;
         return value;
     }
@@ -215,7 +221,6 @@ export default class CellService {
         const dt = this._cellEvolutionDeltaT;
         x += dt * this.getGrowth(u);
         return x;
-        
     }
 
     // a mettre dans une lib ?
@@ -569,6 +574,14 @@ export default class CellService {
         this._brushSize = brushSize;
     }
 
+    public setCellGrowthMu(cellGrowthMu: number) {
+        this._cellGrowthMu = cellGrowthMu;
+    }
+ 
+    public setCellGrowthSigma(cellGrowthSigma: number) {
+        this._cellGrowthSigma = cellGrowthSigma;
+    }
+
     public setCountingFloorR(countingFloorR: number) {
         this._countingFloorR = countingFloorR;
     }
@@ -635,6 +648,14 @@ export default class CellService {
 
     public getBrushSize(): number {
         return this._brushSize;
+    }
+
+    public getCellGrowthMu(): number {
+        return this._cellGrowthMu;
+    }
+
+    public getCellGrowthSigma(): number {
+        return this._cellGrowthSigma;
     }
 
     public getCountingFloorR(): number {
