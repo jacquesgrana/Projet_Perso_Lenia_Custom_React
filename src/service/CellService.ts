@@ -198,8 +198,12 @@ export default class CellService {
         const coefBlueRed = this._colorSensibilityB[0];
         const coefBlueGreen = this._colorSensibilityB[1];
         const coefBlueBlue = this._colorSensibilityB[2];
-        const x0 = Math.floor(x - this._convolFilterR.length / 2) + 1;
-        const y0 = Math.floor(y - this._convolFilterR.length / 2) + 1;
+        const x0R = Math.floor(x - this._convolFilterR.length / 2) + 1;
+        const y0R = Math.floor(y - this._convolFilterR.length / 2) + 1;
+        const x0G = Math.floor(x - this._convolFilterG.length / 2) + 1;
+        const y0G = Math.floor(y - this._convolFilterG.length / 2) + 1;
+        const x0B = Math.floor(x - this._convolFilterB.length / 2) + 1;
+        const y0B = Math.floor(y - this._convolFilterB.length / 2) + 1;
         let averages = {};
         let sumR = 0;
         let sumG = 0;
@@ -211,7 +215,59 @@ export default class CellService {
         //const countingFloorG = CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN;
         //const countingFloorB = CellConfig.CELL_FILTER_COUNT_FLOOR_BLUE;
 
+        /*
+        let maxLength = Math.max(this._convolFilterR.length, this._convolFilterG.length, this._convolFilterB.length);
+        //console.log('maxLength :', maxLength);
+        //console.log('lengths :', this._convolFilterR.length, this._convolFilterG.length, this._convolFilterB.length);
+        const deltaR = (maxLength - this._convolFilterR.length) / 2;
+        const deltaG = (maxLength - this._convolFilterG.length) / 2;
+        const deltaB = (maxLength - this._convolFilterB.length) / 2;
+        //console.log('deltas :', deltaR, deltaG, deltaB);
+
+        for(let i = 0; i < maxLength; i++) {
+            for(let j = 0; j < maxLength; j++) {
+                //const filterResultR = this._convolFilterR[i+deltaR][j+deltaR];
+                //const filterResultG = this._convolFilterG[i+deltaG][j+deltaG];
+                //const filterResultB = this._convolFilterB[i+deltaB][j+deltaB];
+                if(i >= deltaR && i < (this._convolFilterR.length + deltaR) && j >= deltaR && j <(this._convolFilterR.length + deltaR)) {
+                    const filterResultR = this._convolFilterR[i+deltaR][j+deltaR];
+                    let x1 = x0R + i;
+                    let y1 = y0R + j;
+                    x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
+                    y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                    const valueR = (this._cells[x1][y1].stateR * coefRedRed + this._cells[x1][y1].stateG * coefRedGreen + this._cells[x1][y1].stateB * coefRedBlue) / (coefRedRed + coefRedGreen + coefRedBlue);
+                    sumR += filterResultR * valueR;
+                    if(filterResultR > this._countingFloorR) cptR++;
+                }
+
+                if(i >= deltaG && i < (this._convolFilterG.length + deltaG) && j >= deltaG && j <(this._convolFilterG.length + deltaG)) {
+                    const filterResultG = this._convolFilterG[i+deltaG][j+deltaG];
+                    let x1 = x0G + i;
+                    let y1 = y0G + j;
+                    x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
+                    y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                    const valueG = (this._cells[x1][y1].stateR * coefGreenRed + this._cells[x1][y1].stateG * coefGreenGreen + this._cells[x1][y1].stateB * coefGreenBlue) / (coefGreenRed + coefGreenGreen + coefGreenBlue);
+                    sumG += filterResultG * valueG;
+                    if(filterResultG > this._countingFloorG) cptG++;
+                }
+
+                if(i >= deltaB && i < (this._convolFilterB.length + deltaB) && j >= deltaB && j <(this._convolFilterB.length + deltaB)) {
+                    const filterResultB = this._convolFilterB[i+deltaB][j+deltaB];
+                    let x1 = x0B + i;
+                    let y1 = y0B + j;
+                    x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
+                    y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                    const valueB = (this._cells[x1][y1].stateR * coefBlueRed + this._cells[x1][y1].stateG * coefBlueGreen + this._cells[x1][y1].stateB * coefBlueBlue) / (coefBlueRed + coefBlueGreen + coefBlueBlue);
+                    sumB += filterResultB * valueB;
+                    if(filterResultB > this._countingFloorB) cptB++;
+                }
+            }
+            
+        }
+*/
+        /*
         // boucles dans le convolFilter
+        let maxRadius = Math.max(this._convolRadiusR, this._convolRadiusG, this._convolRadiusB.length);
         for(let i = 0; i < this._convolFilterR.length; i++) {
             for(let j = 0; j < this._convolFilterR.length; j++) {
                 const filterResultR = this._convolFilterR[i][j];
@@ -221,10 +277,9 @@ export default class CellService {
                 let y1 = y0 + j;
                 // gerer les bords du tableau de 0 a maxI : reboucler
                 // gerer les bords du tableau de 0 a maxJ : reboucler
-                x1 = x1 < 0 ? this._maxI + x1 : x1; 
-                x1 = x1 >= this._maxI ? x1 - this._maxI : x1;
-                y1 = y1 < 0 ? this._maxJ + y1 : y1;
-                y1 = y1 >= this._maxJ ? y1 - this._maxJ : y1;
+                x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
+                y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                
                 const valueR = (this._cells[x1][y1].stateR * coefRedRed + this._cells[x1][y1].stateG * coefRedGreen + this._cells[x1][y1].stateB * coefRedBlue) / (coefRedRed + coefRedGreen + coefRedBlue);
                 const valueG = (this._cells[x1][y1].stateR * coefGreenRed + this._cells[x1][y1].stateG * coefGreenGreen + this._cells[x1][y1].stateB * coefGreenBlue) / (coefGreenRed + coefGreenGreen + coefGreenBlue);
                 const valueB = (this._cells[x1][y1].stateR * coefBlueRed + this._cells[x1][y1].stateG * coefBlueGreen + this._cells[x1][y1].stateB * coefBlueBlue) / (coefBlueRed + coefBlueGreen + coefBlueBlue);
@@ -235,7 +290,55 @@ export default class CellService {
                 if(filterResultG > this._countingFloorG) cptG++;
                 if(filterResultB > this._countingFloorB) cptB++;
             }
+        }*/
+
+        for(let i = 0; i < this._convolFilterR.length; i++) {
+            for(let j = 0; j < this._convolFilterR.length; j++) {
+                const filterResultR = this._convolFilterR[i][j];
+                let x1 = x0R + i;
+                let y1 = y0R + j;
+ 
+                //x1 = x1 < 0 ? this._maxI + x1 : x1; 
+                //x1 = x1 >= this._maxI ? x1 - this._maxI : x1;
+                //y1 = y1 < 0 ? this._maxJ + y1 : y1;
+                //y1 = y1 >= this._maxJ ? y1 - this._maxJ : y1;
+
+                x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
+                y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                const valueR = (this._cells[x1][y1].stateR * coefRedRed + this._cells[x1][y1].stateG * coefRedGreen + this._cells[x1][y1].stateB * coefRedBlue) / (coefRedRed + coefRedGreen + coefRedBlue);
+                sumR += filterResultR * valueR;
+                if(filterResultR > this._countingFloorR) cptR++;
+            }
         }
+
+
+        for(let i = 0; i < this._convolFilterG.length; i++) {
+            for(let j = 0; j < this._convolFilterG.length; j++) {
+                const filterResultG = this._convolFilterG[i][j];
+                let x1 = x0G + i;
+                let y1 = y0G + j;
+                x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
+                y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                const valueG = (this._cells[x1][y1].stateR * coefGreenRed + this._cells[x1][y1].stateG * coefGreenGreen + this._cells[x1][y1].stateB * coefGreenBlue) / (coefGreenRed + coefGreenGreen + coefGreenBlue);
+                sumG += filterResultG * valueG;
+                if(filterResultG > this._countingFloorG) cptG++;
+            }
+        }
+
+        for(let i = 0; i < this._convolFilterB.length; i++) {
+            for(let j = 0; j < this._convolFilterB.length; j++) {
+                const filterResultB = this._convolFilterB[i][j];
+                let x1 = x0B + i;
+                let y1 = y0B + j;
+                x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
+                y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                const valueB = (this._cells[x1][y1].stateR * coefBlueRed + this._cells[x1][y1].stateG * coefBlueGreen + this._cells[x1][y1].stateB * coefBlueBlue) / (coefBlueRed + coefBlueGreen + coefBlueBlue);
+                sumB += filterResultB * valueB;
+                if(filterResultB > this._countingFloorB) cptB++;
+            }
+        }
+
+
         averages = {
             'red' : (sumR / (cptR)),
             'green' : (sumG / (cptG)),
@@ -275,18 +378,11 @@ export default class CellService {
                 }
             }
         }
-/*
-        // copier tableau newCells dans this._cells a partir de 13 à maxI - 13 et de 13 à maxJ - 13
-        for(let i = 0; i < this._maxI; i++) {
-            for(let j = 0; j < this._maxJ; j++) {
-                this._cells[i][j] = newCells[i][j];
-            }
-        }*/
         this._cells = newCells;
         return this._cells;
     }
 
-
+/*
     public testConvolFilter(i: number, j: number): ICell[][] {
         const i0 = Math.floor(i - this._convolFilterR.length / 2);
         const j0 = Math.floor(j - this._convolFilterR.length / 2);
@@ -303,7 +399,9 @@ export default class CellService {
         }
         return this._cells;
     }
+*/
 
+    /*
     public drawGaussianBlur(i: number, j: number): ICell[][] {
         const blurSize = Math.floor(CellConfig.CELL_BRUSH_SIZE/2);
         const x0 = Math.floor(i - blurSize / 2);
@@ -328,6 +426,15 @@ export default class CellService {
         }
         return this._cells;
     }
+    */
+
+    private getCyclicCoords(x1: number, y1: number, maxI: number, maxJ: number): any {
+        x1 = x1 < 0 ? maxI + x1 : x1; 
+        x1 = x1 >= maxI ? x1 - maxI : x1;
+        y1 = y1 < 0 ? maxJ + y1 : y1;
+        y1 = y1 >= maxJ ? y1 - maxJ : y1;
+        return {x: x1, y: y1};
+    }
 
     public drawRandowCircle(i: number, j: number): ICell[][] {
         const size = this._brushSize;
@@ -345,9 +452,19 @@ export default class CellService {
                     newRed = newRed > 1 ? 1 : newRed;
                     newGreen = newGreen > 1 ? 1 : newGreen;
                     newBlue = newBlue > 1 ? 1 : newBlue;
-                    this._cells[x0 + x][y0 + y].stateR = newRed;
-                    this._cells[x0 + x][y0 + y].stateG = newGreen;
-                    this._cells[x0 + x][y0 + y].stateB = newBlue;  
+                    let x1 = x0 + x;
+                    let y1 = y0 + y;
+                    /*
+                    x1 = x1 < 0 ? this._maxI + x1 : x1; 
+                    x1 = x1 >= this._maxI ? x1 - this._maxI : x1;
+                    y1 = y1 < 0 ? this._maxJ + y1 : y1;
+                    y1 = y1 >= this._maxJ ? y1 - this._maxJ : y1;
+                    */
+                    x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
+                    y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                    this._cells[x1][y1].stateR = newRed;
+                    this._cells[x1][y1].stateG = newGreen;
+                    this._cells[x1][y1].stateB = newBlue;  
                 }
             }
         }
@@ -362,9 +479,19 @@ export default class CellService {
             for(let y = 0; y < size; y++) {
                 const dist = Math.sqrt((x - size / 2) * (x - size / 2) + (y - size / 2) * (y - size / 2)) / size;
                 if(dist <= 0.5) {
-                    this._cells[x0 + x][y0 + y].stateR = 0;
-                    this._cells[x0 + x][y0 + y].stateG = 0;
-                    this._cells[x0 + x][y0 + y].stateB = 0;
+                    let x1 = x0 + x;
+                    let y1 = y0 + y;
+                    /*
+                    x1 = x1 < 0 ? this._maxI + x1 : x1; 
+                    x1 = x1 >= this._maxI ? x1 - this._maxI : x1;
+                    y1 = y1 < 0 ? this._maxJ + y1 : y1;
+                    y1 = y1 >= this._maxJ ? y1 - this._maxJ : y1;
+                    */
+                    x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
+                    y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                    this._cells[x1][y1].stateR = 0;
+                    this._cells[x1][y1].stateG = 0;
+                    this._cells[x1][y1].stateB = 0;
                 }
             }
         }

@@ -1,9 +1,9 @@
 export default class CellConfig {
-    public static readonly CELL_SIZE = 8;
+    public static readonly CELL_SIZE = 10;
 
     public static readonly CELL_BRUSH_SIZE = 32; // nombre pair !!!
 
-    public static readonly CELL_CONV_FILTER_RADIUS = 13;
+    public static readonly CELL_CONV_FILTER_RADIUS = 10;
     public static readonly CELL_CONV_FILTER_MU = 0.5;
     public static readonly CELL_CONV_FILTER_SIGMA = 0.15;
 

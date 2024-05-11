@@ -234,7 +234,7 @@ const CustomCanvas = (props: any) => {
                 const mouseJ = Math.floor(mouseY / CellConfig.CELL_SIZE);
                 //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
                 const radius = Math.floor(brushSize/2);
-                if(mouseI >= radius && mouseI <= maxI - radius && mouseJ >= radius && mouseJ <= maxJ - radius){
+                if(mouseI >= 0 && mouseI <= maxI && mouseJ >= 0 && mouseJ <= maxJ){
                     //console.log('e.button :', e.button);
                     if (e.button === 0) {
                         const ctx = canvasRef.current.getContext("2d");
@@ -554,7 +554,7 @@ const updateSliders = () => {
                             <label>Conv. radius : {convFilterRadiusR}</label>
                             <Slider 
                             min = {8}
-                            max = {26}
+                            max = {16}
                             step = {1}
                             value= {convFilterRadiusR}
                             onChange={handleOnChangeConvFilterRadiusSliderR}
@@ -622,7 +622,7 @@ const updateSliders = () => {
                             <label>Conv. radius : {convFilterRadiusG}</label>
                             <Slider
                             min = {8}
-                            max = {26}
+                            max = {16}
                             step = {1}
                             value= {convFilterRadiusG}
                             onChange={handleOnChangeConvFilterRadiusSliderG}
@@ -690,7 +690,7 @@ const updateSliders = () => {
                             <label>Conv. radius : {convFilterRadiusB}</label>
                             <Slider
                             min = {8}
-                            max = {26}
+                            max = {16}
                             step = {1}
                             value= {convFilterRadiusB}
                             onChange={handleOnChangeConvFilterRadiusSliderB}
