@@ -22,6 +22,8 @@ const CustomCanvas = (props: any) => {
     const delay = AppConfig.APP_DELAY;
     const cellService = CellService.getInstance();
 
+    const [cellSize, setCellSize] = useState<number>(cellService.getCellSize());
+
     const [convFilterRadiusR, setConvFilterRadiusR] = useState<number>(cellService.getConvolRadiusR());
     const [convFilterMuR, setConvFilterMuR] = useState<number>(cellService.getConvolMuR());
     const [convFilterSigmaR, setConvFilterSigmaR] = useState<number>(cellService.getConvolSigmaR());
@@ -52,8 +54,8 @@ const CustomCanvas = (props: any) => {
 
     const intervalRef = useRef<null | any>(null);
 
-    const maxI = Math.floor(width / CellConfig.CELL_SIZE);
-    const maxJ = Math.floor(height / CellConfig.CELL_SIZE);
+    const maxIRef = useRef<number>(Math.floor(width / CellConfig.CELL_SIZE));
+    const maxJRef = useRef<number>(Math.floor(height / CellConfig.CELL_SIZE));
 
     //const cells: ICell[][] = [];
     const cellsRef = useRef<ICell[][]>([]);
@@ -98,8 +100,13 @@ const CustomCanvas = (props: any) => {
         else loadCountRef.current++;
     }, [isRunning]);
 
+    useEffect(() => {
+      randomizeCells();
+      drawCells();
+    }, [cellSize]);
+
     const initCells = () => {
-        cellsRef.current = cellService.init();
+        cellsRef.current = cellService.initCells();
 
         cellService.initValues();
         cellService.initConvolFilters();
@@ -120,7 +127,7 @@ const CustomCanvas = (props: any) => {
     }
 
     const clearCells = () => {
-        cellsRef.current = cellService.init();
+        cellsRef.current = cellService.initCells();
         //cellService.initConvolFilters();
         setVirtTimeCounter(0);
         //updateSliders();
@@ -135,16 +142,16 @@ const CustomCanvas = (props: any) => {
     const drawCells = () => {
         const ctx = canvasRef.current?.getContext("2d");
         if(ctx){
-            for(let i = 0; i < maxI; i++){ 
-                for(let j = 0; j < maxJ; j++){
+            for(let i = 0; i < maxIRef.current; i++){ 
+                for(let j = 0; j < maxJRef.current; j++){
                     const cell = cellsRef.current[i][j];
-                    const x = i * CellConfig.CELL_SIZE;
-                    const y = j * CellConfig.CELL_SIZE;
+                    const x = i * cellSize;
+                    const y = j * cellSize;
                     const red = Math.floor(cell.stateR * 255);
                     const green = Math.floor(cell.stateG * 255);
                     const blue = Math.floor(cell.stateB * 255);
                     ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
-                    ctx.fillRect(x, y, CellConfig.CELL_SIZE, CellConfig.CELL_SIZE);
+                    ctx.fillRect(x, y, cellSize, cellSize);
                 }
             } 
         }
@@ -241,15 +248,15 @@ const CustomCanvas = (props: any) => {
                 const mouseX = coords.x;
                 const mouseY = coords.y;
                 //console.log("MouseX : ", mouseX, " MouseY : ", mouseY);
-                const mouseI = Math.floor(mouseX / CellConfig.CELL_SIZE);
-                const mouseJ = Math.floor(mouseY / CellConfig.CELL_SIZE);
+                const mouseI = Math.floor(mouseX / cellSize);
+                const mouseJ = Math.floor(mouseY / cellSize);
                 //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
                 const radius = Math.floor(brushSize/2);
-                if(mouseI >= 0 && mouseI <= maxI && mouseJ >= 0 && mouseJ <= maxJ){
+                if(mouseI >= 0 && mouseI <= maxIRef.current && mouseJ >= 0 && mouseJ <= maxJRef.current){
                     //console.log('e.button :', e.button);
                     if (e.button === 0) {
                         const ctx = canvasRef.current.getContext("2d");
-                        ctx?.ellipse(mouseX, mouseY, radius * CellConfig.CELL_SIZE, radius * CellConfig.CELL_SIZE, 0, 0, 2 * Math.PI);
+                        ctx?.ellipse(mouseX, mouseY, radius * cellSize, radius * cellSize, 0, 0, 2 * Math.PI);
                         //console.log('clic')
                         
                         cellsRef.current = cellService.drawRandowCircle(mouseI, mouseJ);
@@ -276,14 +283,14 @@ const CustomCanvas = (props: any) => {
             const mouseX = coords.x;
             const mouseY = coords.y;
             //console.log("MouseX : ", mouseX, " MouseY : ", mouseY);
-            const mouseI = Math.floor(mouseX / CellConfig.CELL_SIZE);
-            const mouseJ = Math.floor(mouseY / CellConfig.CELL_SIZE);
+            const mouseI = Math.floor(mouseX / cellSize);
+            const mouseJ = Math.floor(mouseY / cellSize);
             //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
             const radius = Math.floor(brushSize/2);
-            if(mouseI >= radius && mouseI <= maxI - radius && mouseJ >= radius && mouseJ <= maxJ - radius){
+            if(mouseI >= radius && mouseI <= maxIRef.current - radius && mouseJ >= radius && mouseJ <= maxJRef.current - radius){
                     //const ctx = canvasRef.current.getContext("2d");
                     if(ctx){
-                        ctx.ellipse(mouseX, mouseY, radius * CellConfig.CELL_SIZE, radius * CellConfig.CELL_SIZE, 0, 0, 2 * Math.PI); // Dessinez l'ellipse
+                        ctx.ellipse(mouseX, mouseY, radius * cellSize, radius * cellSize, 0, 0, 2 * Math.PI); // Dessinez l'ellipse
 
                         // Définissez la couleur de remplissage
                         ctx.fillStyle = 'rgba(255, 165, 0, 0.4)'; // Orange transparent à 40%
@@ -302,6 +309,8 @@ const CustomCanvas = (props: any) => {
     }
 
 const updateSliders = () => {
+    setCellSize(cellService.getCellSize());
+
     setConvFilterRadiusR(cellService.getConvolRadiusR());
     setConvFilterMuR(cellService.getConvolMuR());
     setConvFilterSigmaR(cellService.getConvolSigmaR());
@@ -329,6 +338,22 @@ const updateSliders = () => {
 
     setCellEvolutionDeltaT(cellService.getCellEvolutionDeltaT());
   };
+
+  const handleOnChangeCellSizeSlider = (value: any) => {
+    setCellSize(value);
+    cellService.setCellSize(value);
+    
+    maxIRef.current = Math.floor(width / value);
+    maxJRef.current = Math.floor(height / value);
+    cellsRef.current = cellService.initCells();
+
+    //drawCells();
+    //cellsRef.current = cellService.getRandomizedCells();
+    setVirtTimeCounter(0);
+
+    //randomizeCells();
+    //drawCells();
+  }
 
   const handleOnChangeConvFilterRadiusSliderR = (value: any) => {
     setConvFilterRadiusR(value);
@@ -773,19 +798,8 @@ const updateSliders = () => {
                         </div>
                     </div>
                     <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center w-100">
-                        <div className="settings-row mt-4">
-                            <div className="settings-column">
-                                <label>Brush size : {brushSize}</label>
-                                <Slider 
-                                min = {10}
-                                max = {64}
-                                step = {2}
-                                value= {brushSize}
-                                onChange={handleOnChangeBrushSizeSlider}
-                                className="slider-floor"
-                                />
-                            </div>
-                            <div className="settings-column">
+                        <div className="settings-row mt-2">
+                          <div className="settings-column">
                                 <label>Delta t : {cellEvolutionDeltaT}</label>
                                 <Slider
                                 min = {0.01}
@@ -796,10 +810,6 @@ const updateSliders = () => {
                                 className="slider-floor"
                                 />
                             </div>
-
-                        </div>
-
-                        <div className="settings-row mt-4">
                             <div className="settings-column">
                                 <label>Growth function mu : {cellGrowthMu}</label>
                                 <Slider 
@@ -823,6 +833,33 @@ const updateSliders = () => {
                                 />
                             </div>
                         </div>
+                        <div className="settings-row mt-2">
+                            <div className="settings-column">
+                                <label>Brush size : {brushSize} (cell)</label>
+                                <Slider 
+                                min = {10}
+                                max = {64}
+                                step = {2}
+                                value= {brushSize}
+                                onChange={handleOnChangeBrushSizeSlider}
+                                className="slider-floor"
+                                />
+                            </div>
+                            <div className="settings-column">
+                                <label>Cell size : {cellSize} (pix)</label>
+                                <Slider
+                                min = {1}
+                                max = {16}
+                                step = {1}
+                                value= {cellSize}
+                                onChange={handleOnChangeCellSizeSlider}
+                                className="slider-floor"
+                                />
+                            </div>
+
+                        </div>
+
+
                     </div>
                     <button
                     className="btn-1"

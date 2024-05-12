@@ -7,6 +7,7 @@ export default class CellService {
 
     private static _instance: CellService | null = null;
     private _cells: ICell[][] = [];
+    private _cellSize: number = CellConfig.CELL_SIZE;
 
     private _convolFilterR: number[][] = [];
     private _convolFilterG: number[][] = [];
@@ -48,16 +49,14 @@ export default class CellService {
         if (this._instance === null) {
             this._instance = new CellService();
             this._instance.initValues();
-            this._instance.init();
-            //this._instance.initConvolFilterR();
-            //this._instance.initConvolFilterG();
-            //this._instance.initConvolFilterB();
+            this._instance.initCells();
+            this._instance.initCellSizeValues();
             this._instance.initConvolFilters();
         }
         return this._instance;
       }
 
-    public init() {
+    public initCells() {
         /*
         this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / CellConfig.CELL_SIZE);
         this._maxJ = Math.floor(CanvasConfig.CANVAS_HEIGHT / CellConfig.CELL_SIZE);
@@ -86,6 +85,10 @@ export default class CellService {
 
         this._cellEvolutionDeltaT = CellConfig.CELL_EVOLUTION_DELTA_T;
 */
+        //this._cellSize = CellConfig.CELL_SIZE;
+        //this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / CellConfig.CELL_SIZE);
+        //this._maxJ = Math.floor(CanvasConfig.CANVAS_HEIGHT / CellConfig.CELL_SIZE);
+
         for(let i = 0; i < this._maxI; i++){ 
             this._cells[i] = new Array<ICell>(this._maxJ);
         }
@@ -104,10 +107,15 @@ export default class CellService {
         return this._cells;
     }
 
-    public initValues(): void {
+    public initCellSizeValues(): void {
+        this._cellSize = CellConfig.CELL_SIZE;
         this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / CellConfig.CELL_SIZE);
         this._maxJ = Math.floor(CanvasConfig.CANVAS_HEIGHT / CellConfig.CELL_SIZE);
+    }
 
+    public initValues(): void {
+
+        this._cellEvolutionDeltaT = CellConfig.CELL_EVOLUTION_DELTA_T;
         this._convolRadiusR = CellConfig.CELL_CONV_FILTER_RADIUS;
         this._convolMuR = CellConfig.CELL_CONV_FILTER_MU;
         this._convolSigmaR = CellConfig.CELL_CONV_FILTER_SIGMA;
@@ -534,6 +542,12 @@ export default class CellService {
         return this._cells;
     }
 
+    public setCellSize(cellSize: number) {
+        this._cellSize = cellSize;
+        this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / this._cellSize);
+        this._maxJ = Math.floor(CanvasConfig.CANVAS_HEIGHT / this._cellSize);
+    }
+
     public setConvolRadiusR(convolRadius: number) {
         this._convolRadiusR = convolRadius;
     }
@@ -608,6 +622,10 @@ export default class CellService {
 
     public setCellEvolutionDeltaT(cellEvolutionDeltaT: number) {
         this._cellEvolutionDeltaT = cellEvolutionDeltaT;
+    }
+
+    public getCellSize(): number {
+        return this._cellSize;
     }
 
     public getConvolRadiusR(): number {
