@@ -592,9 +592,9 @@ const updateSliders = () => {
                             <p><strong>Red</strong></p>
                             <label>Counting floor : {floorR}</label>
                             <Slider 
-                            min = {0}
-                            max = {1}
-                            step = {0.01}
+                            min = {CellConfig.CELL_FILTER_COUNT_FLOOR_MIN}
+                            max = {CellConfig.CELL_FILTER_COUNT_FLOOR_MAX}
+                            step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
                             value= {floorR}
                             onChange={handleOnChangeFloorSliderR}
                             className="slider-floor" 
@@ -602,27 +602,27 @@ const updateSliders = () => {
                             <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
                             <label>Radius : {convFilterRadiusR}</label>
                             <Slider 
-                            min = {6}
-                            max = {16}
-                            step = {1}
+                            min = {CellConfig.CELL_CONV_FILTER_RADIUS_MIN}
+                            max = {CellConfig.CELL_CONV_FILTER_RADIUS_MAX}
+                            step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
                             value= {convFilterRadiusR}
                             onChange={handleOnChangeConvFilterRadiusSliderR}
                             className="slider-floor" 
                             />
                             <label>Mu : {convFilterMuR}</label>
                             <Slider 
-                            min = {0.1}
-                            max = {0.9}
-                            step = {0.01}
+                            min = {CellConfig.CELL_CONV_FILTER_MU_MIN}
+                            max = {CellConfig.CELL_CONV_FILTER_MU_MAX}
+                            step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
                             value= {convFilterMuR}
                             onChange={handleOnChangeConvFilterMuSliderR}
                             className="slider-floor" 
                             />
                             <label>Sigma : {convFilterSigmaR}</label>
                             <Slider 
-                            min = {0.05}
-                            max = {0.5}
-                            step = {0.01}
+                            min = {CellConfig.CELL_CONV_FILTER_SIGMA_MIN}
+                            max = {CellConfig.CELL_CONV_FILTER_SIGMA_MAX}
+                            step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
                             value= {convFilterSigmaR}
                             onChange={handleOnChangeConvFilterSigmaSliderR}
                             className="slider-floor" 
@@ -630,27 +630,27 @@ const updateSliders = () => {
                             <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
                             <label>Red : {colorSensibilityR[0]}</label>
                             <Slider 
-                            min = {0}
-                            max = {24}
-                            step = {0.1}
+                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityR[0]}
                             onChange={handleOnChangeSensibilitySliderRR}
                             className="slider-floor" 
                             />
                             <label>Green : {colorSensibilityR[1]}</label>
                             <Slider 
-                            min = {0}
-                            max = {24}
-                            step = {0.1}
+                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityR[1]}
                             onChange={handleOnChangeSensibilitySliderRG}
                             className="slider-floor" 
                             />
                             <label>Blue : {colorSensibilityR[2]}</label>
                             <Slider
-                            min = {0}
-                            max = {24}
-                            step = {0.1}
+                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityR[2]}
                             onChange={handleOnChangeSensibilitySliderRB}
                             className="slider-floor" 
@@ -660,9 +660,9 @@ const updateSliders = () => {
                             <p><strong>Green</strong></p>
                             <label>Counting floor : {floorG}</label>
                             <Slider 
-                            min = {0}
-                            max = {1}
-                            step = {0.01}
+                            min = {CellConfig.CELL_FILTER_COUNT_FLOOR_MIN}
+                            max = {CellConfig.CELL_FILTER_COUNT_FLOOR_MAX}
+                            step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
                             value= {floorG}
                             onChange={handleOnChangeFloorSliderG}
                             className="slider-floor"
@@ -671,27 +671,27 @@ const updateSliders = () => {
                             <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
                             <label>Radius : {convFilterRadiusG}</label>
                             <Slider
-                            min = {6}
-                            max = {16}
-                            step = {1}
+                            min = {CellConfig.CELL_CONV_FILTER_RADIUS_MIN}
+                            max = {CellConfig.CELL_CONV_FILTER_RADIUS_MAX}
+                            step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
                             value= {convFilterRadiusG}
                             onChange={handleOnChangeConvFilterRadiusSliderG}
                             className="slider-floor"
                             />
                             <label>Mu : {convFilterMuG}</label>
                             <Slider
-                            min = {0.1}
-                            max = {0.9}
-                            step = {0.01}
+                            min = {CellConfig.CELL_CONV_FILTER_MU_MIN}
+                            max = {CellConfig.CELL_CONV_FILTER_MU_MAX}
+                            step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
                             value= {convFilterMuG}
                             onChange={handleOnChangeConvFilterMuSliderG}
                             className="slider-floor"
                             />
                             <label>Sigma : {convFilterSigmaG}</label>
                             <Slider
-                            min = {0.05}
-                            max = {0.5}
-                            step = {0.01}
+                            min = {CellConfig.CELL_CONV_FILTER_SIGMA_MIN}
+                            max = {CellConfig.CELL_CONV_FILTER_SIGMA_MAX}
+                            step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
                             value= {convFilterSigmaG}
                             onChange={handleOnChangeConvFilterSigmaSliderG}
                             className="slider-floor"
@@ -700,27 +700,27 @@ const updateSliders = () => {
                             <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
                             <label>Red : {colorSensibilityG[0]}</label>
                             <Slider 
-                            min = {0}
-                            max = {24}
-                            step = {0.1}
+                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityG[0]}
                             onChange={handleOnChangeSensibilitySliderGR}
                             className="slider-floor" 
                             />
                             <label>Green : {colorSensibilityG[1]}</label>
                             <Slider 
-                            min = {0}
-                            max = {24}
-                            step = {0.1}
+                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityG[1]}
                             onChange={handleOnChangeSensibilitySliderGG}
                             className="slider-floor" 
                             />
                             <label>Blue : {colorSensibilityG[2]}</label>
                             <Slider
-                            min = {0}
-                            max = {24}
-                            step = {0.1}
+                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityG[2]}
                             onChange={handleOnChangeSensibilitySliderGB}
                             className="slider-floor" 
@@ -730,9 +730,9 @@ const updateSliders = () => {
                             <p><strong>Blue</strong></p>
                             <label>Counting floor : {floorB}</label>
                             <Slider 
-                            min = {0}
-                            max = {1}
-                            step = {0.01}
+                            min = {CellConfig.CELL_FILTER_COUNT_FLOOR_MIN}
+                            max = {CellConfig.CELL_FILTER_COUNT_FLOOR_MAX}
+                            step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
                             value= {floorB}
                             onChange={handleOnChangeFloorSliderB}
                             className="slider-floor"
@@ -741,27 +741,27 @@ const updateSliders = () => {
                             <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
                             <label>Radius : {convFilterRadiusB}</label>
                             <Slider
-                            min = {6}
-                            max = {16}
-                            step = {1}
+                            min = {CellConfig.CELL_CONV_FILTER_RADIUS_MIN}
+                            max = {CellConfig.CELL_CONV_FILTER_RADIUS_MAX}
+                            step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
                             value= {convFilterRadiusB}
                             onChange={handleOnChangeConvFilterRadiusSliderB}
                             className="slider-floor"
                             />
                             <label>Mu : {convFilterMuB}</label>
                             <Slider
-                            min = {0.1}
-                            max = {0.9}
-                            step = {0.01}
+                            min = {CellConfig.CELL_CONV_FILTER_MU_MIN}
+                            max = {CellConfig.CELL_CONV_FILTER_MU_MAX}
+                            step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
                             value= {convFilterMuB}
                             onChange={handleOnChangeConvFilterMuSliderB}
                             className="slider-floor"
                             />
                             <label>Sigma : {convFilterSigmaB}</label>
                             <Slider
-                            min = {0.05}
-                            max = {0.5}
-                            step = {0.01}
+                            min = {CellConfig.CELL_CONV_FILTER_SIGMA_MIN}
+                            max = {CellConfig.CELL_CONV_FILTER_SIGMA_MAX}
+                            step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
                             value= {convFilterSigmaB}
                             onChange={handleOnChangeConvFilterSigmaSliderB}
                             className="slider-floor"
@@ -770,27 +770,27 @@ const updateSliders = () => {
                             <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
                             <label>Red : {colorSensibilityB[0]}</label>
                             <Slider 
-                            min = {0}
-                            max = {24}
-                            step = {0.1}
+                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityB[0]}
                             onChange={handleOnChangeSensibilitySliderBR}
                             className="slider-floor" 
                             />
                             <label>Green : {colorSensibilityB[1]}</label>
                             <Slider 
-                            min = {0}
-                            max = {24}
-                            step = {0.1}
+                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityB[1]}
                             onChange={handleOnChangeSensibilitySliderBG}
                             className="slider-floor" 
                             />
                             <label>Blue : {colorSensibilityB[2]}</label>
                             <Slider
-                            min = {0}
-                            max = {24}
-                            step = {0.1}
+                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityB[2]}
                             onChange={handleOnChangeSensibilitySliderBB}
                             className="slider-floor" 
@@ -802,9 +802,9 @@ const updateSliders = () => {
                           <div className="settings-column">
                                 <label>Delta t : {cellEvolutionDeltaT}</label>
                                 <Slider
-                                min = {0.01}
-                                max = {0.125}
-                                step = {0.01}
+                                min = {CellConfig.CELL_EVOLUTION_DELTA_T_MIN}
+                                max = {CellConfig.CELL_EVOLUTION_DELTA_T_MAX}
+                                step = {CellConfig.CELL_EVOLUTION_DELTA_T_STEP}
                                 value= {cellEvolutionDeltaT}
                                 onChange={handleOnChangeCellEvolutionDeltaTSlider}
                                 className="slider-floor"
@@ -813,9 +813,9 @@ const updateSliders = () => {
                             <div className="settings-column">
                                 <label>Growth function mu : {cellGrowthMu}</label>
                                 <Slider 
-                                min = {0.1}
-                                max = {0.2}
-                                step = {0.01}
+                                min = {CellConfig.CELL_GROWTH_MU_MIN}
+                                max = {CellConfig.CELL_GROWTH_MU_MAX}
+                                step = {CellConfig.CELL_GROWTH_MU_STEP}
                                 value= {cellGrowthMu}
                                 onChange={handleOnChangeCellGrowthMuSlider}
                                 className="slider-floor"
@@ -824,9 +824,9 @@ const updateSliders = () => {
                             <div className="settings-column">
                                 <label>Growth function sigma : {cellGrowthSigma}</label>
                                 <Slider
-                                min = {0.01}
-                                max = {0.03}
-                                step = {0.001}
+                                min = {CellConfig.CELL_GROWTH_SIGMA_MIN}
+                                max = {CellConfig.CELL_GROWTH_SIGMA_MAX}
+                                step = {CellConfig.CELL_GROWTH_SIGMA_STEP}
                                 value= {cellGrowthSigma}
                                 onChange={handleOnChangeCellGrowthSigmaSlider}
                                 className="slider-floor"
@@ -837,9 +837,9 @@ const updateSliders = () => {
                             <div className="settings-column">
                                 <label>Brush size : {brushSize} (cell)</label>
                                 <Slider 
-                                min = {10}
-                                max = {64}
-                                step = {2}
+                                min = {CellConfig.CELL_BRUSH_SIZE_MIN}
+                                max = {CellConfig.CELL_BRUSH_SIZE_MAX}
+                                step = {CellConfig.CELL_BRUSH_SIZE_STEP}
                                 value= {brushSize}
                                 onChange={handleOnChangeBrushSizeSlider}
                                 className="slider-floor"
@@ -848,9 +848,9 @@ const updateSliders = () => {
                             <div className="settings-column">
                                 <label>Cell size : {cellSize} (pix)</label>
                                 <Slider
-                                min = {1}
-                                max = {16}
-                                step = {1}
+                                min = {CellConfig.CELL_SIZE_MIN}
+                                max = {CellConfig.CELL_SIZE_MAX}
+                                step = {CellConfig.CELL_SIZE_STEP}
                                 value= {cellSize}
                                 onChange={handleOnChangeCellSizeSlider}
                                 className="slider-floor"
