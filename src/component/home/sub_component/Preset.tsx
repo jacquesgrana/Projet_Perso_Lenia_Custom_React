@@ -1,5 +1,8 @@
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+
 
 const Preset = (props : any) => {
 
@@ -10,7 +13,7 @@ const Preset = (props : any) => {
         <Card.Title>{props.preset.name}</Card.Title>
         <Card.Text>
         <p>{props.preset.description}</p>
-        <p>{props.preset.date}</p>
+        <p>{format(props.preset.date, 'dd MMMM yyyy', { locale: fr })}</p>
         </Card.Text>
         <Button variant="primary" onClick={() => props.applyPresetCB(props.preset)}>Apply</Button>
       </Card.Body>

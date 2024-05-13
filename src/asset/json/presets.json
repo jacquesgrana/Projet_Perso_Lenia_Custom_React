@@ -4,7 +4,7 @@
             "id": 0,
             "name": "To be named later",
             "description": "To be described later",
-            "date": "2024-05-13T12:30:00.000Z",
+            "date": "2024-05-13T00:30:00.000Z",
 
             "values": {
                 "floorR": 0.86,
@@ -37,7 +37,7 @@
             "id": 1,
             "name": "Blue struggle",
             "description": "To be described later",
-            "date": "2024-05-13T14:30:00.000Z",
+            "date": "2024-05-13T02:30:00.000Z",
 
             "values": {
                 "floorR": 0.22,
@@ -64,6 +64,39 @@
 
                 "cellGrowthMu": 0.16,
                 "cellGrowthSigma": 0.023
+            }
+        },
+        {
+            "id": 2,
+            "name": "Living cells in color",
+            "description": "To be described later",
+            "date": "2024-05-13T05:15:00.000Z",
+
+            "values": {
+                "floorR": 0.5,
+                "floorG": 0.6,
+                "floorB": 0.5,
+
+                "convFilterRadiusR": 8,
+                "convFilterMuR": 0.5,
+                "convFilterSigmaR": 0.2,
+
+                "convFilterRadiusG": 10,
+                "convFilterMuG": 0.5,
+                "convFilterSigmaG": 0.3,
+
+                "convFilterRadiusB": 8,
+                "convFilterMuB": 0.5,
+                "convFilterSigmaB": 0.2,
+
+                "colorSensibilityR": [0, 24, 12],
+                "colorSensibilityG": [1, 0, 1],
+                "colorSensibilityB": [12, 24, 0],
+
+                "cellEvolutionDeltaT": 0.06,
+
+                "cellGrowthMu": 0.15,
+                "cellGrowthSigma": 0.022
             }
         }
     ]
