@@ -1,0 +1,38 @@
+{
+    "presets": [
+        {
+            "id": 0,
+            "name": "test",
+            "description": "test",
+            "date": "2024-05-13T12:30:00.000Z",
+
+            "values": {
+                "floorR": 0.86,
+                "floorG": 0.86,
+                "floorB": 0.86,
+
+                "convFilterRadiusR": 6,
+                "convFilterMuR": 0.5,
+                "convFilterSigmaR": 0.25,
+
+                "convFilterRadiusG": 6,
+                "convFilterMuG": 0.7,
+                "convFilterSigmaG": 0.3,
+
+                "convFilterRadiusB": 6,
+                "convFilterMuB": 0.9,
+                "convFilterSigmaB": 0.35,
+
+                "colorSensibilityR": [2, 2, 2],
+                "colorSensibilityG": [24, 2, 2],
+                "colorSensibilityB": [24, 2, 2],
+
+                "cellEvolutionDeltaT": 0.05,
+
+                "cellGrowthMu": 0.15,
+                "cellGrowthSigma": 0.015
+
+            }
+        }
+    ]
+}

@@ -13,17 +13,17 @@ export default class CellService {
     private _convolFilterG: number[][] = [];
     private _convolFilterB: number[][] = [];
 
-    private _convolRadiusR: number = CellConfig.CELL_CONV_FILTER_RADIUS;
-    private _convolMuR: number = CellConfig.CELL_CONV_FILTER_MU;
-    private _convolSigmaR: number = CellConfig.CELL_CONV_FILTER_SIGMA;
+    private _convolRadiusR: number = CellConfig.CELL_CONV_FILTER_RADIUS_RED;
+    private _convolMuR: number = CellConfig.CELL_CONV_FILTER_MU_RED;
+    private _convolSigmaR: number = CellConfig.CELL_CONV_FILTER_SIGMA_RED;
 
-    private _convolRadiusG: number = CellConfig.CELL_CONV_FILTER_RADIUS;
-    private _convolMuG: number = CellConfig.CELL_CONV_FILTER_MU;
-    private _convolSigmaG: number = CellConfig.CELL_CONV_FILTER_SIGMA;
+    private _convolRadiusG: number = CellConfig.CELL_CONV_FILTER_RADIUS_GREEN;
+    private _convolMuG: number = CellConfig.CELL_CONV_FILTER_MU_GREEN;
+    private _convolSigmaG: number = CellConfig.CELL_CONV_FILTER_SIGMA_GREEN;
 
-    private _convolRadiusB: number = CellConfig.CELL_CONV_FILTER_RADIUS;
-    private _convolMuB: number = CellConfig.CELL_CONV_FILTER_MU;
-    private _convolSigmaB: number = CellConfig.CELL_CONV_FILTER_SIGMA;
+    private _convolRadiusB: number = CellConfig.CELL_CONV_FILTER_RADIUS_BLUE;
+    private _convolMuB: number = CellConfig.CELL_CONV_FILTER_MU_BLUE;
+    private _convolSigmaB: number = CellConfig.CELL_CONV_FILTER_SIGMA_BLUE;
 
     private _maxI: number = 0;
     private _maxJ: number = 0;
@@ -116,17 +116,18 @@ export default class CellService {
     public initValues(): void {
 
         this._cellEvolutionDeltaT = CellConfig.CELL_EVOLUTION_DELTA_T;
-        this._convolRadiusR = CellConfig.CELL_CONV_FILTER_RADIUS;
-        this._convolMuR = CellConfig.CELL_CONV_FILTER_MU;
-        this._convolSigmaR = CellConfig.CELL_CONV_FILTER_SIGMA;
+        
+        this._convolRadiusR = CellConfig.CELL_CONV_FILTER_RADIUS_RED;
+        this._convolMuR = CellConfig.CELL_CONV_FILTER_MU_RED;
+        this._convolSigmaR = CellConfig.CELL_CONV_FILTER_SIGMA_RED;
 
-        this._convolRadiusG = CellConfig.CELL_CONV_FILTER_RADIUS;
-        this._convolMuG = CellConfig.CELL_CONV_FILTER_MU;
-        this._convolSigmaG = CellConfig.CELL_CONV_FILTER_SIGMA;
+        this._convolRadiusG = CellConfig.CELL_CONV_FILTER_RADIUS_GREEN;
+        this._convolMuG = CellConfig.CELL_CONV_FILTER_MU_GREEN;
+        this._convolSigmaG = CellConfig.CELL_CONV_FILTER_SIGMA_GREEN;
 
-        this._convolRadiusB = CellConfig.CELL_CONV_FILTER_RADIUS;
-        this._convolMuB = CellConfig.CELL_CONV_FILTER_MU;
-        this._convolSigmaB = CellConfig.CELL_CONV_FILTER_SIGMA;
+        this._convolRadiusB = CellConfig.CELL_CONV_FILTER_RADIUS_BLUE;
+        this._convolMuB = CellConfig.CELL_CONV_FILTER_MU_BLUE;
+        this._convolSigmaB = CellConfig.CELL_CONV_FILTER_SIGMA_BLUE;
 
         this._brushSize = CellConfig.CELL_BRUSH_SIZE;
 
@@ -338,7 +339,7 @@ export default class CellService {
 
         for(let i = 0; i < this._convolFilterR.length; i++) {
             for(let j = 0; j < this._convolFilterR.length; j++) {
-                const filterResultR = this._convolFilterR[i][j];
+                const filterResultR = this._convolFilterR[i][j] ; // * this._countingFloorR
                 let x1 = x0R + i;
                 let y1 = y0R + j;
  
@@ -346,39 +347,51 @@ export default class CellService {
                 //x1 = x1 >= this._maxI ? x1 - this._maxI : x1;
                 //y1 = y1 < 0 ? this._maxJ + y1 : y1;
                 //y1 = y1 >= this._maxJ ? y1 - this._maxJ : y1;
-
-                x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
-                y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                const cyclicCoords = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ);
+                x1 = cyclicCoords.x;
+                y1 = cyclicCoords.y;
                 const valueR = (this._cells[x1][y1].stateR * coefRedRed + this._cells[x1][y1].stateG * coefRedGreen + this._cells[x1][y1].stateB * coefRedBlue) / (coefRedRed + coefRedGreen + coefRedBlue);
-                sumR += filterResultR * valueR;
-                if(filterResultR > this._countingFloorR) cptR++;
+                
+                if(filterResultR > this._countingFloorR) {
+                    sumR += filterResultR * valueR;
+                    cptR++;
+                } 
+                //cptR++;
             }
         }
 
 
         for(let i = 0; i < this._convolFilterG.length; i++) {
             for(let j = 0; j < this._convolFilterG.length; j++) {
-                const filterResultG = this._convolFilterG[i][j];
+                const filterResultG = this._convolFilterG[i][j]; // * this._countingFloorG
                 let x1 = x0G + i;
                 let y1 = y0G + j;
-                x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
-                y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                const cyclicCoords = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ);
+                x1 = cyclicCoords.x;
+                y1 = cyclicCoords.y;
                 const valueG = (this._cells[x1][y1].stateR * coefGreenRed + this._cells[x1][y1].stateG * coefGreenGreen + this._cells[x1][y1].stateB * coefGreenBlue) / (coefGreenRed + coefGreenGreen + coefGreenBlue);
-                sumG += filterResultG * valueG;
-                if(filterResultG > this._countingFloorG) cptG++;
+                if(filterResultG > this._countingFloorG) {
+                    sumG += filterResultG * valueG;
+                    cptG++; 
+                }
+                //cptG++;
             }
         }
 
         for(let i = 0; i < this._convolFilterB.length; i++) {
             for(let j = 0; j < this._convolFilterB.length; j++) {
-                const filterResultB = this._convolFilterB[i][j];
+                const filterResultB = this._convolFilterB[i][j]; //  * this._countingFloorB
                 let x1 = x0B + i;
                 let y1 = y0B + j;
-                x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
-                y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                const cyclicCoords = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ);
+                x1 = cyclicCoords.x;
+                y1 = cyclicCoords.y;
                 const valueB = (this._cells[x1][y1].stateR * coefBlueRed + this._cells[x1][y1].stateG * coefBlueGreen + this._cells[x1][y1].stateB * coefBlueBlue) / (coefBlueRed + coefBlueGreen + coefBlueBlue);
-                sumB += filterResultB * valueB;
-                if(filterResultB > this._countingFloorB) cptB++;
+                if(filterResultB > this._countingFloorB) {
+                    sumB += filterResultB * valueB;
+                    cptB++;
+                }
+                //cptB++;
             }
         }
 

@@ -45,11 +45,11 @@ const CustomCanvas = (props: any) => {
     const [floorG, setFloorG] = useState<number>(cellService.getCountingFloorG());
     const [floorB, setFloorB] = useState<number>(cellService.getCountingFloorB());
 
-    const [colorSensibilityR, setColorSensibilityR] = useState(cellService.getColorSensibilityR());
-    const [colorSensibilityG, setColorSensibilityG] = useState(cellService.getColorSensibilityG());
-    const [colorSensibilityB, setColorSensibilityB] = useState(cellService.getColorSensibilityB());
+    const [colorSensibilityR, setColorSensibilityR] = useState<[number, number, number]>(cellService.getColorSensibilityR());
+    const [colorSensibilityG, setColorSensibilityG] = useState<[number, number, number]>(cellService.getColorSensibilityG());
+    const [colorSensibilityB, setColorSensibilityB] = useState<[number, number, number]>(cellService.getColorSensibilityB());
 
-    const [cellEvolutionDeltaT, setCellEvolutionDeltaT] = useState(cellService.getCellEvolutionDeltaT());
+    const [cellEvolutionDeltaT, setCellEvolutionDeltaT] = useState<number>(cellService.getCellEvolutionDeltaT());
     //const [sensibilityR, setSensibilityR] = useState([10, 1, 1]);
 
     const intervalRef = useRef<null | any>(null);
