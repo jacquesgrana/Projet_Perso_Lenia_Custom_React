@@ -8,6 +8,8 @@ import IToast from "../../../interface/IToast";
 import { Accordion } from "react-bootstrap";
 import Slider from 'rc-slider';
 import AppConfig from "../../../config/AppConfig";
+import PresetSelector from "./PresetSelector";
+import IPreset from "../../../interface/IPreset";
 //import 'rc-slider/assets/index.css';
 
 const CustomCanvas = (props: any) => {
@@ -179,6 +181,57 @@ const CustomCanvas = (props: any) => {
     }
     */
 
+    const applyPresetCB = (preset: IPreset) => {
+      setFloorR(preset.values.floorR);
+      cellService.setCountingFloorR(preset.values.floorR);
+      setFloorG(preset.values.floorG);
+      cellService.setCountingFloorG(preset.values.floorG);
+      setFloorB(preset.values.floorB);
+      cellService.setCountingFloorB(preset.values.floorB);
+
+      setConvFilterRadiusR(preset.values.convFilterRadiusR);
+      cellService.setConvolRadiusR(preset.values.convFilterRadiusR);
+      setConvFilterMuR(preset.values.convFilterMuR);
+      cellService.setConvolMuR(preset.values.convFilterMuR);
+      setConvFilterSigmaR(preset.values.convFilterSigmaR);
+      cellService.setConvolSigmaR(preset.values.convFilterSigmaR);
+
+      setConvFilterRadiusG(preset.values.convFilterRadiusG);
+      cellService.setConvolRadiusG(preset.values.convFilterRadiusG);
+      setConvFilterMuG(preset.values.convFilterMuG);
+      cellService.setConvolMuG(preset.values.convFilterMuG);
+      setConvFilterSigmaG(preset.values.convFilterSigmaG);
+      cellService.setConvolSigmaG(preset.values.convFilterSigmaG);
+
+      setConvFilterRadiusB(preset.values.convFilterRadiusB);
+      cellService.setConvolRadiusB(preset.values.convFilterRadiusB);
+      setConvFilterMuB(preset.values.convFilterMuB);
+      cellService.setConvolMuB(preset.values.convFilterMuB);
+      setConvFilterSigmaB(preset.values.convFilterSigmaB);
+      cellService.setConvolSigmaB(preset.values.convFilterSigmaB);
+
+      setColorSensibilityR(preset.values.colorSensibilityR);
+      cellService.setColorSensibilityR(preset.values.colorSensibilityR);
+      setColorSensibilityG(preset.values.colorSensibilityG);
+      cellService.setColorSensibilityG(preset.values.colorSensibilityG);
+      setColorSensibilityB(preset.values.colorSensibilityB);
+      cellService.setColorSensibilityB(preset.values.colorSensibilityB);
+
+      setCellEvolutionDeltaT(preset.values.cellEvolutionDeltaT);
+      cellService.setCellEvolutionDeltaT(preset.values.cellEvolutionDeltaT);
+
+      setCellGrowthMu(preset.values.cellGrowthMu);
+      cellService.setCellGrowthMu(preset.values.cellGrowthMu);
+      setCellGrowthSigma(preset.values.cellGrowthSigma);
+      cellService.setCellGrowthSigma(preset.values.cellGrowthSigma);
+
+      //updateSliders();
+      setVirtTimeCounter(0);
+      randomizeCells();
+      drawCells();
+      displayApplyPresetToast(preset.name);
+    }
+
     const toggleIsRunning = () => {
         //isRunning.current = !isRunning.current;
         setIsRunning((prev) => {
@@ -239,6 +292,17 @@ const CustomCanvas = (props: any) => {
             delay: 1500
         };
         props.displayToast(toastToDisplay);   
+    }
+
+    const displayApplyPresetToast = (name: string) => {
+        const toastToDisplay: IToast = {
+            title: "APPLY PRESET",
+            subtitle: "Apply Preset",
+            message: "The preset '" + name + "' is applied",
+            mode: "success",
+            delay: 1500
+        };
+        props.displayToast(toastToDisplay);
     }
 
     const handleMouseDown = (e: any) => {
@@ -547,6 +611,7 @@ const updateSliders = () => {
             //onMouseLeave={handleMouseLeave}
             />
             <p>left-click : add circle / right-click : clear circle</p>
+
             <h3 className="text-center mt-2">Virtual time counter : {virtTimeCounter.toFixed(2)} (s)</h3>
             <div className="d-flex gap-3 justify-content-center mb-2">
                 <button
@@ -584,294 +649,303 @@ const updateSliders = () => {
             defaultActiveKey={null}
             className="accordion-container mb-5"
             >
-                <Accordion.Item eventKey="0" >
-                    <Accordion.Header>Settings</Accordion.Header>
-                    <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
-                    <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center w-100">
+              <Accordion.Item eventKey="0" >
+                <Accordion.Header>Presets</Accordion.Header>
+                <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+                  <PresetSelector 
+                  applyPresetCB={applyPresetCB}
+                  presets={props.presets} 
+                  />
+                </Accordion.Body>
+              </Accordion.Item>
+              <Accordion.Item eventKey="1" >
+                  <Accordion.Header>Settings</Accordion.Header>
+                  <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+                  <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center w-100">
+                      <div className="settings-column">
+                          <p><strong>Red</strong></p>
+                          <label>Counting floor : {floorR}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_FILTER_COUNT_FLOOR_MIN}
+                          max = {CellConfig.CELL_FILTER_COUNT_FLOOR_MAX}
+                          step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
+                          value= {floorR}
+                          onChange={handleOnChangeFloorSliderR}
+                          className="slider-floor" 
+                          />
+                          <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
+                          <label>Radius : {convFilterRadiusR}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_CONV_FILTER_RADIUS_MIN}
+                          max = {CellConfig.CELL_CONV_FILTER_RADIUS_MAX}
+                          step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
+                          value= {convFilterRadiusR}
+                          onChange={handleOnChangeConvFilterRadiusSliderR}
+                          className="slider-floor" 
+                          />
+                          <label>Mu : {convFilterMuR}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_CONV_FILTER_MU_MIN}
+                          max = {CellConfig.CELL_CONV_FILTER_MU_MAX}
+                          step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
+                          value= {convFilterMuR}
+                          onChange={handleOnChangeConvFilterMuSliderR}
+                          className="slider-floor" 
+                          />
+                          <label>Sigma : {convFilterSigmaR}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_CONV_FILTER_SIGMA_MIN}
+                          max = {CellConfig.CELL_CONV_FILTER_SIGMA_MAX}
+                          step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
+                          value= {convFilterSigmaR}
+                          onChange={handleOnChangeConvFilterSigmaSliderR}
+                          className="slider-floor" 
+                          />
+                          <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
+                          <label>Red : {colorSensibilityR[0]}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                          max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                          step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
+                          value= {colorSensibilityR[0]}
+                          onChange={handleOnChangeSensibilitySliderRR}
+                          className="slider-floor" 
+                          />
+                          <label>Green : {colorSensibilityR[1]}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                          max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                          step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
+                          value= {colorSensibilityR[1]}
+                          onChange={handleOnChangeSensibilitySliderRG}
+                          className="slider-floor" 
+                          />
+                          <label>Blue : {colorSensibilityR[2]}</label>
+                          <Slider
+                          min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                          max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                          step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
+                          value= {colorSensibilityR[2]}
+                          onChange={handleOnChangeSensibilitySliderRB}
+                          className="slider-floor" 
+                          />
+                      </div>
+                      <div className="settings-column">
+                          <p><strong>Green</strong></p>
+                          <label>Counting floor : {floorG}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_FILTER_COUNT_FLOOR_MIN}
+                          max = {CellConfig.CELL_FILTER_COUNT_FLOOR_MAX}
+                          step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
+                          value= {floorG}
+                          onChange={handleOnChangeFloorSliderG}
+                          className="slider-floor"
+                          />
+
+                          <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
+                          <label>Radius : {convFilterRadiusG}</label>
+                          <Slider
+                          min = {CellConfig.CELL_CONV_FILTER_RADIUS_MIN}
+                          max = {CellConfig.CELL_CONV_FILTER_RADIUS_MAX}
+                          step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
+                          value= {convFilterRadiusG}
+                          onChange={handleOnChangeConvFilterRadiusSliderG}
+                          className="slider-floor"
+                          />
+                          <label>Mu : {convFilterMuG}</label>
+                          <Slider
+                          min = {CellConfig.CELL_CONV_FILTER_MU_MIN}
+                          max = {CellConfig.CELL_CONV_FILTER_MU_MAX}
+                          step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
+                          value= {convFilterMuG}
+                          onChange={handleOnChangeConvFilterMuSliderG}
+                          className="slider-floor"
+                          />
+                          <label>Sigma : {convFilterSigmaG}</label>
+                          <Slider
+                          min = {CellConfig.CELL_CONV_FILTER_SIGMA_MIN}
+                          max = {CellConfig.CELL_CONV_FILTER_SIGMA_MAX}
+                          step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
+                          value= {convFilterSigmaG}
+                          onChange={handleOnChangeConvFilterSigmaSliderG}
+                          className="slider-floor"
+                          />
+
+                          <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
+                          <label>Red : {colorSensibilityG[0]}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                          max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                          step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
+                          value= {colorSensibilityG[0]}
+                          onChange={handleOnChangeSensibilitySliderGR}
+                          className="slider-floor" 
+                          />
+                          <label>Green : {colorSensibilityG[1]}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                          max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                          step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
+                          value= {colorSensibilityG[1]}
+                          onChange={handleOnChangeSensibilitySliderGG}
+                          className="slider-floor" 
+                          />
+                          <label>Blue : {colorSensibilityG[2]}</label>
+                          <Slider
+                          min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                          max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                          step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
+                          value= {colorSensibilityG[2]}
+                          onChange={handleOnChangeSensibilitySliderGB}
+                          className="slider-floor" 
+                          />
+                      </div>
+                      <div className="settings-column">
+                          <p><strong>Blue</strong></p>
+                          <label>Counting floor : {floorB}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_FILTER_COUNT_FLOOR_MIN}
+                          max = {CellConfig.CELL_FILTER_COUNT_FLOOR_MAX}
+                          step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
+                          value= {floorB}
+                          onChange={handleOnChangeFloorSliderB}
+                          className="slider-floor"
+                          />
+
+                          <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
+                          <label>Radius : {convFilterRadiusB}</label>
+                          <Slider
+                          min = {CellConfig.CELL_CONV_FILTER_RADIUS_MIN}
+                          max = {CellConfig.CELL_CONV_FILTER_RADIUS_MAX}
+                          step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
+                          value= {convFilterRadiusB}
+                          onChange={handleOnChangeConvFilterRadiusSliderB}
+                          className="slider-floor"
+                          />
+                          <label>Mu : {convFilterMuB}</label>
+                          <Slider
+                          min = {CellConfig.CELL_CONV_FILTER_MU_MIN}
+                          max = {CellConfig.CELL_CONV_FILTER_MU_MAX}
+                          step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
+                          value= {convFilterMuB}
+                          onChange={handleOnChangeConvFilterMuSliderB}
+                          className="slider-floor"
+                          />
+                          <label>Sigma : {convFilterSigmaB}</label>
+                          <Slider
+                          min = {CellConfig.CELL_CONV_FILTER_SIGMA_MIN}
+                          max = {CellConfig.CELL_CONV_FILTER_SIGMA_MAX}
+                          step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
+                          value= {convFilterSigmaB}
+                          onChange={handleOnChangeConvFilterSigmaSliderB}
+                          className="slider-floor"
+                          />
+
+                          <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
+                          <label>Red : {colorSensibilityB[0]}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                          max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                          step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
+                          value= {colorSensibilityB[0]}
+                          onChange={handleOnChangeSensibilitySliderBR}
+                          className="slider-floor" 
+                          />
+                          <label>Green : {colorSensibilityB[1]}</label>
+                          <Slider 
+                          min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                          max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                          step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
+                          value= {colorSensibilityB[1]}
+                          onChange={handleOnChangeSensibilitySliderBG}
+                          className="slider-floor" 
+                          />
+                          <label>Blue : {colorSensibilityB[2]}</label>
+                          <Slider
+                          min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
+                          max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
+                          step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
+                          value= {colorSensibilityB[2]}
+                          onChange={handleOnChangeSensibilitySliderBB}
+                          className="slider-floor" 
+                          />
+                      </div>
+                  </div>
+                  <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center w-100">
+                      <div className="settings-row mt-2">
                         <div className="settings-column">
-                            <p><strong>Red</strong></p>
-                            <label>Counting floor : {floorR}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_FILTER_COUNT_FLOOR_MIN}
-                            max = {CellConfig.CELL_FILTER_COUNT_FLOOR_MAX}
-                            step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
-                            value= {floorR}
-                            onChange={handleOnChangeFloorSliderR}
-                            className="slider-floor" 
-                            />
-                            <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
-                            <label>Radius : {convFilterRadiusR}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_CONV_FILTER_RADIUS_MIN}
-                            max = {CellConfig.CELL_CONV_FILTER_RADIUS_MAX}
-                            step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
-                            value= {convFilterRadiusR}
-                            onChange={handleOnChangeConvFilterRadiusSliderR}
-                            className="slider-floor" 
-                            />
-                            <label>Mu : {convFilterMuR}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_CONV_FILTER_MU_MIN}
-                            max = {CellConfig.CELL_CONV_FILTER_MU_MAX}
-                            step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
-                            value= {convFilterMuR}
-                            onChange={handleOnChangeConvFilterMuSliderR}
-                            className="slider-floor" 
-                            />
-                            <label>Sigma : {convFilterSigmaR}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_CONV_FILTER_SIGMA_MIN}
-                            max = {CellConfig.CELL_CONV_FILTER_SIGMA_MAX}
-                            step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
-                            value= {convFilterSigmaR}
-                            onChange={handleOnChangeConvFilterSigmaSliderR}
-                            className="slider-floor" 
-                            />
-                            <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
-                            <label>Red : {colorSensibilityR[0]}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
-                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
-                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
-                            value= {colorSensibilityR[0]}
-                            onChange={handleOnChangeSensibilitySliderRR}
-                            className="slider-floor" 
-                            />
-                            <label>Green : {colorSensibilityR[1]}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
-                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
-                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
-                            value= {colorSensibilityR[1]}
-                            onChange={handleOnChangeSensibilitySliderRG}
-                            className="slider-floor" 
-                            />
-                            <label>Blue : {colorSensibilityR[2]}</label>
-                            <Slider
-                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
-                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
-                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
-                            value= {colorSensibilityR[2]}
-                            onChange={handleOnChangeSensibilitySliderRB}
-                            className="slider-floor" 
-                            />
-                        </div>
-                        <div className="settings-column">
-                            <p><strong>Green</strong></p>
-                            <label>Counting floor : {floorG}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_FILTER_COUNT_FLOOR_MIN}
-                            max = {CellConfig.CELL_FILTER_COUNT_FLOOR_MAX}
-                            step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
-                            value= {floorG}
-                            onChange={handleOnChangeFloorSliderG}
-                            className="slider-floor"
-                            />
-
-                            <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
-                            <label>Radius : {convFilterRadiusG}</label>
-                            <Slider
-                            min = {CellConfig.CELL_CONV_FILTER_RADIUS_MIN}
-                            max = {CellConfig.CELL_CONV_FILTER_RADIUS_MAX}
-                            step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
-                            value= {convFilterRadiusG}
-                            onChange={handleOnChangeConvFilterRadiusSliderG}
-                            className="slider-floor"
-                            />
-                            <label>Mu : {convFilterMuG}</label>
-                            <Slider
-                            min = {CellConfig.CELL_CONV_FILTER_MU_MIN}
-                            max = {CellConfig.CELL_CONV_FILTER_MU_MAX}
-                            step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
-                            value= {convFilterMuG}
-                            onChange={handleOnChangeConvFilterMuSliderG}
-                            className="slider-floor"
-                            />
-                            <label>Sigma : {convFilterSigmaG}</label>
-                            <Slider
-                            min = {CellConfig.CELL_CONV_FILTER_SIGMA_MIN}
-                            max = {CellConfig.CELL_CONV_FILTER_SIGMA_MAX}
-                            step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
-                            value= {convFilterSigmaG}
-                            onChange={handleOnChangeConvFilterSigmaSliderG}
-                            className="slider-floor"
-                            />
-
-                            <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
-                            <label>Red : {colorSensibilityG[0]}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
-                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
-                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
-                            value= {colorSensibilityG[0]}
-                            onChange={handleOnChangeSensibilitySliderGR}
-                            className="slider-floor" 
-                            />
-                            <label>Green : {colorSensibilityG[1]}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
-                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
-                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
-                            value= {colorSensibilityG[1]}
-                            onChange={handleOnChangeSensibilitySliderGG}
-                            className="slider-floor" 
-                            />
-                            <label>Blue : {colorSensibilityG[2]}</label>
-                            <Slider
-                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
-                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
-                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
-                            value= {colorSensibilityG[2]}
-                            onChange={handleOnChangeSensibilitySliderGB}
-                            className="slider-floor" 
-                            />
-                        </div>
-                        <div className="settings-column">
-                            <p><strong>Blue</strong></p>
-                            <label>Counting floor : {floorB}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_FILTER_COUNT_FLOOR_MIN}
-                            max = {CellConfig.CELL_FILTER_COUNT_FLOOR_MAX}
-                            step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
-                            value= {floorB}
-                            onChange={handleOnChangeFloorSliderB}
-                            className="slider-floor"
-                            />
-
-                            <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
-                            <label>Radius : {convFilterRadiusB}</label>
-                            <Slider
-                            min = {CellConfig.CELL_CONV_FILTER_RADIUS_MIN}
-                            max = {CellConfig.CELL_CONV_FILTER_RADIUS_MAX}
-                            step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
-                            value= {convFilterRadiusB}
-                            onChange={handleOnChangeConvFilterRadiusSliderB}
-                            className="slider-floor"
-                            />
-                            <label>Mu : {convFilterMuB}</label>
-                            <Slider
-                            min = {CellConfig.CELL_CONV_FILTER_MU_MIN}
-                            max = {CellConfig.CELL_CONV_FILTER_MU_MAX}
-                            step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
-                            value= {convFilterMuB}
-                            onChange={handleOnChangeConvFilterMuSliderB}
-                            className="slider-floor"
-                            />
-                            <label>Sigma : {convFilterSigmaB}</label>
-                            <Slider
-                            min = {CellConfig.CELL_CONV_FILTER_SIGMA_MIN}
-                            max = {CellConfig.CELL_CONV_FILTER_SIGMA_MAX}
-                            step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
-                            value= {convFilterSigmaB}
-                            onChange={handleOnChangeConvFilterSigmaSliderB}
-                            className="slider-floor"
-                            />
-
-                            <p className="mt-2 mb-1"><strong>Sensibility floor</strong></p>
-                            <label>Red : {colorSensibilityB[0]}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
-                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
-                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
-                            value= {colorSensibilityB[0]}
-                            onChange={handleOnChangeSensibilitySliderBR}
-                            className="slider-floor" 
-                            />
-                            <label>Green : {colorSensibilityB[1]}</label>
-                            <Slider 
-                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
-                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
-                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
-                            value= {colorSensibilityB[1]}
-                            onChange={handleOnChangeSensibilitySliderBG}
-                            className="slider-floor" 
-                            />
-                            <label>Blue : {colorSensibilityB[2]}</label>
-                            <Slider
-                            min = {CellConfig.CELL_COLOR_SENSIBILITY_MIN}
-                            max = {CellConfig.CELL_COLOR_SENSIBILITY_MAX}
-                            step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
-                            value= {colorSensibilityB[2]}
-                            onChange={handleOnChangeSensibilitySliderBB}
-                            className="slider-floor" 
-                            />
-                        </div>
-                    </div>
-                    <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center w-100">
-                        <div className="settings-row mt-2">
+                              <label>Delta t : {cellEvolutionDeltaT}</label>
+                              <Slider
+                              min = {CellConfig.CELL_EVOLUTION_DELTA_T_MIN}
+                              max = {CellConfig.CELL_EVOLUTION_DELTA_T_MAX}
+                              step = {CellConfig.CELL_EVOLUTION_DELTA_T_STEP}
+                              value= {cellEvolutionDeltaT}
+                              onChange={handleOnChangeCellEvolutionDeltaTSlider}
+                              className="slider-floor"
+                              />
+                          </div>
                           <div className="settings-column">
-                                <label>Delta t : {cellEvolutionDeltaT}</label>
-                                <Slider
-                                min = {CellConfig.CELL_EVOLUTION_DELTA_T_MIN}
-                                max = {CellConfig.CELL_EVOLUTION_DELTA_T_MAX}
-                                step = {CellConfig.CELL_EVOLUTION_DELTA_T_STEP}
-                                value= {cellEvolutionDeltaT}
-                                onChange={handleOnChangeCellEvolutionDeltaTSlider}
-                                className="slider-floor"
-                                />
-                            </div>
-                            <div className="settings-column">
-                                <label>Growth function mu : {cellGrowthMu}</label>
-                                <Slider 
-                                min = {CellConfig.CELL_GROWTH_MU_MIN}
-                                max = {CellConfig.CELL_GROWTH_MU_MAX}
-                                step = {CellConfig.CELL_GROWTH_MU_STEP}
-                                value= {cellGrowthMu}
-                                onChange={handleOnChangeCellGrowthMuSlider}
-                                className="slider-floor"
-                                />
-                            </div>
-                            <div className="settings-column">
-                                <label>Growth function sigma : {cellGrowthSigma}</label>
-                                <Slider
-                                min = {CellConfig.CELL_GROWTH_SIGMA_MIN}
-                                max = {CellConfig.CELL_GROWTH_SIGMA_MAX}
-                                step = {CellConfig.CELL_GROWTH_SIGMA_STEP}
-                                value= {cellGrowthSigma}
-                                onChange={handleOnChangeCellGrowthSigmaSlider}
-                                className="slider-floor"
-                                />
-                            </div>
-                        </div>
-                        <div className="settings-row mt-2">
-                            <div className="settings-column">
-                                <label>Brush size : {brushSize} (cell)</label>
-                                <Slider 
-                                min = {CellConfig.CELL_BRUSH_SIZE_MIN}
-                                max = {CellConfig.CELL_BRUSH_SIZE_MAX}
-                                step = {CellConfig.CELL_BRUSH_SIZE_STEP}
-                                value= {brushSize}
-                                onChange={handleOnChangeBrushSizeSlider}
-                                className="slider-floor"
-                                />
-                            </div>
-                            <div className="settings-column">
-                                <label>Cell size : {cellSize} (pix)</label>
-                                <Slider
-                                min = {CellConfig.CELL_SIZE_MIN}
-                                max = {CellConfig.CELL_SIZE_MAX}
-                                step = {CellConfig.CELL_SIZE_STEP}
-                                value= {cellSize}
-                                onChange={handleOnChangeCellSizeSlider}
-                                className="slider-floor"
-                                />
-                            </div>
+                              <label>Growth function mu : {cellGrowthMu}</label>
+                              <Slider 
+                              min = {CellConfig.CELL_GROWTH_MU_MIN}
+                              max = {CellConfig.CELL_GROWTH_MU_MAX}
+                              step = {CellConfig.CELL_GROWTH_MU_STEP}
+                              value= {cellGrowthMu}
+                              onChange={handleOnChangeCellGrowthMuSlider}
+                              className="slider-floor"
+                              />
+                          </div>
+                          <div className="settings-column">
+                              <label>Growth function sigma : {cellGrowthSigma}</label>
+                              <Slider
+                              min = {CellConfig.CELL_GROWTH_SIGMA_MIN}
+                              max = {CellConfig.CELL_GROWTH_SIGMA_MAX}
+                              step = {CellConfig.CELL_GROWTH_SIGMA_STEP}
+                              value= {cellGrowthSigma}
+                              onChange={handleOnChangeCellGrowthSigmaSlider}
+                              className="slider-floor"
+                              />
+                          </div>
+                      </div>
+                      <div className="settings-row mt-2">
+                          <div className="settings-column">
+                              <label>Brush size : {brushSize} (cell)</label>
+                              <Slider 
+                              min = {CellConfig.CELL_BRUSH_SIZE_MIN}
+                              max = {CellConfig.CELL_BRUSH_SIZE_MAX}
+                              step = {CellConfig.CELL_BRUSH_SIZE_STEP}
+                              value= {brushSize}
+                              onChange={handleOnChangeBrushSizeSlider}
+                              className="slider-floor"
+                              />
+                          </div>
+                          <div className="settings-column">
+                              <label>Cell size : {cellSize} (pix)</label>
+                              <Slider
+                              min = {CellConfig.CELL_SIZE_MIN}
+                              max = {CellConfig.CELL_SIZE_MAX}
+                              step = {CellConfig.CELL_SIZE_STEP}
+                              value= {cellSize}
+                              onChange={handleOnChangeCellSizeSlider}
+                              className="slider-floor"
+                              />
+                          </div>
 
-                        </div>
+                      </div>
 
 
-                    </div>
-                    <button
-                    className="btn-1"
-                    type="button"
-                    onClick={() => {
-                        resetValues();
-                    }}
-                    >
-                        RESET
-                    </button>
-                    </Accordion.Body>
-                </Accordion.Item>
+                  </div>
+                  <button
+                  className="btn-1"
+                  type="button"
+                  onClick={() => {
+                      resetValues();
+                  }}
+                  >
+                      RESET
+                  </button>
+                  </Accordion.Body>
+              </Accordion.Item>
             </Accordion>
         </div>
     );

@@ -25,10 +25,10 @@ export default interface IPreset {
         colorSensibilityG: [number, number, number];
         colorSensibilityB: [number, number, number];
 
+        cellEvolutionDeltaT: number;
+
         cellGrowthMu: number;
         cellGrowthSigma: number;
-
-        cellEvolutionDeltaT: number;
     }
 
     

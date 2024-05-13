@@ -2,8 +2,8 @@
     "presets": [
         {
             "id": 0,
-            "name": "test",
-            "description": "test",
+            "name": "To be named later",
+            "description": "To be described later",
             "date": "2024-05-13T12:30:00.000Z",
 
             "values": {
@@ -31,7 +31,39 @@
 
                 "cellGrowthMu": 0.15,
                 "cellGrowthSigma": 0.015
+            }
+        },
+        {
+            "id": 1,
+            "name": "Blue struggle",
+            "description": "To be described later",
+            "date": "2024-05-13T14:30:00.000Z",
 
+            "values": {
+                "floorR": 0.22,
+                "floorG": 0.17,
+                "floorB": 0.24,
+
+                "convFilterRadiusR": 8,
+                "convFilterMuR": 0.44,
+                "convFilterSigmaR": 0.25,
+
+                "convFilterRadiusG": 6,
+                "convFilterMuG": 0.47,
+                "convFilterSigmaG": 0.3,
+
+                "convFilterRadiusB": 6,
+                "convFilterMuB": 0.64,
+                "convFilterSigmaB": 0.32,
+
+                "colorSensibilityR": [0.75, 16, 15.75],
+                "colorSensibilityG": [24, 0.25, 1],
+                "colorSensibilityB": [1, 14, 5.5],
+
+                "cellEvolutionDeltaT": 0.08,
+
+                "cellGrowthMu": 0.16,
+                "cellGrowthSigma": 0.023
             }
         }
     ]
