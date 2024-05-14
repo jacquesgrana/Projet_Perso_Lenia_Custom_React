@@ -35,7 +35,7 @@
         },
         {
             "id": 1,
-            "name": "Blue struggle",
+            "name": "Colors struggle",
             "description": "To be described later",
             "date": "2024-05-13T02:30:00.000Z",
 
@@ -56,9 +56,9 @@
                 "convFilterMuB": 0.64,
                 "convFilterSigmaB": 0.32,
 
-                "colorSensibilityR": [0.75, 16, 15.75],
-                "colorSensibilityG": [24, 0.25, 1],
-                "colorSensibilityB": [1, 14, 5.5],
+                "colorSensibilityR": [2, 16, 15.75],
+                "colorSensibilityG": [24, 1, 0],
+                "colorSensibilityB": [2.25, 0, 2],
 
                 "cellEvolutionDeltaT": 0.08,
 
