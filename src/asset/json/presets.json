@@ -40,9 +40,9 @@
             "date": "2024-05-13T02:30:00.000Z",
 
             "values": {
-                "floorR": 0.22,
-                "floorG": 0.17,
-                "floorB": 0.24,
+                "floorR": 0.25,
+                "floorG": 0.25,
+                "floorB": 0.33,
 
                 "convFilterRadiusR": 8,
                 "convFilterMuR": 0.44,
