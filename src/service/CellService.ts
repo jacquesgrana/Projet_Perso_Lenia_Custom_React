@@ -397,9 +397,9 @@ export default class CellService {
 
 
         averages = {
-            'red' : (sumR / (cptR)),
-            'green' : (sumG / (cptG)),
-            'blue' : (sumB / (cptB))
+            'red' : (sumR / cptR),
+            'green' : (sumG / cptG),
+            'blue' : (sumB / cptB)
         }; //this._convolFilter.length * this._convolFilter.length
         return averages;
     }

@@ -225,6 +225,7 @@ const CustomCanvas = (props: any) => {
       setCellGrowthSigma(preset.values.cellGrowthSigma);
       cellService.setCellGrowthSigma(preset.values.cellGrowthSigma);
 
+      cellService.initConvolFilters();
       //updateSliders();
       setVirtTimeCounter(0);
       randomizeCells();

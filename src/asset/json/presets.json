@@ -98,6 +98,39 @@
                 "cellGrowthMu": 0.15,
                 "cellGrowthSigma": 0.022
             }
+        },
+        {
+            "id": 3,
+            "name": "Blue or green life",
+            "description": "To be described later",
+            "date": "2024-05-13T05:55:00.000Z",
+
+            "values": {
+                "floorR": 0.7,
+                "floorG": 0.5,
+                "floorB": 0.5,
+
+                "convFilterRadiusR": 12,
+                "convFilterMuR": 0.5,
+                "convFilterSigmaR": 0.45,
+
+                "convFilterRadiusG": 6,
+                "convFilterMuG": 0.5,
+                "convFilterSigmaG": 0.4,
+
+                "convFilterRadiusB": 6,
+                "convFilterMuB": 0.5,
+                "convFilterSigmaB": 0.4,
+
+                "colorSensibilityR": [4, 2, 4],
+                "colorSensibilityG": [12, 2, 0],
+                "colorSensibilityB": [12, 0, 2],
+
+                "cellEvolutionDeltaT": 0.03,
+
+                "cellGrowthMu": 0.15,
+                "cellGrowthSigma": 0.02
+            }
         }
     ]
 }
