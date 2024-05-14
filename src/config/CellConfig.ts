@@ -4,14 +4,14 @@ export default class CellConfig {
     public static readonly CELL_SIZE_MAX = 16;
     public static readonly CELL_SIZE_STEP = 1;
 
-    public static readonly CELL_BRUSH_SIZE = 48; // nombre pair !!!
+    public static readonly CELL_BRUSH_SIZE = 32; // nombre pair !!!
     public static readonly CELL_BRUSH_SIZE_MIN = 8;
     public static readonly CELL_BRUSH_SIZE_MAX = 64;
     public static readonly CELL_BRUSH_SIZE_STEP = 2;
 
-    public static readonly CELL_CONV_FILTER_RADIUS_RED = 10;
-    public static readonly CELL_CONV_FILTER_RADIUS_GREEN = 10;
-    public static readonly CELL_CONV_FILTER_RADIUS_BLUE = 10;
+    public static readonly CELL_CONV_FILTER_RADIUS_RED = 7;
+    public static readonly CELL_CONV_FILTER_RADIUS_GREEN = 7;
+    public static readonly CELL_CONV_FILTER_RADIUS_BLUE = 7;
     public static readonly CELL_CONV_FILTER_RADIUS_MIN = 6;
     public static readonly CELL_CONV_FILTER_RADIUS_MAX = 16;
     public static readonly CELL_CONV_FILTER_RADIUS_STEP = 1;
