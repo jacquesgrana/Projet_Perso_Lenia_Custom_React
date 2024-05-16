@@ -12,8 +12,9 @@ const Preset = (props : any) => {
       <Card.Body>
         <Card.Title>{props.preset.name}</Card.Title>
         <Card.Text>
-        <p>{props.preset.description}</p>
-        <p>{format(props.preset.date, 'dd MMMM yyyy', { locale: fr })}</p>
+        {props.preset.description}<br/>
+        {format(props.preset.date, 'dd MMMM yyyy')}<br/>
+        {props.preset.pseudo}
         </Card.Text>
         <Button variant="primary" onClick={() => props.applyPresetCB(props.preset)}>Apply</Button>
       </Card.Body>
@@ -24,3 +25,5 @@ const Preset = (props : any) => {
     
 };
 export default Preset;
+
+//, { locale: fr }

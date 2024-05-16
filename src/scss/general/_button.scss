@@ -15,4 +15,10 @@
         transition: 0.3s;
     }
 
+    &:disabled {
+        background-color: $color-bg-secondary-dark-2;
+        color: $color-warning;
+        transition: 0.3s;
+    }
+
 }

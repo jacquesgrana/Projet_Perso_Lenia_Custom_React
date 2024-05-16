@@ -2,10 +2,43 @@
     "presets": [
         {
             "id": 0,
+            "name": "Default",
+            "description": "Default preset",
+            "date": "2024-05-15T09:30:00.000Z",
+            "pseudo": "znorrt",
+            "values": {
+                "floorR": 0.2,
+                "floorG": 0.25,
+                "floorB": 0.3,
+
+                "convFilterRadiusR": 7,
+                "convFilterMuR": 0.5,
+                "convFilterSigmaR": 0.25,
+
+                "convFilterRadiusG": 7,
+                "convFilterMuG": 0.5,
+                "convFilterSigmaG": 0.3,
+
+                "convFilterRadiusB": 7,
+                "convFilterMuB": 0.5,
+                "convFilterSigmaB": 0.35,
+
+                "colorSensibilityR": [4, 1, 1],
+                "colorSensibilityG": [1, 4, 1],
+                "colorSensibilityB": [1, 1, 4],
+
+                "cellEvolutionDeltaT": 0.05,
+
+                "cellGrowthMu": 0.15,
+                "cellGrowthSigma": 0.015
+            }
+        },
+        {
+            "id": 1,
             "name": "To be named later",
             "description": "To be described later",
             "date": "2024-05-13T00:30:00.000Z",
-
+            "pseudo": "znorrt",
             "values": {
                 "floorR": 0.86,
                 "floorG": 0.86,
@@ -34,11 +67,11 @@
             }
         },
         {
-            "id": 1,
+            "id": 2,
             "name": "Colors struggle",
             "description": "To be described later",
             "date": "2024-05-13T02:30:00.000Z",
-
+            "pseudo": "velpp",
             "values": {
                 "floorR": 0.25,
                 "floorG": 0.25,
@@ -67,11 +100,11 @@
             }
         },
         {
-            "id": 2,
+            "id": 3,
             "name": "Living cells in color",
             "description": "To be described later",
             "date": "2024-05-13T05:15:00.000Z",
-
+            "pseudo": "znorrt",
             "values": {
                 "floorR": 0.5,
                 "floorG": 0.6,
@@ -100,11 +133,11 @@
             }
         },
         {
-            "id": 3,
+            "id": 4,
             "name": "Blue or green life",
             "description": "To be described later",
             "date": "2024-05-13T05:55:00.000Z",
-
+            "pseudo": "znorrt",
             "values": {
                 "floorR": 0.7,
                 "floorG": 0.5,

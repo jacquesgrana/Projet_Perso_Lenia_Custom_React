@@ -5,14 +5,22 @@ import ICell from "../../../interface/ICell";
 import CellConfig from "../../../config/CellConfig";
 import CellService from "../../../service/CellService";
 import IToast from "../../../interface/IToast";
-import { Accordion } from "react-bootstrap";
+import { Accordion, Button } from "react-bootstrap";
 import Slider from 'rc-slider';
 import AppConfig from "../../../config/AppConfig";
 import PresetSelector from "./PresetSelector";
 import IPreset from "../../../interface/IPreset";
+import ToastLibrary from "../../../library/ToastLibrary";
+import IPresetValues from "../../../interface/IPresetValues";
 //import 'rc-slider/assets/index.css';
+import PresetService from '../../../service/PresetService';
 
-const CustomCanvas = (props: any) => {
+interface ICustomCanvasProps {
+  displayToast: (toast: IToast) => void,
+  presets: IPreset[],
+  userPresets: IPreset[]
+}
+const CustomCanvas = (props: ICustomCanvasProps) => {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [isRunning, setIsRunning] = useState(false);
@@ -52,7 +60,10 @@ const CustomCanvas = (props: any) => {
     const [colorSensibilityB, setColorSensibilityB] = useState<[number, number, number]>(cellService.getColorSensibilityB());
 
     const [cellEvolutionDeltaT, setCellEvolutionDeltaT] = useState<number>(cellService.getCellEvolutionDeltaT());
-    //const [sensibilityR, setSensibilityR] = useState([10, 1, 1]);
+    
+    const [selectedPreset, setSelectedPreset] = useState<IPreset>(props.presets[0]);
+
+    const [isNewPresetDivOpen, setIsNewPresetDivOpen] = useState<boolean>(false);
 
     const intervalRef = useRef<null | any>(null);
 
@@ -63,6 +74,8 @@ const CustomCanvas = (props: any) => {
     const cellsRef = useRef<ICell[][]>([]);
     const loadCountRef = useRef<number>(0);
 
+    const presetServiceRef = useRef<any>(null);
+
     useEffect(() => {
         initCells();
         randomizeCells();
@@ -70,18 +83,39 @@ const CustomCanvas = (props: any) => {
         if (loadCountRef.current < AppConfig.APP_LOAD_COUNT_MAX) {
             loadCountRef.current++;
         }
+        const fct = async () => {
+          presetServiceRef.current = await PresetService.getInstance();
+          //console.log('presetServiceRef.current :', presetServiceRef.current);
+        }
+        fct();
         //generateRandomImage();  
+        
     }, []);
+
+    useEffect(() => {
+      setIsNewPresetDivOpen(false);
+      if(selectedPreset !== undefined) applyPresetCB(selectedPreset);
+    }, [selectedPreset]);
+
+    useEffect(() => {
+      if(props.presets.length > 0) {
+        setSelectedPreset((prev) => {
+        applyPresetCB(props.presets[0]);
+        return props.presets[0]
+      });
+      }
+    }, [props.presets]);
 
     useEffect(() => {    
         const fct = () => {
+          setIsNewPresetDivOpen(false);
             //initCells();
             //generateRandomImage();
             //randomizeCells();
-            generateNext();
-            drawCells();
-            setVirtTimeCounter((prev: number) => prev + cellEvolutionDeltaT);
-            intervalRef.current = setTimeout(fct, delay);
+          generateNext();
+          drawCells();
+          setVirtTimeCounter((prev: number) => prev + cellEvolutionDeltaT);
+          intervalRef.current = setTimeout(fct, delay);
         };
   
         if (isRunning) {
@@ -92,17 +126,24 @@ const CustomCanvas = (props: any) => {
         return () => {
             clearTimeout(intervalRef.current);
         };
-
+        
     }, [isRunning, delay]);
+
+    useEffect(() => {
+      const savePresetBtn = document.getElementById("save-preset-button");
+      if (savePresetBtn) savePresetBtn.innerText = !isNewPresetDivOpen ? "SAVE" : "CLOSE";
+    }, [isNewPresetDivOpen]);
 
     useEffect(() => {
         //console.log('firsloadRef.current :', firsloadRef.current);
         //console.log('load count :', AppConfig.APP_LOAD_COUNT_MAX);
-        if(loadCountRef.current > AppConfig.APP_LOAD_COUNT_MAX) isRunning ? displayRunToast() : displayStopToast();
+        setIsNewPresetDivOpen(false);
+        if(loadCountRef.current > AppConfig.APP_LOAD_COUNT_MAX) isRunning ? ToastLibrary.displayRunToast(props.displayToast) : ToastLibrary.displayStopToast(props.displayToast);
         else loadCountRef.current++;
     }, [isRunning]);
 
     useEffect(() => {
+      setIsNewPresetDivOpen(false);
       randomizeCells();
       drawCells();
     }, [cellSize]);
@@ -135,10 +176,123 @@ const CustomCanvas = (props: any) => {
         //updateSliders();
     }
 
-    const resetValues = () => {
-        cellService.initValues();
+    const handleDefaultValues = () => {
+      const preset: IPreset = {
+        id: props.presets[0].id,
+        name: props.presets[0].name,
+        description: props.presets[0].description,
+        pseudo: props.presets[0].pseudo,
+        date: props.presets[0].date,
+        values: props.presets[0].values
+
+      }
+        setSelectedPreset(preset);
+        //cellService.initValues();
         cellService.initConvolFilters();
         updateSliders();
+    }
+
+    const handleResetValues = () => {
+      const preset: IPreset = {
+        id: selectedPreset.id,
+        name: selectedPreset.name,
+        description: selectedPreset.description,
+        pseudo: selectedPreset.pseudo,
+        date: selectedPreset.date,
+        values: selectedPreset.values
+      }
+        setSelectedPreset(preset);
+        //cellService.initValues();
+        cellService.initConvolFilters();
+        updateSliders();
+    }
+
+    const handleSaveValues = () => {
+      //const savePresetBtn = document.getElementById("save-preset-button");
+      //if (savePresetBtn) savePresetBtn.innerText = isNewPresetDivOpen ? "SAVE" : "CLOSE";
+      setIsNewPresetDivOpen(!isNewPresetDivOpen);
+    }
+
+    const handleSaveNewPresetValues = () => {
+      const fieldName = document.getElementById("new-preset-name") as HTMLInputElement | null;
+      const fieldDescription = document.getElementById("new-preset-description") as HTMLInputElement | null;
+      const fieldPseudo = document.getElementById("new-preset-pseudo") as HTMLInputElement | null;
+      const name = fieldName?.value;
+      const description = fieldDescription?.value;
+      const pseudo = fieldPseudo?.value;
+      if(name !== undefined && description !== undefined && pseudo !== undefined) {
+        ToastLibrary.displaySavePresetToast(name, props.displayToast);
+        const newValues: IPresetValues = {
+          floorR: floorR,
+          floorG: floorG,
+          floorB: floorB,
+          convFilterRadiusR: convFilterRadiusR,
+          convFilterMuR: convFilterMuR,
+          convFilterSigmaR: convFilterSigmaR,
+          convFilterRadiusG: convFilterRadiusG,
+          convFilterMuG: convFilterMuG,
+          convFilterSigmaG: convFilterSigmaG,
+          convFilterRadiusB: convFilterRadiusB,
+          convFilterMuB: convFilterMuB,
+          convFilterSigmaB: convFilterSigmaB,
+          colorSensibilityR: colorSensibilityR,
+          colorSensibilityG: colorSensibilityG,
+          colorSensibilityB: colorSensibilityB,
+          cellEvolutionDeltaT: cellEvolutionDeltaT,
+          cellGrowthMu: cellGrowthMu,
+          cellGrowthSigma: cellGrowthSigma
+        };
+        const id = Math.max(...props.userPresets.map(preset => preset.id)) + 1;
+        const date = new Date().toISOString();
+        const newPreset: IPreset = {
+          id: id,
+          name: name,
+          description: description,
+          pseudo: pseudo,
+          date: date,
+          values: newValues
+        };
+        //console.log('newPreset :', newPreset);
+        presetServiceRef.current.saveNewUserPreset(newPreset);
+        setIsNewPresetDivOpen(false);
+        // TODO vider les inputs **********************************************************************************
+        // TODO changer nom bouton "save" par "close" **********************************************************************************
+        //const savePresetBtn = document.getElementById("save-preset-button");
+        //if (savePresetBtn) savePresetBtn.innerText = isNewPresetDivOpen ? "SAVE" : "CLOSE";
+      }
+      //console.log('name :', fieldName?.value, 'description :', fieldDescription?.value, 'pseudo :', fieldPseudo?.value);
+    }
+
+    const handleOnChangeNewPresetName = (e: any) => {
+      updateSavePresetBtn();
+    }
+
+    const handleOnChangeNewPresetDescription = (e: any) => {
+      updateSavePresetBtn();
+    }
+
+    const handleOnChangeNewPresetPseudo = (e: any) => {
+      updateSavePresetBtn();
+    }
+
+    const updateSavePresetBtn = () => {
+      const savePresetBtn = document.getElementById("save-preset-form-button") as HTMLButtonElement | null;
+      if (savePresetBtn) {
+        const isFormValid = isNewPresetDivFieldsNotEmpty();
+        savePresetBtn.disabled = !isFormValid;
+      }
+    };
+    
+
+    const isNewPresetDivFieldsNotEmpty = (): boolean => {
+      let toReturn: boolean = false;
+      const fieldName = document.getElementById("new-preset-name") as HTMLInputElement | null;
+      const fieldDescription = document.getElementById("new-preset-description") as HTMLInputElement | null;
+      const fieldPseudo = document.getElementById("new-preset-pseudo") as HTMLInputElement | null;
+      if(fieldName && fieldDescription && fieldPseudo) {
+        toReturn = fieldName.value !== "" && fieldDescription.value !== "" && fieldPseudo.value !== "";
+      }
+      return toReturn;
     }
 
     const drawCells = () => {
@@ -180,6 +334,14 @@ const CustomCanvas = (props: any) => {
             }
     }
     */
+
+    const handleChangePresetCB = (preset: IPreset) => {
+      if(preset !== undefined) setSelectedPreset(preset);
+    }
+
+    const exportUserPresetsCB = () => {
+      presetServiceRef.current.exportUserPresets();
+    }
 
     const applyPresetCB = (preset: IPreset) => {
       setFloorR(preset.values.floorR);
@@ -230,7 +392,7 @@ const CustomCanvas = (props: any) => {
       setVirtTimeCounter(0);
       randomizeCells();
       drawCells();
-      displayApplyPresetToast(preset.name);
+      ToastLibrary.displayApplyPresetToast(preset.name, props.displayToast);
     }
 
     const toggleIsRunning = () => {
@@ -247,6 +409,7 @@ const CustomCanvas = (props: any) => {
         //!isRunning ? displayRunToast() : displayStopToast();
     }
 
+    /*
     const displayRunToast = async () => {
         const toastToDisplay: IToast = {
             title: "RUN",
@@ -259,7 +422,8 @@ const CustomCanvas = (props: any) => {
         props.displayToast(toastToDisplay);
         //props.displayToast(toastToDisplay);
     }
-
+*/
+/*
     const displayStopToast = async () => {
         const toastToDisplay: IToast = {
             title: "STOP",
@@ -272,7 +436,8 @@ const CustomCanvas = (props: any) => {
         props.displayToast(toastToDisplay);
         //props.displayToast(toastToDisplay);
     }
-
+*/
+/*
     const displayResetToast = () => {
         const toastToDisplay: IToast = {
             title: "RESET",
@@ -283,7 +448,8 @@ const CustomCanvas = (props: any) => {
         };
         props.displayToast(toastToDisplay);
     }
-
+*/
+/*
     const displayRandomizeToast = () => {
         const toastToDisplay: IToast = {
             title: "RANDOMIZE",
@@ -294,7 +460,8 @@ const CustomCanvas = (props: any) => {
         };
         props.displayToast(toastToDisplay);   
     }
-
+*/
+/*
     const displayApplyPresetToast = (name: string) => {
         const toastToDisplay: IToast = {
             title: "APPLY PRESET",
@@ -305,7 +472,7 @@ const CustomCanvas = (props: any) => {
         };
         props.displayToast(toastToDisplay);
     }
-
+*/
     const handleMouseDown = (e: any) => {
             handleCoords((e as unknown) as MouseEvent);
             if (canvasRef.current) {
@@ -614,37 +781,35 @@ const updateSliders = () => {
             <p>left-click : add circle / right-click : clear circle</p>
 
             <h3 className="text-center mt-2">Virtual time counter : {virtTimeCounter.toFixed(2)} (s)</h3>
+            <h4>Preset : {selectedPreset?.name}</h4>
             <div className="d-flex gap-3 justify-content-center mb-2">
-                <button
+                <Button
                 className="btn-1"
-                type="button"
                 onClick={() => {
-                    displayRandomizeToast();
+                    ToastLibrary.displayRandomizeToast(props.displayToast);
                     randomizeCells();
                     drawCells();
                 }}
                 >
                     RANDOM
-                </button>
-                <button
+                </Button>
+                <Button
                 className="btn-1"
-                type="button"
                 onClick={() => {
-                    displayResetToast();
+                    ToastLibrary.displayResetToast(props.displayToast);
                     clearCells();
                     drawCells();
                 }}
                 >
                     CLEAR
-                </button>
-                <button
+                </Button>
+                <Button
                 className="btn-1" 
                 id="button-run"
-                type="button"
                 onClick={() => toggleIsRunning()}
                 >
                     RUN
-                </button>  
+                </Button>  
             </div>
             <Accordion 
             defaultActiveKey={null}
@@ -654,8 +819,10 @@ const updateSliders = () => {
                 <Accordion.Header>Presets</Accordion.Header>
                 <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
                   <PresetSelector 
-                  applyPresetCB={applyPresetCB}
+                  applyPresetCB={handleChangePresetCB}
                   presets={props.presets} 
+                  userPresets={props.userPresets}
+                  exportUserPresetsCB={exportUserPresetsCB}
                   />
                 </Accordion.Body>
               </Accordion.Item>
@@ -936,15 +1103,86 @@ const updateSliders = () => {
 
 
                   </div>
-                  <button
-                  className="btn-1"
-                  type="button"
-                  onClick={() => {
-                      resetValues();
-                  }}
-                  >
-                      RESET
-                  </button>
+                  <div className="d-flex gap-3 justify-content-center mb-2">
+                    <Button
+                    className="btn-1"
+                    onClick={() => {
+                        handleDefaultValues();
+                    }}
+                    >
+                        DEFAULT
+                    </Button>
+                    <Button
+                    className="btn-1"
+                    onClick={() => {
+                        handleResetValues();
+                    }}
+                    >
+                        RESET
+                    </Button>
+                    <Button
+                    className="btn-1"
+                    id="save-preset-button"
+                    onClick={() => {
+                        handleSaveValues();
+                    }}
+                    >
+                        SAVE
+                    </Button>
+
+                  </div>
+                    {isNewPresetDivOpen ? (
+                      <>
+                       <h5>New preset</h5>
+                        <div className="d-flex gap-3 justify-content-center flex-wrap mb-2">
+                         
+                          <div>
+                            <label htmlFor="new-preset-name">Name :</label>
+                            <input 
+                            type="text" 
+                            id="new-preset-name" 
+                            className="form-control" 
+                            placeholder="Preset name" 
+                            onChange={handleOnChangeNewPresetName}
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="new-preset-description">Description :</label>
+                            <input 
+                            type="text" 
+                            id="new-preset-description" 
+                            className="form-control" 
+                            placeholder="Preset description" 
+                            onChange={handleOnChangeNewPresetDescription}
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="new-preset-pseudo">User pseudo :</label>
+                            <input 
+                            type="text" 
+                            id="new-preset-pseudo" 
+                            className="form-control" 
+                            placeholder="Preset user pseudo" 
+                            onChange = {handleOnChangeNewPresetPseudo}
+                            />
+                          </div>
+
+                        </div>
+                        <Button
+                        className="btn-1"
+                        id="save-preset-form-button"
+                        disabled={!isNewPresetDivFieldsNotEmpty()}
+                        onClick={() => {
+                            handleSaveNewPresetValues();
+                            //console.log('click save');
+
+                        }}
+                        >
+                            SAVE
+                        </Button>
+                        </>
+                    ) : null
+                    }
                   </Accordion.Body>
               </Accordion.Item>
             </Accordion>
