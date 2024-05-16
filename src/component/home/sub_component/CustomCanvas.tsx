@@ -242,7 +242,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
           cellGrowthMu: cellGrowthMu,
           cellGrowthSigma: cellGrowthSigma
         };
-        const id = Math.max(...props.userPresets.map(preset => preset.id)) + 1;
+        const id = props.userPresets.length > 0 ? Math.max(...props.userPresets.map(preset => preset.id)) + 1: 0;
         const date = new Date().toISOString();
         const newPreset: IPreset = {
           id: id,
