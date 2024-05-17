@@ -12,7 +12,6 @@ import PresetSelector from "./PresetSelector";
 import IPreset from "../../../interface/IPreset";
 import ToastLibrary from "../../../library/ToastLibrary";
 import IPresetValues from "../../../interface/IPresetValues";
-//import 'rc-slider/assets/index.css';
 import PresetService from '../../../service/PresetService';
 import LocalStorageService from '../../../service/LocalStorageService';
 
@@ -32,7 +31,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     const width = CanvasConfig.CANVAS_WIDTH;
     const height = CanvasConfig.CANVAS_HEIGHT;
     const delay = AppConfig.APP_DELAY;
-    const cellService = CellService.getInstance();
+    //const cellService = CellService.getInstance();
 
     const [cellSize, setCellSize] = useState<number>(CellConfig.CELL_SIZE);
 
@@ -78,24 +77,23 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
 
     const presetServiceRef = useRef<any>(null);
     const localStorageServiceRef = useRef<any>(null);
-    //const cellServiceRef = useRef<any>(null);
+    const cellServiceRef = useRef<any>(CellService.getInstance());
 
     useEffect(() => {
-        initCells();
-        randomizeCells();
-        drawCells();
-        if (loadCountRef.current < AppConfig.APP_LOAD_COUNT_MAX) {
-            loadCountRef.current++;
-        }
-        const fct = async () => {
-          presetServiceRef.current = await PresetService.getInstance();
-          localStorageServiceRef.current = await LocalStorageService.getInstance();
-          //cellServiceRef.current = await CellService.getInstance();
-          //console.log('presetServiceRef.current :', presetServiceRef.current);
-        }
-        fct();
-        //generateRandomImage();  
-        
+
+      const fct = async () => {
+        presetServiceRef.current = await PresetService.getInstance();
+        localStorageServiceRef.current = await LocalStorageService.getInstance();
+        cellServiceRef.current = await CellService.getInstance();
+        //console.log('presetServiceRef.current :', presetServiceRef.current);
+      }
+      fct();
+      initCells();
+      randomizeCells();
+      drawCells();
+      if (loadCountRef.current < AppConfig.APP_LOAD_COUNT_MAX) {
+          loadCountRef.current++;
+      }        
     }, []);
 
     useEffect(() => {
@@ -149,36 +147,36 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     }, [isRunning]);
 
     useEffect(() => {
-      //cellService.setCellSize(cellSize);
+      //cellServiceRef.current.setCellSize(cellSize);
       setIsNewPresetDivOpen(false);
       randomizeCells();
       drawCells();
     }, [cellSize]);
 
     const initCells = () => {
-        cellsRef.current = cellService.initCells();
+        cellsRef.current = cellServiceRef.current.initCells();
 
-        cellService.initValues();
-        cellService.initConvolFilters();
+        cellServiceRef.current.initValues();
+        cellServiceRef.current.initConvolFilters();
         setVirtTimeCounter(0);
         updateSliders();
     }
 
     const generateNext = () => {
-        cellsRef.current = cellService.generateNextCells();
+        cellsRef.current = cellServiceRef.current.generateNextCells();
     }
 
     const randomizeCells = () => {
-        //cellsRef.current = cellService.init();
-        //cellService.initConvolFilters();
-        cellsRef.current = cellService.getRandomizedCells();
+        //cellsRef.current = cellServiceRef.current.init();
+        //cellServiceRef.current.initConvolFilters();
+        cellsRef.current = cellServiceRef.current.getRandomizedCells();
         setVirtTimeCounter(0);
         //updateSliders();
     }
 
     const clearCells = () => {
-        cellsRef.current = cellService.initCells();
-        //cellService.initConvolFilters();
+        cellsRef.current = cellServiceRef.current.initCells();
+        //cellServiceRef.current.initConvolFilters();
         setVirtTimeCounter(0);
         //updateSliders();
     }
@@ -194,8 +192,8 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
 
       }
         setSelectedPreset(preset);
-        //cellService.initValues();
-        cellService.initConvolFilters();
+        //cellServiceRef.current.initValues();
+        cellServiceRef.current.initConvolFilters();
         updateSliders();
     }
 
@@ -209,8 +207,8 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         values: selectedPreset.values
       }
         setSelectedPreset(preset);
-        //cellService.initValues();
-        cellService.initConvolFilters();
+        //cellServiceRef.current.initValues();
+        cellServiceRef.current.initConvolFilters();
         updateSliders();
     }
 
@@ -339,49 +337,49 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
 
     const applyPresetCB = (preset: IPreset) => {
       setFloorR(preset.values.floorR);
-      cellService.setCountingFloorR(preset.values.floorR);
+      cellServiceRef.current.setCountingFloorR(preset.values.floorR);
       setFloorG(preset.values.floorG);
-      cellService.setCountingFloorG(preset.values.floorG);
+      cellServiceRef.current.setCountingFloorG(preset.values.floorG);
       setFloorB(preset.values.floorB);
-      cellService.setCountingFloorB(preset.values.floorB);
+      cellServiceRef.current.setCountingFloorB(preset.values.floorB);
 
       setConvFilterRadiusR(preset.values.convFilterRadiusR);
-      cellService.setConvolRadiusR(preset.values.convFilterRadiusR);
+      cellServiceRef.current.setConvolRadiusR(preset.values.convFilterRadiusR);
       setConvFilterMuR(preset.values.convFilterMuR);
-      cellService.setConvolMuR(preset.values.convFilterMuR);
+      cellServiceRef.current.setConvolMuR(preset.values.convFilterMuR);
       setConvFilterSigmaR(preset.values.convFilterSigmaR);
-      cellService.setConvolSigmaR(preset.values.convFilterSigmaR);
+      cellServiceRef.current.setConvolSigmaR(preset.values.convFilterSigmaR);
 
       setConvFilterRadiusG(preset.values.convFilterRadiusG);
-      cellService.setConvolRadiusG(preset.values.convFilterRadiusG);
+      cellServiceRef.current.setConvolRadiusG(preset.values.convFilterRadiusG);
       setConvFilterMuG(preset.values.convFilterMuG);
-      cellService.setConvolMuG(preset.values.convFilterMuG);
+      cellServiceRef.current.setConvolMuG(preset.values.convFilterMuG);
       setConvFilterSigmaG(preset.values.convFilterSigmaG);
-      cellService.setConvolSigmaG(preset.values.convFilterSigmaG);
+      cellServiceRef.current.setConvolSigmaG(preset.values.convFilterSigmaG);
 
       setConvFilterRadiusB(preset.values.convFilterRadiusB);
-      cellService.setConvolRadiusB(preset.values.convFilterRadiusB);
+      cellServiceRef.current.setConvolRadiusB(preset.values.convFilterRadiusB);
       setConvFilterMuB(preset.values.convFilterMuB);
-      cellService.setConvolMuB(preset.values.convFilterMuB);
+      cellServiceRef.current.setConvolMuB(preset.values.convFilterMuB);
       setConvFilterSigmaB(preset.values.convFilterSigmaB);
-      cellService.setConvolSigmaB(preset.values.convFilterSigmaB);
+      cellServiceRef.current.setConvolSigmaB(preset.values.convFilterSigmaB);
 
       setColorSensibilityR(preset.values.colorSensibilityR);
-      cellService.setColorSensibilityR(preset.values.colorSensibilityR);
+      cellServiceRef.current.setColorSensibilityR(preset.values.colorSensibilityR);
       setColorSensibilityG(preset.values.colorSensibilityG);
-      cellService.setColorSensibilityG(preset.values.colorSensibilityG);
+      cellServiceRef.current.setColorSensibilityG(preset.values.colorSensibilityG);
       setColorSensibilityB(preset.values.colorSensibilityB);
-      cellService.setColorSensibilityB(preset.values.colorSensibilityB);
+      cellServiceRef.current.setColorSensibilityB(preset.values.colorSensibilityB);
 
       setCellEvolutionDeltaT(preset.values.cellEvolutionDeltaT);
-      cellService.setCellEvolutionDeltaT(preset.values.cellEvolutionDeltaT);
+      cellServiceRef.current.setCellEvolutionDeltaT(preset.values.cellEvolutionDeltaT);
 
       setCellGrowthMu(preset.values.cellGrowthMu);
-      cellService.setCellGrowthMu(preset.values.cellGrowthMu);
+      cellServiceRef.current.setCellGrowthMu(preset.values.cellGrowthMu);
       setCellGrowthSigma(preset.values.cellGrowthSigma);
-      cellService.setCellGrowthSigma(preset.values.cellGrowthSigma);
+      cellServiceRef.current.setCellGrowthSigma(preset.values.cellGrowthSigma);
 
-      cellService.initConvolFilters();
+      cellServiceRef.current.initConvolFilters();
       //updateSliders();
       setVirtTimeCounter(0);
       randomizeCells();
@@ -421,19 +419,19 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
                         ctx?.ellipse(mouseX, mouseY, radius * cellSize, radius * cellSize, 0, 0, 2 * Math.PI);
                         //console.log('clic')
                         
-                        cellsRef.current = cellService.drawRandowCircle(mouseI, mouseJ);
+                        cellsRef.current = cellServiceRef.current.drawRandowCircle(mouseI, mouseJ);
                         drawCells();
                     }
                     else if (e.button === 2) {
                         //e.preventDefault();
                         //console.log('clic droit')
-                        cellsRef.current = cellService.clearCircle(mouseI, mouseJ);
+                        cellsRef.current = cellServiceRef.current.clearCircle(mouseI, mouseJ);
                         drawCells();
                     }
                     
                 }
                 
-                //cellsRef.current = cellService.getCells();
+                //cellsRef.current = cellServiceRef.current.getCells();
             }
           }
 
@@ -471,46 +469,46 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     }
 
 const updateSliders = () => {
-    setCellSize(cellService.getCellSize());
+    setCellSize(cellServiceRef.current.getCellSize());
 
-    setConvFilterRadiusR(cellService.getConvolRadiusR());
-    setConvFilterMuR(cellService.getConvolMuR());
-    setConvFilterSigmaR(cellService.getConvolSigmaR());
+    setConvFilterRadiusR(cellServiceRef.current.getConvolRadiusR());
+    setConvFilterMuR(cellServiceRef.current.getConvolMuR());
+    setConvFilterSigmaR(cellServiceRef.current.getConvolSigmaR());
 
-    setConvFilterRadiusG(cellService.getConvolRadiusG());
-    setConvFilterMuG(cellService.getConvolMuG());
-    setConvFilterSigmaG(cellService.getConvolSigmaG());
+    setConvFilterRadiusG(cellServiceRef.current.getConvolRadiusG());
+    setConvFilterMuG(cellServiceRef.current.getConvolMuG());
+    setConvFilterSigmaG(cellServiceRef.current.getConvolSigmaG());
 
-    setConvFilterRadiusB(cellService.getConvolRadiusB());
-    setConvFilterMuB(cellService.getConvolMuB());
-    setConvFilterSigmaB(cellService.getConvolSigmaB());
+    setConvFilterRadiusB(cellServiceRef.current.getConvolRadiusB());
+    setConvFilterMuB(cellServiceRef.current.getConvolMuB());
+    setConvFilterSigmaB(cellServiceRef.current.getConvolSigmaB());
 
-    setCellGrowthMu(cellService.getCellGrowthMu());
-    setCellGrowthSigma(cellService.getCellGrowthSigma());
+    setCellGrowthMu(cellServiceRef.current.getCellGrowthMu());
+    setCellGrowthSigma(cellServiceRef.current.getCellGrowthSigma());
 
-    setBrushSize(cellService.getBrushSize());
+    setBrushSize(cellServiceRef.current.getBrushSize());
 
-    setFloorR(cellService.getCountingFloorR());
-    setFloorG(cellService.getCountingFloorG());
-    setFloorB(cellService.getCountingFloorB());
+    setFloorR(cellServiceRef.current.getCountingFloorR());
+    setFloorG(cellServiceRef.current.getCountingFloorG());
+    setFloorB(cellServiceRef.current.getCountingFloorB());
 
-    setColorSensibilityR(cellService.getColorSensibilityR());
-    setColorSensibilityG(cellService.getColorSensibilityG());
-    setColorSensibilityB(cellService.getColorSensibilityB());
+    setColorSensibilityR(cellServiceRef.current.getColorSensibilityR());
+    setColorSensibilityG(cellServiceRef.current.getColorSensibilityG());
+    setColorSensibilityB(cellServiceRef.current.getColorSensibilityB());
 
-    setCellEvolutionDeltaT(cellService.getCellEvolutionDeltaT());
+    setCellEvolutionDeltaT(cellServiceRef.current.getCellEvolutionDeltaT());
   };
 
   const handleOnChangeCellSizeSlider = (value: any) => {
     setCellSize(value);
-    cellService.setCellSize(value);
+    cellServiceRef.current.setCellSize(value);
     
     maxIRef.current = Math.floor(width / value);
     maxJRef.current = Math.floor(height / value);
-    cellsRef.current = cellService.initCells();
+    cellsRef.current = cellServiceRef.current.initCells();
 
     //drawCells();
-    //cellsRef.current = cellService.getRandomizedCells();
+    //cellsRef.current = cellServiceRef.current.getRandomizedCells();
     setVirtTimeCounter(0);
 
     //randomizeCells();
@@ -519,150 +517,150 @@ const updateSliders = () => {
 
   const handleOnChangeConvFilterRadiusSliderR = (value: any) => {
     setConvFilterRadiusR(value);
-    cellService.setConvolRadiusR(value);
-    cellService.initConvolFilterR();
+    cellServiceRef.current.setConvolRadiusR(value);
+    cellServiceRef.current.initConvolFilterR();
   }
 
   const handleOnChangeConvFilterMuSliderR = (value: any) => {
     setConvFilterMuR(value);
-    cellService.setConvolMuR(value);
-    cellService.initConvolFilterR();
+    cellServiceRef.current.setConvolMuR(value);
+    cellServiceRef.current.initConvolFilterR();
   }
 
   const handleOnChangeConvFilterSigmaSliderR = (value: any) => {
     setConvFilterSigmaR(value);
-    cellService.setConvolSigmaR(value);
-    cellService.initConvolFilterR();
+    cellServiceRef.current.setConvolSigmaR(value);
+    cellServiceRef.current.initConvolFilterR();
   }
 
   const handleOnChangeConvFilterRadiusSliderG = (value: any) => {
     setConvFilterRadiusG(value);
-    cellService.setConvolRadiusG(value);
-    cellService.initConvolFilterG();
+    cellServiceRef.current.setConvolRadiusG(value);
+    cellServiceRef.current.initConvolFilterG();
   }
 
   const handleOnChangeConvFilterMuSliderG = (value: any) => {
     setConvFilterMuG(value);
-    cellService.setConvolMuG(value);
-    cellService.initConvolFilterG();
+    cellServiceRef.current.setConvolMuG(value);
+    cellServiceRef.current.initConvolFilterG();
   }
 
   const handleOnChangeConvFilterSigmaSliderG = (value: any) => {
     setConvFilterSigmaG(value);
-    cellService.setConvolSigmaG(value);
-    cellService.initConvolFilterG();
+    cellServiceRef.current.setConvolSigmaG(value);
+    cellServiceRef.current.initConvolFilterG();
   }
 
   const handleOnChangeConvFilterRadiusSliderB = (value: any) => {
     setConvFilterRadiusB(value);
-    cellService.setConvolRadiusB(value);
-    cellService.initConvolFilterB();
+    cellServiceRef.current.setConvolRadiusB(value);
+    cellServiceRef.current.initConvolFilterB();
   }
 
   const handleOnChangeConvFilterMuSliderB = (value: any) => {
     setConvFilterMuB(value);
-    cellService.setConvolMuB(value);
-    cellService.initConvolFilterB();
+    cellServiceRef.current.setConvolMuB(value);
+    cellServiceRef.current.initConvolFilterB();
   }
 
   const handleOnChangeConvFilterSigmaSliderB = (value: any) => {
     setConvFilterSigmaB(value);
-    cellService.setConvolSigmaB(value);
-    cellService.initConvolFilterB();
+    cellServiceRef.current.setConvolSigmaB(value);
+    cellServiceRef.current.initConvolFilterB();
   }
 
   const handleOnChangeCellGrowthMuSlider = (value: any) => {
     setCellGrowthMu(value);
-    cellService.setCellGrowthMu(value);
+    cellServiceRef.current.setCellGrowthMu(value);
   }
 
   const handleOnChangeCellGrowthSigmaSlider = (value: any) => {
     setCellGrowthSigma(value);
-    cellService.setCellGrowthSigma(value);
+    cellServiceRef.current.setCellGrowthSigma(value);
   }
 
   const handleOnChangeBrushSizeSlider = (value: any) => {
     setBrushSize(value);
-    cellService.setBrushSize(value);
+    cellServiceRef.current.setBrushSize(value);
   }
   const handleOnChangeFloorSliderR = (value: any) => {
     setFloorR(value);
-    cellService.setCountingFloorR(value);
+    cellServiceRef.current.setCountingFloorR(value);
   };
   
   const handleOnChangeFloorSliderG = (value: any) => {
     setFloorG(value);
-    cellService.setCountingFloorG(value);
+    cellServiceRef.current.setCountingFloorG(value);
   };
   
   const handleOnChangeFloorSliderB = (value: any) => {
     setFloorB(value);
-    cellService.setCountingFloorB(value);
+    cellServiceRef.current.setCountingFloorB(value);
   };
 
   /*
   const handleOnChangeSensibilitySliderR = (value: any) => {
     setColorSensibilityR(value);
-    cellService.setColorSensibilityR(value);
+    cellServiceRef.current.setColorSensibilityR(value);
   }*/
 
   const handleOnChangeSensibilitySliderRR = (value: any) => {
-    const tab: [number, number, number] = [value, cellService.getColorSensibilityR()[1], cellService.getColorSensibilityR()[2]];
+    const tab: [number, number, number] = [value, cellServiceRef.current.getColorSensibilityR()[1], cellServiceRef.current.getColorSensibilityR()[2]];
     setColorSensibilityR(tab);
-    cellService.setColorSensibilityR(tab);
+    cellServiceRef.current.setColorSensibilityR(tab);
   }
 
   const handleOnChangeSensibilitySliderRG = (value: any) => {
-    const tab: [number, number, number] = [cellService.getColorSensibilityR()[0], value, cellService.getColorSensibilityR()[2]];
+    const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityR()[0], value, cellServiceRef.current.getColorSensibilityR()[2]];
     setColorSensibilityR(tab);
-    cellService.setColorSensibilityR(tab);
+    cellServiceRef.current.setColorSensibilityR(tab);
   }
 
   const handleOnChangeSensibilitySliderRB = (value: any) => {
-    const tab: [number, number, number] = [cellService.getColorSensibilityR()[0], cellService.getColorSensibilityR()[1], value];
+    const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityR()[0], cellServiceRef.current.getColorSensibilityR()[1], value];
     setColorSensibilityR(tab);
-    cellService.setColorSensibilityR(tab);
+    cellServiceRef.current.setColorSensibilityR(tab);
   }
 
   const handleOnChangeSensibilitySliderGR = (value: any) => {
-      const tab: [number, number, number] = [value, cellService.getColorSensibilityG()[1], cellService.getColorSensibilityG()[2]];
+      const tab: [number, number, number] = [value, cellServiceRef.current.getColorSensibilityG()[1], cellServiceRef.current.getColorSensibilityG()[2]];
       setColorSensibilityG(tab);
-      cellService.setColorSensibilityG(tab);
+      cellServiceRef.current.setColorSensibilityG(tab);
   }
 
   const handleOnChangeSensibilitySliderGG = (value: any) => {
-    const tab: [number, number, number] = [cellService.getColorSensibilityG()[0], value, cellService.getColorSensibilityG()[2]];
+    const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityG()[0], value, cellServiceRef.current.getColorSensibilityG()[2]];
     setColorSensibilityG(tab);
-    cellService.setColorSensibilityG(tab);
+    cellServiceRef.current.setColorSensibilityG(tab);
   }
 
   const handleOnChangeSensibilitySliderGB = (value: any) => {
-    const tab: [number, number, number] = [cellService.getColorSensibilityG()[0], cellService.getColorSensibilityG()[1], value];
+    const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityG()[0], cellServiceRef.current.getColorSensibilityG()[1], value];
     setColorSensibilityG(tab);
-    cellService.setColorSensibilityG(tab);
+    cellServiceRef.current.setColorSensibilityG(tab);
   }
 
   const handleOnChangeSensibilitySliderBR = (value: any) => {
-    const tab: [number, number, number] = [value, cellService.getColorSensibilityB()[1], cellService.getColorSensibilityB()[2]];
+    const tab: [number, number, number] = [value, cellServiceRef.current.getColorSensibilityB()[1], cellServiceRef.current.getColorSensibilityB()[2]];
     setColorSensibilityB(tab);
-    cellService.setColorSensibilityB(tab);
+    cellServiceRef.current.setColorSensibilityB(tab);
   }
 
   const handleOnChangeSensibilitySliderBG = (value: any) => {
-    const tab: [number, number, number] = [cellService.getColorSensibilityB()[0], value, cellService.getColorSensibilityB()[2]];
+    const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityB()[0], value, cellServiceRef.current.getColorSensibilityB()[2]];
     setColorSensibilityB(tab);
-    cellService.setColorSensibilityB(tab);
+    cellServiceRef.current.setColorSensibilityB(tab);
   }
 
   const handleOnChangeSensibilitySliderBB = (value: any) => {
-    const tab: [number, number, number] = [cellService.getColorSensibilityB()[0], cellService.getColorSensibilityB()[1], value];
+    const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityB()[0], cellServiceRef.current.getColorSensibilityB()[1], value];
     setColorSensibilityB(tab);
-    cellService.setColorSensibilityB(tab);
+    cellServiceRef.current.setColorSensibilityB(tab);
   }
 
   const handleOnChangeCellEvolutionDeltaTSlider = (value: any) => {
       setCellEvolutionDeltaT(value);
-      cellService.setCellEvolutionDeltaT(value);
+      cellServiceRef.current.setCellEvolutionDeltaT(value);
   }
 
   /*
