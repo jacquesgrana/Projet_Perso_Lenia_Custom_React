@@ -16,7 +16,8 @@ interface IPresetSelectorProps {
     exportUserPresetsCB: () => void,
     reloadUserPresetsCB: () => void,
     deleteUserPresetCB: (preset: IPreset) => void
-    displayToast: (toast: IToast) => void
+    displayToast: (toast: IToast) => void,
+    updateStorageCB: () => void
 }
 
 const PresetSelector = (props : IPresetSelectorProps) => {
@@ -74,6 +75,8 @@ const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
                     ToastLibrary.displayImportPresetDoneToast(props.displayToast);
                     setFile(null);
                     setIsImportDivOpen(false);
+                    props.updateStorageCB();
+
                 }
                 catch (error) {
                     console.error('Error parsing JSON:', error);
