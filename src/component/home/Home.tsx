@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import IPreset from "../../interface/IPreset";
 import JsonService from '../../service/JsonService';
 import PresetService from "../../service/PresetService";
+import LocalStorageService from "../../service/LocalStorageService";
 
 
 const Home = () => {
@@ -16,17 +17,25 @@ const Home = () => {
 
     const jsonServiceRef = useRef<any>(null);
     const presetServiceRef = useRef<any>(null);
-
+    const localStorageServiceRef = useRef<any>(null);
+ 
     useEffect(() => {
         const initData = async () => {
           jsonServiceRef.current = await JsonService.getInstance();
           presetServiceRef.current = await PresetService.getInstance();
+          localStorageServiceRef.current = await LocalStorageService.getInstance();
           //setPresets(await jsonServiceRef.current.findAllPresets());
           setPresets(presetServiceRef.current.getPresets());
           //setUserPresets(await jsonServiceRef.current.findAllUserPresets());
           setUserPresets(presetServiceRef.current.getUserPresets());
+
+          const localStorageUserPresets = await localStorageServiceRef.current.getUserPresets();
+          if(localStorageUserPresets.length > 0) {  
+            presetServiceRef.current.addUserPresets(localStorageUserPresets);
+          }
         };
         initData();
+        //const value = localStorage.getItem('my-key');
     }, []);
 
     /*

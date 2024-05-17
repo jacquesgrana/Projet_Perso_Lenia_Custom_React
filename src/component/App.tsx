@@ -11,14 +11,14 @@ import IToast from '../interface/IToast';
 function App() {
   const [showToast, setShowToast] = useState(false);
   const outletProps = {
-    displayToast: (toast: IToast ) => displayToast(toast) //IToast
+    displayToast: (toast: IToast ) => displayToast(toast)
   };
 
   const toastRef = useRef<IToast>( //IToast
     {
-        title: "Test.",
-        subtitle: "Test.",
-        message: "Test d'affichage d'un toast.",
+        title: "Test",
+        subtitle: "Test",
+        message: "Test display toast",
         mode: "success",
         delay: 2000
     }
@@ -26,7 +26,7 @@ function App() {
 
   const toggleShowToast = () => setShowToast(!showToast);
 
-  const displayToast = (toast: IToast) => { //IToast
+  const displayToast = (toast: IToast) => {
     toastRef.current = toast;
     toggleShowToast();
   }

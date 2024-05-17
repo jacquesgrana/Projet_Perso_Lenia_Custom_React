@@ -14,6 +14,7 @@ import ToastLibrary from "../../../library/ToastLibrary";
 import IPresetValues from "../../../interface/IPresetValues";
 //import 'rc-slider/assets/index.css';
 import PresetService from '../../../service/PresetService';
+import LocalStorageService from '../../../service/LocalStorageService';
 
 interface ICustomCanvasProps {
   displayToast: (toast: IToast) => void,
@@ -76,6 +77,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     const loadCountRef = useRef<number>(0);
 
     const presetServiceRef = useRef<any>(null);
+    const localStorageServiceRef = useRef<any>(null);
 
     useEffect(() => {
         initCells();
@@ -86,6 +88,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         }
         const fct = async () => {
           presetServiceRef.current = await PresetService.getInstance();
+          localStorageServiceRef.current = await LocalStorageService.getInstance();
           //console.log('presetServiceRef.current :', presetServiceRef.current);
         }
         fct();
@@ -256,10 +259,15 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         //console.log('newPreset :', newPreset);
         presetServiceRef.current.saveNewUserPreset(newPreset);
         setIsNewPresetDivOpen(false);
+        //await localStorageServiceRef.current.saveUserPresets(props.presets);
         // TODO vider les inputs **********************************************************************************
         // TODO changer nom bouton "save" par "close" **********************************************************************************
         //const savePresetBtn = document.getElementById("save-preset-button");
         //if (savePresetBtn) savePresetBtn.innerText = isNewPresetDivOpen ? "SAVE" : "CLOSE";
+        const fct = async () => {
+          await localStorageServiceRef.current.setUserPresets(presetServiceRef.current.getUserPresets());
+        }
+        fct();
       }
       //console.log('name :', fieldName?.value, 'description :', fieldDescription?.value, 'pseudo :', fieldPseudo?.value);
     }
@@ -347,6 +355,8 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     const deleteUserPresetCB = (preset: IPreset) => {
       presetServiceRef.current.deleteUserPreset(preset.id);
       props.reloadUserPresetsCB();
+      // TODO afficher toast
+      ToastLibrary.displayDeletePresetToast(preset.name, props.displayToast);
     }
 
     const applyPresetCB = (preset: IPreset) => {
@@ -831,6 +841,7 @@ const updateSliders = () => {
                   exportUserPresetsCB={exportUserPresetsCB}
                   reloadUserPresetsCB={props.reloadUserPresetsCB}
                   deleteUserPresetCB={deleteUserPresetCB}
+                  displayToast={props.displayToast}
                   />
                 </Accordion.Body>
               </Accordion.Item>

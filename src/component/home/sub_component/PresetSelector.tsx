@@ -5,6 +5,8 @@ import { Button } from "react-bootstrap";
 import { useEffect, useRef, useState } from "react";
 import PresetService from "../../../service/PresetService";
 import { se } from "date-fns/locale";
+import IToast from "../../../interface/IToast";
+import ToastLibrary from "../../../library/ToastLibrary";
 //import CellService from '../../../service/CellService';
 
 interface IPresetSelectorProps {
@@ -14,6 +16,7 @@ interface IPresetSelectorProps {
     exportUserPresetsCB: () => void,
     reloadUserPresetsCB: () => void,
     deleteUserPresetCB: (preset: IPreset) => void
+    displayToast: (toast: IToast) => void
 }
 
 const PresetSelector = (props : IPresetSelectorProps) => {
@@ -68,12 +71,16 @@ const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
                     presetServiceRef.current?.addUserPresets(userPresetsToAdd);
                     // TODO afficher toast
                     props.reloadUserPresetsCB();
+                    ToastLibrary.displayImportPresetDoneToast(props.displayToast);
                     setFile(null);
                     setIsImportDivOpen(false);
                 }
                 catch (error) {
                     console.error('Error parsing JSON:', error);
                     // TODO afficher toast
+                    ToastLibrary.displayImportPresetErrorToast(props.displayToast);
+                    setFile(null);
+                    setIsImportDivOpen(false);
                 }                
             }
         };

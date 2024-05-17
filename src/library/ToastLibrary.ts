@@ -72,4 +72,37 @@ export default class ToastLibrary {
         };
         displayToast(toastToDisplay);
     }
+
+    static displayImportPresetDoneToast = async (displayToast: (toast: IToast) => void) => {
+        const toastToDisplay: IToast = {
+            title: "IMPORT PRESETS",
+            subtitle: "Import Presets",
+            message: "The presets are imported",
+            mode: "success",
+            delay: 1500
+        };
+        displayToast(toastToDisplay);
+    }
+
+    static displayImportPresetErrorToast = async (displayToast: (toast: IToast) => void) => {
+        const toastToDisplay: IToast = {
+            title: "ERROR IMPORT PRESETS",
+            subtitle: "Error Import Presets",
+            message: "The presets are not imported",
+            mode: "danger",
+            delay: 1500
+        };
+        displayToast(toastToDisplay);
+    }
+
+    static displayDeletePresetToast = async (name: string, displayToast: (toast: IToast) => void) => {
+        const toastToDisplay: IToast = {
+            title: "DELETE PRESET",
+            subtitle: "Delete Preset",
+            message: "The preset '" + name + "' is deleted",
+            mode: "success",
+            delay: 1500
+        };
+        displayToast(toastToDisplay);
+    }
 }
