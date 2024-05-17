@@ -1,0 +1,26 @@
+.slider-settings {
+    
+    .rc-slider-track {
+        background-color: $color-bg-light;  
+    }
+
+    .rc-slider-rail {
+        background-color: $color-bg-light-2;
+    }
+
+    .rc-slider-handle {
+        border: 1px solid $color-bg-light;
+        background-color: $color-bg-light-2;
+    }
+
+    .rc-slider-handle:active {
+        border: 2px solid $color-bg-light;
+        box-shadow: 0 0 0 5px rgba(63, 81, 181, 0.2);
+    }
+
+    .rc-slider-handle-click-focused:focus {
+        border: 2px solid $color-bg !important;
+        box-shadow: none;  
+        box-shadow: 0 0 0 4px rgba(63, 81, 181, 0.2);
+    }
+}

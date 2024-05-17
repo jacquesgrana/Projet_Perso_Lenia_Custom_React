@@ -4,9 +4,9 @@
     top: 40px;
     right: 40px;
     z-index: 1000;
-    background-color: $color-bg-dark;
-    color: $color-white;
-    border: 1px solid $color-white;
+    background-color: $color-bg-light-2;
+    color: $color-bg-dark;
+    border: 1px solid $color-bg-light-2;
     
     
     .custom-toast-success {
@@ -26,15 +26,21 @@
     }
     
     .toast-header {
-        background-color: $color-bg-secondary;
-        color: $color-white;
-        border: 1px solid $color-white;
+        background-color: $color-bg-dark;
+        color: $color-bg-dark;
+        border: 1px solid $color-bg-light-2;
+    }
+
+    .custom-toast-body {
+        background-color: $color-bg-light;
+        color: $color-bg-dark;
+        border: 1px solid $color-bg-light-2;
     }
     
     button.btn-close {
         transition: 0.3s;
         color: $color-white !important;
-        background-color: $color-bg-secondary-dark;
+        background-color: $color-bg-dark;
         padding: 5px;
         content: "X";
     }

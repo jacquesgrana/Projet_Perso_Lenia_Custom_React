@@ -3,7 +3,7 @@ const Footer = () => {
     
     return (
         <footer id="app-footer">
-            <h1 className="text-center">Footer</h1>
+            <h6 className="text-center">React Web App: A freely inspired 'Lenia-like' simulation.</h6>
         </footer>
     );
 }

@@ -93,7 +93,7 @@ const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 
     return (
         <div id="app-preset-selector" className="d-flex flex-column align-items-center justify-content-center">
-            <h4 className="text-center">Preset Selector</h4>
+            <h4 className="text-center mt-2">Preset Selector</h4>
             <h5 className="text-center mt-3">Default presets</h5>
             <div id="presets-container" className="d-flex flex-wrap flex-row gap-3 justify-content-center align-items-center">
                 {props.presets.map((preset: IPreset) => 

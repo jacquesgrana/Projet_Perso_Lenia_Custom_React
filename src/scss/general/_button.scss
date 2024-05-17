@@ -2,23 +2,88 @@
     width: 120px;
     border: 0px;
     border-radius: 5px;
-    padding: 10px;
+    padding: 5px;
     color: $color-white;
-    background-color: $color-bg-secondary-dark;
+    background-color: $color-bg;
     font-size: 1.2rem;
     font-weight: 500;
     cursor: pointer;
     transition: 0.3s;
+
     &:hover {
-        background-color: $color-bg-secondary;
+        background-color: $color-bg-dark;
+        color: $color-warning;
+        transition: 0.3s;
+    }
+
+    &:disabled {
+        background-color: $color-bg-dark-2;
+        color: $color-bg;
+        transition: 0.3s;
+    }
+
+    &:active {
+        background-color: $color-bg-light !important;
+        color: $color-warning;
+        transition: 0.3s;
+    }
+
+}
+
+.btn-sm-1 {
+    width: 60px;
+    border: 0px;
+    border-radius: 5px;
+    padding: 5px;
+    color: $color-white;
+    background-color: $color-bg;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: $color-bg-dark;
+        color: $color-warning;
+        transition: 0.3s;
+    }
+
+    &:disabled {
+        background-color: $color-bg-dark-2;
+        color: $color-bg;
+        transition: 0.3s;
+    }
+
+    &:active {
+        background-color: $color-bg-light !important;
+        color: $color-warning;
+        transition: 0.3s;
+    }
+}
+
+.btn-sm-2 {
+    width: 60px;
+    border: 0px;
+    border-radius: 5px;
+    padding: 5px;
+    color: $color-white;
+    background-color: $color-bg-secondary;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: $color-bg-secondary-dark;
         color: $color-warning;
         transition: 0.3s;
     }
 
     &:disabled {
         background-color: $color-bg-secondary-dark-2;
-        color: $color-warning;
+        color: $color-bg;
         transition: 0.3s;
     }
 
+    &:active {
+        background-color: $color-bg-secondary-light !important;
+        color: $color-warning;
+        transition: 0.3s;
+    }
 }

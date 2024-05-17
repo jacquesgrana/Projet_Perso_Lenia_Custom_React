@@ -692,14 +692,13 @@ const updateSliders = () => {
   }
 
     return (
-        <div className="d-flex flex-column align-items-center gap-3">
-            <h2 className="text-center">CustomCanvas</h2>
+        <div className="d-flex flex-column align-items-center gap-1">
            
             <canvas
             ref={canvasRef}
             width={width}
             height={height}
-            style={{ border: "1px solid black" }}
+            id="app-canvas"
             onMouseDown={handleMouseDown}
             //onMouseOver={handleMouseOver}
             //onMouseMove={handleMouseOver}
@@ -708,9 +707,9 @@ const updateSliders = () => {
             />
             <p>left-click : add circle / right-click : clear circle</p>
 
-            <h3 className="text-center mt-2">Virtual time counter : {virtTimeCounter.toFixed(2)} (s)</h3>
-            <h4>Preset : {selectedPreset?.name}</h4>
-            <div className="d-flex gap-3 justify-content-center mb-2">
+            <p className="text-center"><strong>Virtual time counter : {virtTimeCounter.toFixed(2)} (s)</strong></p>
+            <p>Preset : {selectedPreset?.name}</p>
+            <div className="d-flex gap-3 justify-content-center mb-3">
                 <Button
                 className="btn-1"
                 onClick={() => {
@@ -741,7 +740,7 @@ const updateSliders = () => {
             </div>
             <Accordion 
             defaultActiveKey={null}
-            className="accordion-container mb-5"
+            className="accordion-container mb-4"
             >
               <Accordion.Item eventKey="0" >
                 <Accordion.Header>Presets</Accordion.Header>
@@ -761,6 +760,8 @@ const updateSliders = () => {
               <Accordion.Item eventKey="1" >
                   <Accordion.Header>Settings</Accordion.Header>
                   <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+                  <h4 className="text-center mt-2">Settings</h4>
+
                     <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center w-100">
                         <div className="settings-column">
                             <p><strong>Red</strong></p>
@@ -771,7 +772,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
                             value= {floorR}
                             onChange={handleOnChangeFloorSliderR}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                             <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
                             <label>Radius : {convFilterRadiusR}</label>
@@ -781,7 +782,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
                             value= {convFilterRadiusR}
                             onChange={handleOnChangeConvFilterRadiusSliderR}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                             <label>Mu : {convFilterMuR}</label>
                             <Slider 
@@ -790,7 +791,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
                             value= {convFilterMuR}
                             onChange={handleOnChangeConvFilterMuSliderR}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                             <label>Sigma : {convFilterSigmaR}</label>
                             <Slider 
@@ -799,7 +800,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
                             value= {convFilterSigmaR}
                             onChange={handleOnChangeConvFilterSigmaSliderR}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                             <p className="mt-2 mb-1"><strong>Sensibility</strong></p>
                             <label>Red : {colorSensibilityR[0]}</label>
@@ -809,7 +810,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityR[0]}
                             onChange={handleOnChangeSensibilitySliderRR}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                             <label>Green : {colorSensibilityR[1]}</label>
                             <Slider 
@@ -818,7 +819,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityR[1]}
                             onChange={handleOnChangeSensibilitySliderRG}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                             <label>Blue : {colorSensibilityR[2]}</label>
                             <Slider
@@ -827,7 +828,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityR[2]}
                             onChange={handleOnChangeSensibilitySliderRB}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                         </div>
                         <div className="settings-column">
@@ -839,7 +840,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
                             value= {floorG}
                             onChange={handleOnChangeFloorSliderG}
-                            className="slider-floor"
+                            className="slider-settings"
                             />
 
                             <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
@@ -850,7 +851,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
                             value= {convFilterRadiusG}
                             onChange={handleOnChangeConvFilterRadiusSliderG}
-                            className="slider-floor"
+                            className="slider-settings"
                             />
                             <label>Mu : {convFilterMuG}</label>
                             <Slider
@@ -859,7 +860,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
                             value= {convFilterMuG}
                             onChange={handleOnChangeConvFilterMuSliderG}
-                            className="slider-floor"
+                            className="slider-settings"
                             />
                             <label>Sigma : {convFilterSigmaG}</label>
                             <Slider
@@ -868,7 +869,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
                             value= {convFilterSigmaG}
                             onChange={handleOnChangeConvFilterSigmaSliderG}
-                            className="slider-floor"
+                            className="slider-settings"
                             />
 
                             <p className="mt-2 mb-1"><strong>Sensibility</strong></p>
@@ -879,7 +880,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityG[0]}
                             onChange={handleOnChangeSensibilitySliderGR}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                             <label>Green : {colorSensibilityG[1]}</label>
                             <Slider 
@@ -888,7 +889,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityG[1]}
                             onChange={handleOnChangeSensibilitySliderGG}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                             <label>Blue : {colorSensibilityG[2]}</label>
                             <Slider
@@ -897,7 +898,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityG[2]}
                             onChange={handleOnChangeSensibilitySliderGB}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                         </div>
                         <div className="settings-column">
@@ -909,7 +910,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
                             value= {floorB}
                             onChange={handleOnChangeFloorSliderB}
-                            className="slider-floor"
+                            className="slider-settings"
                             />
 
                             <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
@@ -920,7 +921,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
                             value= {convFilterRadiusB}
                             onChange={handleOnChangeConvFilterRadiusSliderB}
-                            className="slider-floor"
+                            className="slider-settings"
                             />
                             <label>Mu : {convFilterMuB}</label>
                             <Slider
@@ -929,7 +930,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_CONV_FILTER_MU_STEP}
                             value= {convFilterMuB}
                             onChange={handleOnChangeConvFilterMuSliderB}
-                            className="slider-floor"
+                            className="slider-settings"
                             />
                             <label>Sigma : {convFilterSigmaB}</label>
                             <Slider
@@ -938,7 +939,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_CONV_FILTER_SIGMA_STEP}
                             value= {convFilterSigmaB}
                             onChange={handleOnChangeConvFilterSigmaSliderB}
-                            className="slider-floor"
+                            className="slider-settings"
                             />
 
                             <p className="mt-2 mb-1"><strong>Sensibility</strong></p>
@@ -949,7 +950,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityB[0]}
                             onChange={handleOnChangeSensibilitySliderBR}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                             <label>Green : {colorSensibilityB[1]}</label>
                             <Slider 
@@ -958,7 +959,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityB[1]}
                             onChange={handleOnChangeSensibilitySliderBG}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                             <label>Blue : {colorSensibilityB[2]}</label>
                             <Slider
@@ -967,7 +968,7 @@ const updateSliders = () => {
                             step = {CellConfig.CELL_COLOR_SENSIBILITY_STEP}
                             value= {colorSensibilityB[2]}
                             onChange={handleOnChangeSensibilitySliderBB}
-                            className="slider-floor" 
+                            className="slider-settings" 
                             />
                         </div>
                     </div>
@@ -981,7 +982,7 @@ const updateSliders = () => {
                                   step = {CellConfig.CELL_EVOLUTION_DELTA_T_STEP}
                                   value= {cellEvolutionDeltaT}
                                   onChange={handleOnChangeCellEvolutionDeltaTSlider}
-                                  className="slider-floor"
+                                  className="slider-settings"
                                 />
                             </div>
                             <div className="settings-column">
@@ -992,7 +993,7 @@ const updateSliders = () => {
                                   step = {CellConfig.CELL_GROWTH_MU_STEP}
                                   value= {cellGrowthMu}
                                   onChange={handleOnChangeCellGrowthMuSlider}
-                                  className="slider-floor"
+                                  className="slider-settings"
                                 />
                             </div>
                             <div className="settings-column">
@@ -1003,7 +1004,7 @@ const updateSliders = () => {
                                   step = {CellConfig.CELL_GROWTH_SIGMA_STEP}
                                   value= {cellGrowthSigma}
                                   onChange={handleOnChangeCellGrowthSigmaSlider}
-                                  className="slider-floor"
+                                  className="slider-settings"
                                 />
                             </div>
                         </div>
@@ -1016,7 +1017,7 @@ const updateSliders = () => {
                                   step = {CellConfig.CELL_BRUSH_SIZE_STEP}
                                   value= {brushSize}
                                   onChange={handleOnChangeBrushSizeSlider}
-                                  className="slider-floor"
+                                  className="slider-settings"
                                 />
                             </div>
                             <div className="settings-column">
@@ -1027,7 +1028,7 @@ const updateSliders = () => {
                                   step = {CellConfig.CELL_SIZE_STEP}
                                   value= {cellSize}
                                   onChange={handleOnChangeCellSizeSlider}
-                                  className="slider-floor"
+                                  className="slider-settings"
                                 />
                             </div>
 
@@ -1064,7 +1065,7 @@ const updateSliders = () => {
 
                     </div>
                       {isNewPresetDivOpen ? (
-                        <div>
+                        <div className="d-flex gap-3 justify-content-center flex-wrap mb-2">
                           <h5>New preset</h5>
                             <div className="d-flex gap-3 justify-content-center flex-wrap mb-2">
                             

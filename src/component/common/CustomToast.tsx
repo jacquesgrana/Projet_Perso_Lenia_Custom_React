@@ -30,7 +30,7 @@ const CustomToast = (props: CustomToastProps) => {
                 </small>
             </Toast.Header>
             <Toast.Body
-            className={`text-white`}
+            className={`custom-toast-body`}
             >
                 {props.toast.message}
             </Toast.Body>

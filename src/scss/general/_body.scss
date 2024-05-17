@@ -8,6 +8,7 @@ body {
     min-width: 100%;
     display: flex;
     flex-direction: column;
+    color: $color-bg-dark-2;
   }
   
   /*
@@ -37,5 +38,6 @@ body {
   main {
     padding-top: 80px;
     flex-grow: 1;
+    background-color: $color-bg-light-2;
   }
 

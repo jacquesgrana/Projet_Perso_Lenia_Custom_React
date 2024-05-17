@@ -50,7 +50,7 @@ const Home = () => {
 
     return (
         <div id="app-home">
-            <h1 className="text-center">Home</h1>
+            
             <CustomCanvas 
                 displayToast={displayToast}
                 presets={presets}
@@ -62,3 +62,5 @@ const Home = () => {
 }
 
 export default Home;
+
+// <h1 className="text-center">Home</h1>

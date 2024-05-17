@@ -3,6 +3,27 @@
     width: 80vw;
     margin: auto 40px;
     //border-radius: $radius-1 !important;
+    //color: $color-bg !important;
 
+    .accordion-button {
+        background-color: $color-bg-light;
+        color: $color-bg-dark-2;
+    }
+
+    .accordion-button:hover,
+    .accordion-button:not(.collapsed):hover {
+        background-color: $color-bg !important;
+        color: $color-white;
+        transition: 0.3s ease-out;
+    }
+
+    .accordion-button:focus {
+        box-shadow: none;
+    }
+
+    .accordion-item {
+        background-color: $color-bg-light-3;
+        color: $color-bg-dark-2;
+    }
 
 }

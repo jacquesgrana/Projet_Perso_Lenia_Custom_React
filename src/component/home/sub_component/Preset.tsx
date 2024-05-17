@@ -13,26 +13,29 @@ interface IPresetProps {
 const Preset = (props : IPresetProps) => {
 
     return (
-        <div id="app-preset">
-    <Card style={{ width: '18rem' }}>
-      <Card.Body>
+    <Card className="app-preset-card">
+      <Card.Body className="d-flex flex-column">
         <Card.Title>{props.preset.name}</Card.Title>
         <Card.Text>
         {props.preset.description}<br/>
         {format(props.preset.date, 'dd MMMM yyyy')}<br/>
         {props.preset.pseudo}
         </Card.Text>
-        <Button 
-          variant="primary" 
-          onClick={() => props.applyPresetCB(props.preset)}
-        >
-          Apply
-        </Button>
-        {props.isDeletable && <Button 
-          onClick={() => props.deleteUserPresetCB(props.preset)} variant="danger">Delete</Button>}
+        <div className="flex-grow-1"></div>
+        <div className="d-flex justify-content-center gap-2">
+          <Button 
+            className="btn-sm-1"
+            variant="primary" 
+            onClick={() => props.applyPresetCB(props.preset)}
+          >
+            Apply
+          </Button>
+          {props.isDeletable && <Button 
+            className="btn-sm-2" onClick={() => props.deleteUserPresetCB(props.preset)} variant="danger">Delete</Button>}
+        </div>
+
       </Card.Body>
     </Card>
-        </div>
         
     );
     

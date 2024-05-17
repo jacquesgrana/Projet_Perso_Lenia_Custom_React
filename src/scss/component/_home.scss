@@ -1,4 +1,9 @@
 #app-home {
+    padding-top: 30px;
+
+    #app-canvas {
+       border: 1px solid $color-bg-dark;
+    }
 
     .settings-column {
         display: flex;
