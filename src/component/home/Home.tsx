@@ -35,6 +35,10 @@ const Home = () => {
     }, [presets]);
     */
 
+    const reloadUserPresetsCB = async () => {
+        setUserPresets(presetServiceRef.current.getUserPresets());
+    }
+
     return (
         <div id="app-home">
             <h1 className="text-center">Home</h1>
@@ -42,6 +46,7 @@ const Home = () => {
                 displayToast={displayToast}
                 presets={presets}
                 userPresets={userPresets}
+                reloadUserPresetsCB={reloadUserPresetsCB}
             />
         </div>
     );

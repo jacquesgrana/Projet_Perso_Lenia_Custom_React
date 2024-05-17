@@ -71,7 +71,7 @@
             "name": "Colors struggle",
             "description": "To be described later",
             "date": "2024-05-13T02:30:00.000Z",
-            "pseudo": "velpp",
+            "pseudo": "Velp",
             "values": {
                 "floorR": 0.25,
                 "floorG": 0.25,
@@ -164,6 +164,45 @@
                 "cellGrowthMu": 0.15,
                 "cellGrowthSigma": 0.02
             }
-        }
+        },
+        {
+            "id": 5,
+            "name": "Roots",
+            "description": "Branch up like roots",
+            "pseudo": "Velp",
+            "date": "2024-05-16T16:45:17.852Z",
+            "values": {
+              "floorR": 0.13,
+              "floorG": 0.1,
+              "floorB": 0.1,
+              "convFilterRadiusR": 6,
+              "convFilterMuR": 0.48,
+              "convFilterSigmaR": 0.11,
+              "convFilterRadiusG": 7,
+              "convFilterMuG": 0.51,
+              "convFilterSigmaG": 0.15,
+              "convFilterRadiusB": 6,
+              "convFilterMuB": 0.51,
+              "convFilterSigmaB": 0.15,
+              "colorSensibilityR": [
+                0.5,
+                24,
+                3.5
+              ],
+              "colorSensibilityG": [
+                1,
+                0,
+                1
+              ],
+              "colorSensibilityB": [
+                3,
+                24,
+                0.25
+              ],
+              "cellEvolutionDeltaT": 0.06,
+              "cellGrowthMu": 0.14,
+              "cellGrowthSigma": 0.023
+            }
+          }
     ]
 }

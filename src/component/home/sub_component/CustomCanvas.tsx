@@ -18,7 +18,8 @@ import PresetService from '../../../service/PresetService';
 interface ICustomCanvasProps {
   displayToast: (toast: IToast) => void,
   presets: IPreset[],
-  userPresets: IPreset[]
+  userPresets: IPreset[],
+  reloadUserPresetsCB: () => void
 }
 const CustomCanvas = (props: ICustomCanvasProps) => {
 
@@ -341,6 +342,11 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
 
     const exportUserPresetsCB = () => {
       presetServiceRef.current.exportUserPresets();
+    }
+
+    const deleteUserPresetCB = (preset: IPreset) => {
+      presetServiceRef.current.deleteUserPreset(preset.id);
+      props.reloadUserPresetsCB();
     }
 
     const applyPresetCB = (preset: IPreset) => {
@@ -823,6 +829,8 @@ const updateSliders = () => {
                   presets={props.presets} 
                   userPresets={props.userPresets}
                   exportUserPresetsCB={exportUserPresetsCB}
+                  reloadUserPresetsCB={props.reloadUserPresetsCB}
+                  deleteUserPresetCB={deleteUserPresetCB}
                   />
                 </Accordion.Body>
               </Accordion.Item>

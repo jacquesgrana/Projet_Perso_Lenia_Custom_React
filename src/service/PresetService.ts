@@ -24,7 +24,7 @@ export default class PresetService {
     private async init() {
         this._jsonService = await (await JsonService).getInstance();
         this._presets = await this._jsonService.findAllPresets();
-        //this._user_presets = await this._jsonService.findAllUserPresets();
+        this._user_presets = await this._jsonService.findAllUserPresets();
     }
 
     public async saveNewUserPreset(newPreset: IPreset): Promise<void> {
@@ -58,6 +58,23 @@ export default class PresetService {
     
       // Libérer de la mémoire
       URL.revokeObjectURL(url);
+    }
+
+    public addUserPresets(userPresetsToAdd: IPreset[]): void {
+      for (let i = 0; i < userPresetsToAdd.length; i++) {
+        const id = this._user_presets.length > 0 ? Math.max(...this._user_presets.map(preset => preset.id)) + 1: 0;
+        userPresetsToAdd[i].id = id;
+        // TODO ajouter tests pour valider le preset
+        this._user_presets.push(userPresetsToAdd[i]);
+      }
+
+      //this._user_presets = this._user_presets.concat(userPresets);
+      //console.log('user_presets :', this._user_presets);
+    }
+
+    public deleteUserPreset(id: number): void {
+      this._user_presets = this._user_presets.filter(preset => preset.id !== id);
+      console.log('user_presets :', this._user_presets);
     }
     
     
