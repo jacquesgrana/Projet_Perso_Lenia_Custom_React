@@ -1,7 +1,8 @@
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import { format } from "date-fns";
 import IPreset from '../../../interface/IPreset';
+import { useEffect, useRef } from 'react';
+import { format } from 'date-fns';
 //import { fr } from "date-fns/locale";
 
 interface IPresetProps {
@@ -11,17 +12,22 @@ interface IPresetProps {
   isDeletable: boolean                     
 }
 const Preset = (props : IPresetProps) => {
+    const titleHoverRef = useRef<string>("");
+
+    useEffect(() => {
+        titleHoverRef.current = props.preset.name + "\n"  + props.preset.description + "\n" 
+        + format(props.preset.date, 'dd MMMM yyyy') + "\n by " + props.preset.pseudo;
+    }, []);
 
     return (
-    <Card className="app-preset-card">
+    <Card 
+    className="app-preset-card" 
+    title={titleHoverRef.current}
+    >
       {props.preset.imageSrc.length > 0 && <Card.Img variant="top" src={props.preset.imageSrc} />}
       <Card.Body className="d-flex flex-column">
         <Card.Title><span className="text-color-bg-dark">{props.preset.name}</span></Card.Title>
-        <Card.Text>
-        {props.preset.description}<br/>
-        <i><span className="text-color-bg">{format(props.preset.date, 'dd MMMM yyyy')}</span></i><br/>
-        By <strong><span className="text-color-bg-dark">{props.preset.pseudo}</span></strong>
-        </Card.Text>
+
         <div className="flex-grow-1"></div>
         <div className="d-flex justify-content-center gap-2">
           <Button 
@@ -42,3 +48,11 @@ const Preset = (props : IPresetProps) => {
     
 };
 export default Preset;
+
+/*
+        <Card.Text>
+        {props.preset.description}<br/>
+        <i><span className="text-color-bg">{format(props.preset.date, 'dd MMMM yyyy')}</span></i><br/>
+        By <strong><span className="text-color-bg-dark">{props.preset.pseudo}</span></strong>
+        </Card.Text>
+*/
