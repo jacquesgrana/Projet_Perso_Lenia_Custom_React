@@ -6,7 +6,8 @@ export default interface IPreset {
     description: string;
     date: string;
     pseudo: string;
-    values: IPresetValues  
+    imageSrc: string;
+    values: IPresetValues;
 }
 
 /*

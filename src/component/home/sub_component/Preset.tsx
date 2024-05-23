@@ -14,12 +14,13 @@ const Preset = (props : IPresetProps) => {
 
     return (
     <Card className="app-preset-card">
+      {props.preset.imageSrc.length > 0 && <Card.Img variant="top" src={props.preset.imageSrc} />}
       <Card.Body className="d-flex flex-column">
-        <Card.Title>{props.preset.name}</Card.Title>
+        <Card.Title><span className="text-color-bg-dark">{props.preset.name}</span></Card.Title>
         <Card.Text>
         {props.preset.description}<br/>
-        {format(props.preset.date, 'dd MMMM yyyy')}<br/>
-        {props.preset.pseudo}
+        <i><span className="text-color-bg">{format(props.preset.date, 'dd MMMM yyyy')}</span></i><br/>
+        By <strong><span className="text-color-bg-dark">{props.preset.pseudo}</span></strong>
         </Card.Text>
         <div className="flex-grow-1"></div>
         <div className="d-flex justify-content-center gap-2">
@@ -41,5 +42,3 @@ const Preset = (props : IPresetProps) => {
     
 };
 export default Preset;
-
-//, { locale: fr }

@@ -3,6 +3,8 @@
 
     #app-canvas {
        border: 1px solid $color-bg-dark;
+       // changer le pointeur de la souris
+       cursor: crosshair;
     }
 
     .settings-column {

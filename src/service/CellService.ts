@@ -555,6 +555,93 @@ export default class CellService {
         return this._cells;
     }
 
+    // génére un image a partir des cellules avec une cellule = n pixel dessine un rectangle de largeur n et de hauteur n
+    public getImageData(n: number): ImageData {
+        const imageData = new ImageData(this._maxI * n, this._maxJ * n);
+        for(let i = 0; i < this._maxI; i++) {
+            for(let j = 0; j < this._maxJ; j++) {
+                const cell = this._cells[i][j];
+                const x = i * n;
+                const y = j * n;
+                for(let k = 0; k < n; k++) {
+                    for(let l = 0; l < n; l++) {
+                        imageData.data[((x + k) + (y + l) * imageData.width) * 4] = Math.floor(255 * cell.stateR);
+                        imageData.data[((x + k) + (y + l) * imageData.width) * 4 + 1] = Math.floor(255 * cell.stateG);
+                        imageData.data[((x + k) + (y + l) * imageData.width) * 4 + 2] = Math.floor(255 * cell.stateB);
+                        imageData.data[((x + k) + (y + l) * imageData.width) * 4 + 3] = 255;
+                    }
+                }
+            }
+        }
+        return imageData;
+    }
+
+    // TODO mettre dans une library?
+    public getSquareImageData(imageData: ImageData): ImageData {
+        let newImageData : ImageData = new ImageData(imageData.width, imageData.height);
+        if(imageData.width > imageData.height) {
+            // générer nouvelle imageData en décalant l'axe horizontal de la moitié de l'écart entre la largeur et la hauteur
+            newImageData = new ImageData(imageData.height, imageData.height);
+            const deltaI = Math.floor((imageData.width - imageData.height) / 2);
+            const newWidth = imageData.height;
+            for(let i = 0; i < imageData.height; i++) {
+                for(let j = 0; j < imageData.height; j++) {
+                    //const cell = imageData.data[(i + j * imageData.width) * 4];
+                   
+                    newImageData.data[(i + j * newWidth) * 4] = imageData.data[(deltaI + i + j * imageData.width) * 4];
+                    newImageData.data[(i + j * newWidth) * 4 + 1] = imageData.data[(deltaI + i + j * imageData.width) * 4 + 1];
+                    newImageData.data[(i + j * newWidth) * 4 + 2] = imageData.data[(deltaI + i + j * imageData.width) * 4 + 2];
+                    newImageData.data[(i + j * newWidth) * 4 + 3] = imageData.data[(deltaI + i + j * imageData.width) * 4 + 3];;
+                }
+            }
+        }
+        else if(imageData.width < imageData.height) {
+            // générer nouvelle imageData en décalant l'axe vertical de la moitié de l'écart entre la largeur et la hauteur
+            newImageData = new ImageData(imageData.width, imageData.width);
+            const deltaJ = Math.floor((imageData.height - imageData.width) / 2);
+            for(let i = 0; i < imageData.width; i++) {
+                for(let j = 0; j < imageData.width; j++) {
+                    //const cell = imageData.data[(i + (deltaJ + j) * imageData.height) * 4];
+                    newImageData.data[(i + j * imageData.width) * 4] = imageData.data[(i + (deltaJ + j) * imageData.width) * 4];
+                    newImageData.data[(i + j * imageData.width) * 4 + 1] = imageData.data[(i + (deltaJ + j) * imageData.width) * 4 + 1];
+                    newImageData.data[(i + j * imageData.width) * 4 + 2] = imageData.data[(i + (deltaJ + j) * imageData.width) * 4 + 2];
+                    newImageData.data[(i + j * imageData.width) * 4 + 3] = imageData.data[(i + (deltaJ + j) * imageData.width) * 4 + 3];
+                }
+            }   
+        }
+        else {
+            newImageData = imageData;
+        }
+        
+        return newImageData;
+    }
+
+    // TODO mettre dans une library?
+    public getImageSrcFromImageData(imagedata: ImageData): string {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = imagedata.width;
+        canvas.height = imagedata.height;
+        ctx?.putImageData(imagedata, 0, 0);
+        return canvas.toDataURL();
+    }
+
+    /*
+    public getImageData(): ImageData {
+        const imageData = new ImageData(this._maxI, this._maxJ);
+        for(let i = 0; i < this._maxI; i++) {
+            for(let j = 0; j < this._maxJ; j++) {
+                const cell = this._cells[i][j];
+                imageData.data[(i * this._maxJ + j) * 4] = Math.floor(255 * cell.stateR);
+                imageData.data[(i * this._maxJ + j) * 4 + 1] = Math.floor(255 * cell.stateG);
+                imageData.data[(i * this._maxJ + j) * 4 + 2] = Math.floor(255 * cell.stateB);
+                imageData.data[(i * this._maxJ + j) * 4 + 3] = 255;
+            }
+        }
+        return imageData;
+    }
+    */
+
     public setCellSize(cellSize: number) {
         this._cellSize = cellSize;
         this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / this._cellSize);

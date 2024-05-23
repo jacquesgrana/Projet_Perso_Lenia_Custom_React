@@ -93,7 +93,8 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       drawCells();
       if (loadCountRef.current < AppConfig.APP_LOAD_COUNT_MAX) {
           loadCountRef.current++;
-      }        
+      }  
+      
     }, []);
 
     useEffect(() => {
@@ -188,6 +189,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         description: props.presets[0].description,
         pseudo: props.presets[0].pseudo,
         date: props.presets[0].date,
+        imageSrc: props.presets[0].imageSrc,
         values: props.presets[0].values
 
       }
@@ -204,9 +206,10 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         description: selectedPreset.description,
         pseudo: selectedPreset.pseudo,
         date: selectedPreset.date,
+        imageSrc: selectedPreset.imageSrc,
         values: selectedPreset.values
       }
-        setSelectedPreset(preset);
+        setSelectedPreset(preset); // ????
         //cellServiceRef.current.initValues();
         cellServiceRef.current.initConvolFilters();
         updateSliders();
@@ -219,6 +222,24 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     }
 
     const handleSaveNewPresetValues = () => {
+      /*
+      const imageData: ImageData = cellServiceRef.current.getImageData(2);
+      const squareImageData: ImageData = cellServiceRef.current.getSquareImageData(imageData);
+      const src: string = cellServiceRef.current.getImageSrcFromImageData(squareImageData);
+      console.log('src :', src);
+      */
+
+      //img.src = imageData.toString();
+      /*
+        //const canvas = document.getElementById('app-canvas') as HTMLCanvasElement | null;
+        if (canvasRef.current) {
+          const ctx = canvasRef.current?.getContext("2d");
+          if (ctx) {
+            ctx.putImageData(squareImageData, 0, 0);
+          }
+        }
+      */
+
       const fieldName = document.getElementById("new-preset-name") as HTMLInputElement | null;
       const fieldDescription = document.getElementById("new-preset-description") as HTMLInputElement | null;
       const fieldPseudo = document.getElementById("new-preset-pseudo") as HTMLInputElement | null;
@@ -227,6 +248,12 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       const pseudo = fieldPseudo?.value;
       if(name !== undefined && description !== undefined && pseudo !== undefined) {
         ToastLibrary.displaySavePresetToast(name, props.displayToast);
+
+        const imageData: ImageData = cellServiceRef.current.getImageData(2);
+        const squareImageData: ImageData = cellServiceRef.current.getSquareImageData(imageData);
+        const src: string = cellServiceRef.current.getImageSrcFromImageData(squareImageData);
+        //console.log('src :', src);
+
         const newValues: IPresetValues = {
           floorR: floorR,
           floorG: floorG,
@@ -255,6 +282,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
           description: description,
           pseudo: pseudo,
           date: date,
+          imageSrc: src,
           values: newValues
         };
         presetServiceRef.current.saveNewUserPreset(newPreset);
@@ -682,13 +710,17 @@ const updateSliders = () => {
 
   const handleMouseOver = (e: any) => {
     console.log('mouseOver');
-    drawBrush(e);
-    /*
-      if(isMouseOver){
-        console.log('isMouseOver 2 :', isMouseOver);
-
-        drawBrush(e);
-      }*/
+    //drawBrush(e);
+    const radius = 150;
+      const cx = radius;
+      const cy = radius;
+      const svgCode = '<svg xmlns="http://www.w3.org/2000/svg" width="' + radius*2 + '" height="' + radius*2 + '"><circle cx="' + cx + '" cy="' + cy + '" r="' + radius + '" fill="none" stroke="orange" stroke-width="4"/></svg>';
+      console.log('svgCode :', svgCode);
+      const canvas = document.getElementById('app-canvas') as HTMLCanvasElement | null;
+      if (canvas) {
+        canvas.style.cursor = 'url(data:image/svg+xml;utf8,' + encodeURIComponent(svgCode) + '), auto';
+        canvas.style.cursor = 'crosshair';
+      }
   }
 
     return (

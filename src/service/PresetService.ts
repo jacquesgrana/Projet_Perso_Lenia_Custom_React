@@ -74,7 +74,7 @@ export default class PresetService {
 
     public deleteUserPreset(id: number): void {
       this._user_presets = this._user_presets.filter(preset => preset.id !== id);
-      console.log('user_presets :', this._user_presets);
+      //console.log('user_presets :', this._user_presets);
     }
     
     
