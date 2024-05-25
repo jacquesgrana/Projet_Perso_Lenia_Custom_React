@@ -8,7 +8,7 @@ export default class PresetService {
     private static _instance: PresetService | null = null;
     private _jsonService: JsonService | null = null;
     private _presets: IPreset[] = [];
-    private _user_presets: IPreset[] = [];
+    private _userPresets: IPreset[] = [];
 
 
     private constructor() {}
@@ -24,11 +24,11 @@ export default class PresetService {
     private async init() {
         this._jsonService = await (await JsonService).getInstance();
         this._presets = await this._jsonService.findAllPresets();
-        this._user_presets = await this._jsonService.findAllUserPresets();
+        //this._user_presets = await this._jsonService.findAllUserPresets();
     }
 
     public async saveNewUserPreset(newPreset: IPreset): Promise<void> {
-      this._user_presets.push(newPreset);
+      this._userPresets.push(newPreset);
       //await this._jsonService?.saveUserPresets(this._user_presets);
     }
 
@@ -37,12 +37,12 @@ export default class PresetService {
     }
 
     public getUserPresets(): IPreset[] {
-        return this._user_presets;
+        return this._userPresets;
     }
 
     public exportUserPresets(): void {
-      if(this._user_presets.length === 0) return;
-      const json = "{ \n" + "  \"user_presets\": " + JSON.stringify(this._user_presets, null, 2) + "\n" + "}";
+      if(this._userPresets.length === 0) return;
+      const json = "{ \n" + "  \"user_presets\": " + JSON.stringify(this._userPresets, null, 2) + "\n" + "}";
       const blob = new Blob([json], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
     
@@ -62,10 +62,16 @@ export default class PresetService {
 
     public addUserPresets(userPresetsToAdd: IPreset[]): void {
       for (let i = 0; i < userPresetsToAdd.length; i++) {
-        const id = this._user_presets.length > 0 ? Math.max(...this._user_presets.map(preset => preset.id)) + 1: 0;
+        const id = this._userPresets.length > 0 ? Math.max(...this._userPresets.map(preset => preset.id)) + 1: 0;
         userPresetsToAdd[i].id = id;
         // TODO ajouter tests pour valider le preset
-        this._user_presets.push(userPresetsToAdd[i]);
+        // si id pas deja present
+        const isPresetAlreadyPresent = this._userPresets.some(preset => 
+          preset.name === userPresetsToAdd[i].name
+          && preset.description === userPresetsToAdd[i].description
+          && preset.pseudo === userPresetsToAdd[i].pseudo
+        );
+        if (!isPresetAlreadyPresent) this._userPresets.push(userPresetsToAdd[i]);
       }
 
       //this._user_presets = this._user_presets.concat(userPresets);
@@ -73,7 +79,7 @@ export default class PresetService {
     }
 
     public deleteUserPreset(id: number): void {
-      this._user_presets = this._user_presets.filter(preset => preset.id !== id);
+      this._userPresets = this._userPresets.filter(preset => preset.id !== id);
       //console.log('user_presets :', this._user_presets);
     }
     

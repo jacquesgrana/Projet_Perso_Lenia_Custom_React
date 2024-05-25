@@ -19,11 +19,30 @@ export default class LocalStorageService {
 
     public async getUserPresets(): Promise<IPreset[]> {
         let presets: IPreset[] = [];
+        const presetsToReturn: IPreset[] = [];
+        let isErrorInLocalStorage = false;
         let presetsString = localStorage.getItem('userPresets');
         if (presetsString) {
             presets = JSON.parse(presetsString);
+        
+            // TODO tester les presets pour verifier qu'ils sont de type IPreset sinon on omet le preset concerné -> done
+            // TODO améliorer -> refaire le local storage si il contient des erreurs si besoin -> done
+            presets.forEach((preset: any) => {
+                if(preset && (preset as IPreset)) {
+                    presetsToReturn.push(preset);
+                }
+                else {
+                    isErrorInLocalStorage = true
+                }
+            });
+
+            if(isErrorInLocalStorage) {
+                await this.setUserPresets(presetsToReturn);
+            }
         }
-        return presets;
+
+        
+        return presetsToReturn;
     }
 
     public async setUserPresets(presets: IPreset[]): Promise<void> {

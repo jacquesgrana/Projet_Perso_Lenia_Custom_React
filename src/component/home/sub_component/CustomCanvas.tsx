@@ -1150,6 +1150,7 @@ const updateSliders = () => {
                       }
                   </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
         </div>
     );
@@ -1158,10 +1159,10 @@ const updateSliders = () => {
 export default CustomCanvas;
 
 /*
-{
-    if (canvasRef.current) {
-    const ctx = canvasRef.current.getContext("2d");
-    ctx?.clearRect(0, 0, width, height);
-    }
-}
+              <Accordion.Item eventKey="2" >
+                <Accordion.Header>Brush settings</Accordion.Header>
+                <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+                 
+                </Accordion.Body>
+              </Accordion.Item>
 */
