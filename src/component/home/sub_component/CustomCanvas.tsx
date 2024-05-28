@@ -802,7 +802,7 @@ const updateSliders = () => {
                     drawCells();
                 }}
                 >
-                    RANDOM
+                    FILL
                 </Button>
                 <Button
                 className="btn-1"

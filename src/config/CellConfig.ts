@@ -11,7 +11,7 @@ export default class CellConfig {
 
     public static readonly CELL_BRUSH_HARDNESS = 0.5;
     public static readonly CELL_BRUSH_HARDNESS_MIN = 0;
-    public static readonly CELL_BRUSH_HARDNESS_MAX = 1;
+    public static readonly CELL_BRUSH_HARDNESS_MAX = 0.99;
     public static readonly CELL_BRUSH_HARDNESS_STEP = 0.01;
 
     public static readonly CELL_BRUSH_IS_RANDOM: boolean = true;

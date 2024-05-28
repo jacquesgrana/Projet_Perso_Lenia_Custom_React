@@ -551,9 +551,9 @@ export default class CellService {
                     let newRed = p * newR;
                     let newGreen = p * newG;
                     let newBlue = p * newB;
-                    newRed = newRed > 1 ? 1 : newRed;
-                    newGreen = newGreen > 1 ? 1 : newGreen;
-                    newBlue = newBlue > 1 ? 1 : newBlue;
+                    
+
+                    
                     let x1 = x0 + x;
                     let y1 = y0 + y;
                     /*
@@ -564,6 +564,12 @@ export default class CellService {
                     */
                     x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
                     y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                    newRed += this._cells[x1][y1].stateR;
+                    newGreen += this._cells[x1][y1].stateG;
+                    newBlue += this._cells[x1][y1].stateB;
+                    newRed = newRed > 1 ? 1 : newRed;
+                    newGreen = newGreen > 1 ? 1 : newGreen;
+                    newBlue = newBlue > 1 ? 1 : newBlue;
                     this._cells[x1][y1].stateR = newRed;
                     this._cells[x1][y1].stateG = newGreen;
                     this._cells[x1][y1].stateB = newBlue;  
