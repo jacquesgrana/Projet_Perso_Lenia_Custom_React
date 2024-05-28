@@ -2,6 +2,7 @@ import { cp } from "fs";
 import CanvasConfig from "../config/CanvasConfig";
 import CellConfig from "../config/CellConfig";
 import ICell from "../interface/ICell";
+import ColorLibrary from "../library/ColorLibrary";
 
 export default class CellService {
 
@@ -42,6 +43,11 @@ export default class CellService {
     private _cellGrowthSigma: number = CellConfig.CELL_GROWTH_SIGMA;
 
     private _brushSize: number = CellConfig.CELL_BRUSH_SIZE;
+    private _brushHardness: number = CellConfig.CELL_BRUSH_HARDNESS;
+    private _brushIsRandom: boolean = CellConfig.CELL_BRUSH_IS_RANDOM;
+
+    private _brushColor: string = CellConfig.CELL_BRUSH_COLOR;
+    private _bgColor: string = CellConfig.CELL_BACKGROUND_COLOR;
     
     private constructor() {}
 
@@ -130,6 +136,11 @@ export default class CellService {
         this._convolSigmaB = CellConfig.CELL_CONV_FILTER_SIGMA_BLUE;
 
         this._brushSize = CellConfig.CELL_BRUSH_SIZE;
+        this._brushHardness = CellConfig.CELL_BRUSH_HARDNESS;
+        this._brushIsRandom = CellConfig.CELL_BRUSH_IS_RANDOM;
+
+        this._brushColor = CellConfig.CELL_BRUSH_COLOR;
+        this._bgColor = CellConfig.CELL_BACKGROUND_COLOR;
 
         this._countingFloorR = CellConfig.CELL_FILTER_COUNT_FLOOR_RED;
         this._countingFloorG = CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN;
@@ -160,6 +171,30 @@ export default class CellService {
                     stateR: Math.random(),
                     stateG:Math.random(),
                     stateB: Math.random()
+                }
+            }
+        }
+        return this._cells;
+    }
+
+    public getColoredCells(): ICell[][] {
+        const newRgb = ColorLibrary.hexToRgb(this._bgColor);
+        const newValues = ColorLibrary.rgbToCellValues(newRgb); 
+        // passer en teinte saturation luminosité
+        // randomiser saturation et luminosité
+        // passer en rgb
+        // calculer les values
+        const newR = newValues.red;
+        const newG = newValues.green;
+        const newB = newValues.blue;
+        for(let i = 0; i < this._maxI; i++){ 
+            for(let j = 0; j < this._maxJ; j++){
+                this._cells[i][j] = {
+                    i: i,
+                    j: j,
+                    stateR: newR * Math.random(),
+                    stateG: newG * Math.random(),
+                    stateB: newB * Math.random()
                 }
             }
         }
@@ -458,9 +493,9 @@ export default class CellService {
     }
 */
 
-    /*
+    
     public drawGaussianBlur(i: number, j: number): ICell[][] {
-        const blurSize = Math.floor(CellConfig.CELL_BRUSH_SIZE/2);
+        const blurSize = Math.floor(this._brushSize/2);
         const x0 = Math.floor(i - blurSize / 2);
         const y0 = Math.floor(j - blurSize / 2);
         for(let x = 0; x < blurSize; x++) {
@@ -483,7 +518,7 @@ export default class CellService {
         }
         return this._cells;
     }
-    */
+    
 
     private getCyclicCoords(x1: number, y1: number, maxI: number, maxJ: number): any {
         x1 = x1 < 0 ? maxI + x1 : x1; 
@@ -491,6 +526,51 @@ export default class CellService {
         y1 = y1 < 0 ? maxJ + y1 : y1;
         y1 = y1 >= maxJ ? y1 - maxJ : y1;
         return {x: x1, y: y1};
+    }
+
+    public drawColoredCircle(i: number, j: number): ICell[][] {
+        const size = this._brushSize;
+        const x0 = Math.floor(i - size / 2);
+        const y0 = Math.floor(j - size / 2);
+        const newRgb = ColorLibrary.hexToRgb(this._brushColor);
+        const newValues = ColorLibrary.rgbToCellValues(newRgb); 
+        // passer en teinte saturation luminosité
+        // randomiser saturation et luminosité
+        // passer en rgb
+        // calculer les values
+        const newR = newValues.red;
+        const newG = newValues.green;
+        const newB = newValues.blue;
+        for(let x = 0; x < size; x++) {
+            for(let y = 0; y < size; y++) {
+                const dist = Math.sqrt((x - size / 2) * (x - size / 2) + (y - size / 2) * (y - size / 2)) / size;
+                if(dist <= 0.5) {
+                    const n = this._brushHardness / 2;
+                    const b = (1 - this._brushHardness) / 2;
+                    const p = dist >= n ?  (1 -  ((dist - n) / b)) : 1;
+                    let newRed = p * newR;
+                    let newGreen = p * newG;
+                    let newBlue = p * newB;
+                    newRed = newRed > 1 ? 1 : newRed;
+                    newGreen = newGreen > 1 ? 1 : newGreen;
+                    newBlue = newBlue > 1 ? 1 : newBlue;
+                    let x1 = x0 + x;
+                    let y1 = y0 + y;
+                    /*
+                    x1 = x1 < 0 ? this._maxI + x1 : x1; 
+                    x1 = x1 >= this._maxI ? x1 - this._maxI : x1;
+                    y1 = y1 < 0 ? this._maxJ + y1 : y1;
+                    y1 = y1 >= this._maxJ ? y1 - this._maxJ : y1;
+                    */
+                    x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
+                    y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
+                    this._cells[x1][y1].stateR = newRed;
+                    this._cells[x1][y1].stateG = newGreen;
+                    this._cells[x1][y1].stateB = newBlue;  
+                }
+            }
+        }
+        return this._cells;
     }
 
     public drawRandowCircle(i: number, j: number): ICell[][] {
@@ -688,6 +768,22 @@ export default class CellService {
         this._brushSize = brushSize;
     }
 
+    public setBrushHardness(brushHardness: number) {
+        this._brushHardness = brushHardness;
+    }
+
+    public setBrushIsRandom(brushIsRandom: boolean) {
+        this._brushIsRandom = brushIsRandom;
+    }
+
+    public setBrushColor(brushColor: string) {
+        this._brushColor = brushColor;
+    }
+
+    public setBgColor(bgColor: string) {
+        this._bgColor = bgColor;
+    }
+
     public setCellGrowthMu(cellGrowthMu: number) {
         this._cellGrowthMu = cellGrowthMu;
     }
@@ -766,6 +862,22 @@ export default class CellService {
 
     public getBrushSize(): number {
         return this._brushSize;
+    }
+
+    public getBrushHardness(): number {
+        return this._brushHardness;
+    }
+
+    public getBrushIsRandom(): boolean {
+        return this._brushIsRandom;
+    }
+
+    public getBrushColor(): string {
+        return this._brushColor;
+    }
+
+    public getBgColor(): string {
+        return this._bgColor;
     }
 
     public getCellGrowthMu(): number {

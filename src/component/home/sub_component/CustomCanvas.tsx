@@ -14,6 +14,7 @@ import ToastLibrary from "../../../library/ToastLibrary";
 import IPresetValues from "../../../interface/IPresetValues";
 import PresetService from '../../../service/PresetService';
 import LocalStorageService from '../../../service/LocalStorageService';
+import BrushSettings from "./BrushSettings";
 
 interface ICustomCanvasProps {
   displayToast: (toast: IToast) => void,
@@ -51,6 +52,11 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     const [cellGrowthSigma, setCellGrowthSigma] = useState<number>(CellConfig.CELL_GROWTH_SIGMA);
 
     const [brushSize, setBrushSize] = useState<number>(CellConfig.CELL_BRUSH_SIZE);
+    const [brushHardness, setBrushHardness] = useState<number>(CellConfig.CELL_BRUSH_HARDNESS);
+    const [brushIsRandom, setBrushIsRandom] = useState<boolean>(CellConfig.CELL_BRUSH_IS_RANDOM);
+
+    const [brushColor, setBrushColor] = useState<string>(CellConfig.CELL_BRUSH_COLOR);
+    const [bgColor, setBgColor] = useState<string>(CellConfig.CELL_BACKGROUND_COLOR);
 
     const [floorR, setFloorR] = useState<number>(CellConfig.CELL_FILTER_COUNT_FLOOR_RED);
     const [floorG, setFloorG] = useState<number>(CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN);
@@ -89,7 +95,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       }
       fct();
       initCells();
-      randomizeCells();
+      handleFillCells();
       drawCells();
       if (loadCountRef.current < AppConfig.APP_LOAD_COUNT_MAX) {
           loadCountRef.current++;
@@ -116,7 +122,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
           setIsNewPresetDivOpen(false);
             //initCells();
             //generateRandomImage();
-            //randomizeCells();
+            //handleFillCells();
           generateNext();
           drawCells();
           setVirtTimeCounter((prev: number) => prev + cellEvolutionDeltaT);
@@ -150,7 +156,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     useEffect(() => {
       //cellServiceRef.current.setCellSize(cellSize);
       setIsNewPresetDivOpen(false);
-      randomizeCells();
+      handleFillCells();
       drawCells();
     }, [cellSize]);
 
@@ -167,15 +173,23 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         cellsRef.current = cellServiceRef.current.generateNextCells();
     }
 
-    const randomizeCells = () => {
+    const handleFillCells = () => {
         //cellsRef.current = cellServiceRef.current.init();
         //cellServiceRef.current.initConvolFilters();
-        cellsRef.current = cellServiceRef.current.getRandomizedCells();
+        if(brushIsRandom) {
+          cellsRef.current = cellServiceRef.current.getRandomizedCells();
+          ToastLibrary.displayRandomizeToast(props.displayToast);
+        } 
+        else {
+          cellsRef.current = cellServiceRef.current.getColoredCells();
+          // TODO ToastLibrary.displayColorToast(props.displayToast);
+        }
+        //cellsRef.current = cellServiceRef.current.getRandomizedCells();
         setVirtTimeCounter(0);
         //updateSliders();
     }
 
-    const clearCells = () => {
+    const handleClearCells = () => {
         cellsRef.current = cellServiceRef.current.initCells();
         //cellServiceRef.current.initConvolFilters();
         setVirtTimeCounter(0);
@@ -410,7 +424,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       cellServiceRef.current.initConvolFilters();
       //updateSliders();
       setVirtTimeCounter(0);
-      randomizeCells();
+      handleFillCells();
       drawCells();
       ToastLibrary.displayApplyPresetToast(preset.name, props.displayToast);
     }
@@ -429,6 +443,8 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         //!isRunning ? displayRunToast() : displayStopToast();
     }
 
+    // librairie ?
+
     const handleMouseDown = (e: any) => {
             handleCoords((e as unknown) as MouseEvent);
             if (canvasRef.current) {
@@ -443,11 +459,20 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
                 if(mouseI >= 0 && mouseI <= maxIRef.current && mouseJ >= 0 && mouseJ <= maxJRef.current){
                     //console.log('e.button :', e.button);
                     if (e.button === 0) {
-                        const ctx = canvasRef.current.getContext("2d");
-                        ctx?.ellipse(mouseX, mouseY, radius * cellSize, radius * cellSize, 0, 0, 2 * Math.PI);
+                        //const ctx = canvasRef.current.getContext("2d");
+                        //ctx?.ellipse(mouseX, mouseY, radius * cellSize, radius * cellSize, 0, 0, 2 * Math.PI);
                         //console.log('clic')
-                        
-                        cellsRef.current = cellServiceRef.current.drawRandowCircle(mouseI, mouseJ);
+                        if(brushIsRandom){
+                            cellsRef.current = cellServiceRef.current.drawRandowCircle(mouseI, mouseJ);
+                        }
+                        else {
+                          //console.log('colored brush');
+                          // drawGaussianBlur
+                          cellsRef.current = cellServiceRef.current.drawColoredCircle(mouseI, mouseJ);
+                          //cellsRef.current = cellServiceRef.current.drawGaussianBlur(mouseI, mouseJ);
+                          
+                        }
+                        //cellsRef.current = cellServiceRef.current.drawRandowCircle(mouseI, mouseJ);
                         drawCells();
                     }
                     else if (e.button === 2) {
@@ -515,6 +540,11 @@ const updateSliders = () => {
     setCellGrowthSigma(cellServiceRef.current.getCellGrowthSigma());
 
     setBrushSize(cellServiceRef.current.getBrushSize());
+    setBrushHardness(cellServiceRef.current.getBrushHardness());
+    setBrushIsRandom(cellServiceRef.current.getBrushIsRandom());
+
+    setBrushColor(cellServiceRef.current.getBrushColor());
+    setBgColor(cellServiceRef.current.getBgColor());
 
     setFloorR(cellServiceRef.current.getCountingFloorR());
     setFloorG(cellServiceRef.current.getCountingFloorG());
@@ -539,7 +569,7 @@ const updateSliders = () => {
     //cellsRef.current = cellServiceRef.current.getRandomizedCells();
     setVirtTimeCounter(0);
 
-    //randomizeCells();
+    //handleFillCells();
     //drawCells();
   }
 
@@ -611,6 +641,29 @@ const updateSliders = () => {
     setBrushSize(value);
     cellServiceRef.current.setBrushSize(value);
   }
+
+  const handleOnChangeBrushHardnessSlider = (value: any) => {
+    setBrushHardness(value);
+    cellServiceRef.current.setBrushHardness(value);
+    //console.log('brush hardness :', value);
+  }
+
+  const handleOnChangeBrushIsRandomCheckbox = (value: any) => {
+    setBrushIsRandom(value);
+    cellServiceRef.current.setBrushIsRandom(value);
+    //console.log('brush is random :', value);
+  }
+
+  const handleOnChangeBrushColorPicker = (value: any) => {
+    setBrushColor(value);
+    cellServiceRef.current.setBrushColor(value);
+  }
+
+  const handleOnChangeBgColorPicker = (value: any) => {
+    setBgColor(value);
+    cellServiceRef.current.setBgColor(value);
+  }
+
   const handleOnChangeFloorSliderR = (value: any) => {
     setFloorR(value);
     cellServiceRef.current.setCountingFloorR(value);
@@ -745,8 +798,7 @@ const updateSliders = () => {
                 <Button
                 className="btn-1"
                 onClick={() => {
-                    ToastLibrary.displayRandomizeToast(props.displayToast);
-                    randomizeCells();
+                    handleFillCells();
                     drawCells();
                 }}
                 >
@@ -756,7 +808,7 @@ const updateSliders = () => {
                 className="btn-1"
                 onClick={() => {
                     ToastLibrary.displayResetToast(props.displayToast);
-                    clearCells();
+                    handleClearCells();
                     drawCells();
                 }}
                 >
@@ -792,7 +844,7 @@ const updateSliders = () => {
               <Accordion.Item eventKey="1" >
                   <Accordion.Header>Settings</Accordion.Header>
                   <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
-                  <h4 className="text-center mt-2">Settings</h4>
+                    <h4 className="text-center mt-2">Settings</h4>
 
                     <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center w-100">
                         <div className="settings-column">
@@ -1042,17 +1094,6 @@ const updateSliders = () => {
                         </div>
                         <div className="settings-row mt-2">
                             <div className="settings-column">
-                                <label>Brush size : {brushSize} (cell)</label>
-                                <Slider 
-                                  min = {CellConfig.CELL_BRUSH_SIZE_MIN}
-                                  max = {CellConfig.CELL_BRUSH_SIZE_MAX}
-                                  step = {CellConfig.CELL_BRUSH_SIZE_STEP}
-                                  value= {brushSize}
-                                  onChange={handleOnChangeBrushSizeSlider}
-                                  className="slider-settings"
-                                />
-                            </div>
-                            <div className="settings-column">
                                 <label>Cell size : {cellSize} (pix)</label>
                                 <Slider
                                   min = {CellConfig.CELL_SIZE_MIN}
@@ -1150,7 +1191,23 @@ const updateSliders = () => {
                       }
                   </Accordion.Body>
               </Accordion.Item>
-
+              <Accordion.Item eventKey="2" >
+                <Accordion.Header>Brush settings</Accordion.Header>
+                <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+                 <BrushSettings 
+                    brushSize = {brushSize}
+                    brushHardness = {brushHardness}
+                    brushIsRandom = {brushIsRandom}
+                    brushColor = {brushColor}
+                    bgColor = {bgColor}
+                    handleOnChangeBrushSizeSlider = {handleOnChangeBrushSizeSlider}
+                    handleOnChangeBrushHardnessSlider = {handleOnChangeBrushHardnessSlider}
+                    handleOnChangeBrushIsRandomCheckbox = {handleOnChangeBrushIsRandomCheckbox}
+                    handleOnChangeBrushColorPicker = {handleOnChangeBrushColorPicker}
+                    handleOnChangeBgColorPicker = {handleOnChangeBgColorPicker}
+                    />
+                </Accordion.Body>
+              </Accordion.Item>
             </Accordion>
         </div>
     );
@@ -1158,11 +1215,16 @@ const updateSliders = () => {
 
 export default CustomCanvas;
 
-/*
-              <Accordion.Item eventKey="2" >
-                <Accordion.Header>Brush settings</Accordion.Header>
-                <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
-                 
-                </Accordion.Body>
-              </Accordion.Item>
+/*                            
+<div className="settings-column">
+    <label>Brush size : {brushSize} (cell)</label>
+    <Slider 
+      min = {CellConfig.CELL_BRUSH_SIZE_MIN}
+      max = {CellConfig.CELL_BRUSH_SIZE_MAX}
+      step = {CellConfig.CELL_BRUSH_SIZE_STEP}
+      value= {brushSize}
+      onChange={handleOnChangeBrushSizeSlider}
+      className="slider-settings"
+    />
+</div>
 */

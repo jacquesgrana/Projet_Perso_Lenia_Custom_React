@@ -9,6 +9,15 @@ export default class CellConfig {
     public static readonly CELL_BRUSH_SIZE_MAX = 64;
     public static readonly CELL_BRUSH_SIZE_STEP = 2;
 
+    public static readonly CELL_BRUSH_HARDNESS = 0.5;
+    public static readonly CELL_BRUSH_HARDNESS_MIN = 0;
+    public static readonly CELL_BRUSH_HARDNESS_MAX = 1;
+    public static readonly CELL_BRUSH_HARDNESS_STEP = 0.01;
+
+    public static readonly CELL_BRUSH_IS_RANDOM: boolean = true;
+    public static readonly CELL_BRUSH_COLOR = '#ffffff';
+    public static readonly CELL_BACKGROUND_COLOR = '#ffffff';
+
     public static readonly CELL_CONV_FILTER_RADIUS_RED = 7;
     public static readonly CELL_CONV_FILTER_RADIUS_GREEN = 7;
     public static readonly CELL_CONV_FILTER_RADIUS_BLUE = 7;

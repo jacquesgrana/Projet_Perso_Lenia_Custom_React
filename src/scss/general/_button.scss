@@ -87,3 +87,45 @@
         transition: 0.3s;
     }
 }
+
+.chckbx-1 {
+    width: 90px;
+    height: 36px;
+    padding: 5px;
+    border: 0px;
+    border-radius: 5px;
+    color: $color-white;
+    background-color: $color-bg-secondary !important;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background-color: $color-bg-secondary-dark !important;
+        color: $color-warning !important;
+        transition: 0.3s;
+    }
+
+    &:disabled {
+        background-color: $color-bg-secondary-dark-2 !important;
+        color: $color-bg !important;
+        transition: 0.3s;
+    }
+
+    &:active {
+        background-color: $color-bg-secondary-light !important;
+        color: $color-warning !important;
+        transition: 0.3s;
+    }
+
+    &.chckbx-1-checked {
+        background-color: $color-bg-secondary-dark-2 !important;
+        color: $color-warning !important;
+        transition: 0.3s;
+    }
+
+    &.chckbx-1-checked:hover {
+        background-color: $color-bg-secondary-dark !important;
+        color: $color-warning !important;
+        transition: 0.3s;
+    }
+}
