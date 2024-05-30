@@ -30,10 +30,10 @@ const BrushSettings = (props: IBrushSettingsProps) => {
 
     return (
         <div id="app-brush-settings" className="d-flex flex-column align-items-center w-100">
-            <h4 className="text-center mt-2">Brush Settings</h4>
+            <h4 className="text-center mt-2">Brush & fill Settings</h4>
 
             <div className="d-flex flex-row align-items-center gap-3 flex-wrap justify-content-center w-100">
-                <div className="settings-column">
+                <div className="settings-column" title="Change brush size">
                     <label>Brush size : {props.brushSize} (cell)</label>
                     <Slider 
                     min = {CellConfig.CELL_BRUSH_SIZE_MIN}
@@ -46,8 +46,8 @@ const BrushSettings = (props: IBrushSettingsProps) => {
                         }}
                     className="slider-settings"
                     />
-                </div>
-                <div className="settings-column">
+                </div>     
+                <div className="settings-column" title="Change brush hardness">
                     <label>Brush hardness : {Math.floor(props.brushHardness * 100)} (%)</label>
                     <Slider 
                     min = {CellConfig.CELL_BRUSH_HARDNESS_MIN}
@@ -70,6 +70,7 @@ const BrushSettings = (props: IBrushSettingsProps) => {
                         checked={props.brushIsRandom}
                         value="1"
                         onChange={(e) => props.handleOnChangeBrushIsRandomCheckbox(e.currentTarget.checked)} //e.currentTarget.checked
+                        title="Toggle random brush"
                         >
                         Random
                         </ToggleButton>
@@ -84,11 +85,11 @@ const BrushSettings = (props: IBrushSettingsProps) => {
                             //console.log('brush color :', e.target.value);
                             props.handleOnChangeBrushColorPicker(e.target.value);
                         }}
-                        title="Choose your color" 
+                        title="Choose brush color" 
                     />
                 </div>
                 <div className="settings-column">
-                    <label>Background color : {getCellValuesComment(props.bgColor)}</label>
+                    <label>Fill background color : {getCellValuesComment(props.bgColor)}</label>
                     <input type="color"
                         id="bgColorInput"
                         value={props.bgColor}
@@ -96,7 +97,7 @@ const BrushSettings = (props: IBrushSettingsProps) => {
                             //console.log('bg color :', e.target.value);
                             props.handleOnChangeBgColorPicker(e.target.value);
                         }}
-                        title="Choose your color" 
+                        title="Choose fill background color" 
                     />
                 </div>
             </div>

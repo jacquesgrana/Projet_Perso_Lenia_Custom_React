@@ -45,7 +45,7 @@ const Home = () => {
     */
 
     const reloadUserPresetsCB = async () => {
-        setUserPresets(presetServiceRef.current.getUserPresets());
+        setUserPresets(await presetServiceRef.current.getUserPresets());
     }
 
     return (
