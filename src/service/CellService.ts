@@ -178,23 +178,28 @@ export default class CellService {
     }
 
     public getColoredCells(): ICell[][] {
-        const newRgb = ColorLibrary.hexToRgb(this._bgColor);
-        const newValues = ColorLibrary.rgbToCellValues(newRgb); 
-        // passer en teinte saturation luminosité
-        // randomiser saturation et luminosité
-        // passer en rgb
-        // calculer les values
-        const newR = newValues.red;
-        const newG = newValues.green;
-        const newB = newValues.blue;
+        let rgb = ColorLibrary.hexToRgb(this._bgColor);
+        const bgValues = ColorLibrary.rgbToCellValues(rgb);
         for(let i = 0; i < this._maxI; i++){ 
             for(let j = 0; j < this._maxJ; j++){
+                const randomRgb = ColorLibrary.getRandomSatLumColorFromRgb(rgb);
+                const randomValues = ColorLibrary.rgbToCellValues(randomRgb);
+                let r = randomValues.red;
+                let g = randomValues.green;
+                let b = randomValues.blue;
+
+                // cas du background en 'blanc'
+                if(bgValues.red == 1 && bgValues.green == 1 && bgValues.blue == 1) {
+                    r = Math.random();
+                    g = Math.random();
+                    b = Math.random();
+                }
                 this._cells[i][j] = {
                     i: i,
                     j: j,
-                    stateR: newR * Math.random(),
-                    stateG: newG * Math.random(),
-                    stateB: newB * Math.random()
+                    stateR: r,
+                    stateG: g,
+                    stateB: b
                 }
             }
         }
@@ -291,86 +296,6 @@ export default class CellService {
         let cptR = 0;
         let cptG = 0;
         let cptB = 0;
-        //const countingFloorR = CellConfig.CELL_FILTER_COUNT_FLOOR_RED;
-        //const countingFloorG = CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN;
-        //const countingFloorB = CellConfig.CELL_FILTER_COUNT_FLOOR_BLUE;
-
-        /*
-        let maxLength = Math.max(this._convolFilterR.length, this._convolFilterG.length, this._convolFilterB.length);
-        //console.log('maxLength :', maxLength);
-        //console.log('lengths :', this._convolFilterR.length, this._convolFilterG.length, this._convolFilterB.length);
-        const deltaR = (maxLength - this._convolFilterR.length) / 2;
-        const deltaG = (maxLength - this._convolFilterG.length) / 2;
-        const deltaB = (maxLength - this._convolFilterB.length) / 2;
-        //console.log('deltas :', deltaR, deltaG, deltaB);
-
-        for(let i = 0; i < maxLength; i++) {
-            for(let j = 0; j < maxLength; j++) {
-                //const filterResultR = this._convolFilterR[i+deltaR][j+deltaR];
-                //const filterResultG = this._convolFilterG[i+deltaG][j+deltaG];
-                //const filterResultB = this._convolFilterB[i+deltaB][j+deltaB];
-                if(i >= deltaR && i < (this._convolFilterR.length + deltaR) && j >= deltaR && j <(this._convolFilterR.length + deltaR)) {
-                    const filterResultR = this._convolFilterR[i+deltaR][j+deltaR];
-                    let x1 = x0R + i;
-                    let y1 = y0R + j;
-                    x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
-                    y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
-                    const valueR = (this._cells[x1][y1].stateR * coefRedRed + this._cells[x1][y1].stateG * coefRedGreen + this._cells[x1][y1].stateB * coefRedBlue) / (coefRedRed + coefRedGreen + coefRedBlue);
-                    sumR += filterResultR * valueR;
-                    if(filterResultR > this._countingFloorR) cptR++;
-                }
-
-                if(i >= deltaG && i < (this._convolFilterG.length + deltaG) && j >= deltaG && j <(this._convolFilterG.length + deltaG)) {
-                    const filterResultG = this._convolFilterG[i+deltaG][j+deltaG];
-                    let x1 = x0G + i;
-                    let y1 = y0G + j;
-                    x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
-                    y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
-                    const valueG = (this._cells[x1][y1].stateR * coefGreenRed + this._cells[x1][y1].stateG * coefGreenGreen + this._cells[x1][y1].stateB * coefGreenBlue) / (coefGreenRed + coefGreenGreen + coefGreenBlue);
-                    sumG += filterResultG * valueG;
-                    if(filterResultG > this._countingFloorG) cptG++;
-                }
-
-                if(i >= deltaB && i < (this._convolFilterB.length + deltaB) && j >= deltaB && j <(this._convolFilterB.length + deltaB)) {
-                    const filterResultB = this._convolFilterB[i+deltaB][j+deltaB];
-                    let x1 = x0B + i;
-                    let y1 = y0B + j;
-                    x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
-                    y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
-                    const valueB = (this._cells[x1][y1].stateR * coefBlueRed + this._cells[x1][y1].stateG * coefBlueGreen + this._cells[x1][y1].stateB * coefBlueBlue) / (coefBlueRed + coefBlueGreen + coefBlueBlue);
-                    sumB += filterResultB * valueB;
-                    if(filterResultB > this._countingFloorB) cptB++;
-                }
-            }
-            
-        }
-*/
-        /*
-        // boucles dans le convolFilter
-        let maxRadius = Math.max(this._convolRadiusR, this._convolRadiusG, this._convolRadiusB.length);
-        for(let i = 0; i < this._convolFilterR.length; i++) {
-            for(let j = 0; j < this._convolFilterR.length; j++) {
-                const filterResultR = this._convolFilterR[i][j];
-                const filterResultG = this._convolFilterG[i][j];
-                const filterResultB = this._convolFilterB[i][j];
-                let x1 = x0 + i;
-                let y1 = y0 + j;
-                // gerer les bords du tableau de 0 a maxI : reboucler
-                // gerer les bords du tableau de 0 a maxJ : reboucler
-                x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
-                y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
-                
-                const valueR = (this._cells[x1][y1].stateR * coefRedRed + this._cells[x1][y1].stateG * coefRedGreen + this._cells[x1][y1].stateB * coefRedBlue) / (coefRedRed + coefRedGreen + coefRedBlue);
-                const valueG = (this._cells[x1][y1].stateR * coefGreenRed + this._cells[x1][y1].stateG * coefGreenGreen + this._cells[x1][y1].stateB * coefGreenBlue) / (coefGreenRed + coefGreenGreen + coefGreenBlue);
-                const valueB = (this._cells[x1][y1].stateR * coefBlueRed + this._cells[x1][y1].stateG * coefBlueGreen + this._cells[x1][y1].stateB * coefBlueBlue) / (coefBlueRed + coefBlueGreen + coefBlueBlue);
-                sumR += filterResultR * valueR;
-                sumG += filterResultG * valueG;
-                sumB += filterResultB * valueB;
-                if(filterResultR > this._countingFloorR) cptR++;
-                if(filterResultG > this._countingFloorG) cptG++;
-                if(filterResultB > this._countingFloorB) cptB++;
-            }
-        }*/
 
         for(let i = 0; i < this._convolFilterR.length; i++) {
             for(let j = 0; j < this._convolFilterR.length; j++) {
@@ -435,7 +360,7 @@ export default class CellService {
             'red' : (sumR / cptR),
             'green' : (sumG / cptG),
             'blue' : (sumB / cptB)
-        }; //this._convolFilter.length * this._convolFilter.length
+        };
         return averages;
     }
 
@@ -473,26 +398,6 @@ export default class CellService {
         this._cells = newCells;
         return this._cells;
     }
-
-/*
-    public testConvolFilter(i: number, j: number): ICell[][] {
-        const i0 = Math.floor(i - this._convolFilterR.length / 2);
-        const j0 = Math.floor(j - this._convolFilterR.length / 2);
-        //console.log('i0 :', i0, ' j0 :', j0);
-        for(let x = 0; x < this._convolFilterR.length; x++) {
-            for(let y = 0; y < this._convolFilterR.length; y++) {
-                //console.log(this._convolFilterR[x][y]);
-                const value = this._convolFilterR[x][y];
-                
-                this._cells[i0 + x][j0 + y].stateR = value;
-                this._cells[i0 + x][j0 + y].stateG = value;
-                this._cells[i0 + x][j0 + y].stateB = value;
-            }   
-        }
-        return this._cells;
-    }
-*/
-
     
     public drawGaussianBlur(i: number, j: number): ICell[][] {
         const blurSize = Math.floor(this._brushSize/2);
@@ -583,15 +488,27 @@ export default class CellService {
         const size = this._brushSize;
         const x0 = Math.floor(i - size / 2);
         const y0 = Math.floor(j - size / 2);
+        const rgb = ColorLibrary.hexToRgb(this._brushColor);
+        const brushValues = ColorLibrary.rgbToCellValues(rgb);
         for(let x = 0; x < size; x++) {
             for(let y = 0; y < size; y++) {
                 const dist = Math.sqrt((x - size / 2) * (x - size / 2) + (y - size / 2) * (y - size / 2)) / size;
-                //console.log('dist :', dist);
-                //const value = Math.random();
                 if(dist <= 0.5) {
-                    let newRed = Math.random();
-                    let newGreen = Math.random();
-                    let newBlue = Math.random();
+                    
+                    const randomRgb = ColorLibrary.getRandomSatLumColorFromRgb(rgb);
+                    const randomValues = ColorLibrary.rgbToCellValues(randomRgb);
+
+                    let newRed = randomValues.red;
+                    let newGreen = randomValues.green;
+                    let newBlue = randomValues.blue;
+
+                    // cas de la brosse colorée en 'blanc'
+                    if(brushValues.red == 1 && brushValues.green == 1 && brushValues.blue == 1) {
+                        newRed = Math.random();
+                        newGreen = Math.random();
+                        newBlue = Math.random();
+                    }
+
                     newRed = newRed > 1 ? 1 : newRed;
                     newGreen = newGreen > 1 ? 1 : newGreen;
                     newBlue = newBlue > 1 ? 1 : newBlue;

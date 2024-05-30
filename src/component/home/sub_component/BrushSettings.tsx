@@ -1,4 +1,3 @@
-import { useState } from "react";
 import CellConfig from "../../../config/CellConfig";
 import Slider from "rc-slider";
 import { ToggleButton } from "react-bootstrap";
