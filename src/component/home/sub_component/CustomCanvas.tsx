@@ -174,8 +174,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     }
 
     const handleFillCells = () => {
-        //cellsRef.current = cellServiceRef.current.init();
-        //cellServiceRef.current.initConvolFilters();
+        /*
         if(brushIsRandom) {
           cellsRef.current = cellServiceRef.current.getRandomizedCells();
           ToastLibrary.displayRandomizeToast(props.displayToast);
@@ -183,10 +182,10 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         else {
           cellsRef.current = cellServiceRef.current.getColoredCells();
           // TODO ToastLibrary.displayColorToast(props.displayToast);
-        }
+        }*/
+        cellsRef.current = cellServiceRef.current.getColoredCells();
         //cellsRef.current = cellServiceRef.current.getRandomizedCells();
         setVirtTimeCounter(0);
-        //updateSliders();
     }
 
     const handleClearCells = () => {

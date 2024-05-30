@@ -62,7 +62,7 @@ const BrushSettings = (props: IBrushSettingsProps) => {
                     />
                 </div>
                 <div className="settings-column">
-                    <label>Random brush and background : {props.brushIsRandom ? "On" : "Off"}</label>
+                    <label>Random brush : {props.brushIsRandom ? "On" : "Off"}</label>
                         <ToggleButton
                         id="toggle-check"
                         type="checkbox"
