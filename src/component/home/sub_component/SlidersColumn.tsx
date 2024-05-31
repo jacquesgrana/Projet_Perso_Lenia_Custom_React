@@ -21,7 +21,7 @@ const SlidersColumn = (props: ISettingsColumnProps) => {
         <div className="settings-column">
             <p><strong>{props.title}</strong></p>
             <label>Counting floor : {props.floor}</label>
-                <Slider 
+            <Slider 
                 min = {CellConfig.CELL_FILTER_COUNT_FLOOR_MIN}
                 max = {CellConfig.CELL_FILTER_COUNT_FLOOR_MAX}
                 step = {CellConfig.CELL_FILTER_COUNT_FLOOR_STEP}
@@ -31,7 +31,7 @@ const SlidersColumn = (props: ISettingsColumnProps) => {
             />
             <p className="mt-2 mb-1"><strong>Convolution filter</strong></p>
             <label>Radius : {props.convFilterRadius}</label>
-                <Slider 
+            <Slider 
                 min = {CellConfig.CELL_CONV_FILTER_RADIUS_MIN}
                 max = {CellConfig.CELL_CONV_FILTER_RADIUS_MAX}
                 step = {CellConfig.CELL_CONV_FILTER_RADIUS_STEP}
@@ -40,7 +40,7 @@ const SlidersColumn = (props: ISettingsColumnProps) => {
                 className="slider-settings" 
             />
             <label>Mu : {props.convFilterMu}</label>
-                <Slider 
+            <Slider 
                 min = {CellConfig.CELL_CONV_FILTER_MU_MIN}
                 max = {CellConfig.CELL_CONV_FILTER_MU_MAX}
                 step = {CellConfig.CELL_CONV_FILTER_MU_STEP}

@@ -65,7 +65,7 @@
                 "cellEvolutionDeltaT": 0.05,
 
                 "cellGrowthMu": 0.15,
-                "cellGrowthSigma": 0.015
+                "cellGrowthSigma": 0.016
             }
         },
         {

@@ -129,7 +129,6 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
           drawCells();
           setVirtTimeCounter((prev: number) => prev + cellEvolutionDeltaT);
           intervalRef.current = setTimeout(fct, delay);
-          //if(isMouseOver) drawBrush();
         };
   
         if (isRunning) {
@@ -486,8 +485,8 @@ const drawBrush =(e: any) => {
   }
   //console.log('drawBrush');
   handleCoords((e as unknown) as MouseEvent);
-  if (canvasRef.current && !isRunning) {
-    drawCells();
+  if (canvasRef.current) {
+    if(!isRunning) drawCells();
     const ctx = canvasRef.current.getContext("2d");
 
     const mouseX = coords.x;
@@ -496,13 +495,13 @@ const drawBrush =(e: any) => {
     
     // TODO améliorer : utiliser une Config
     if (ctx) {
-      ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
-      ctx.lineWidth = 6;
+      ctx.strokeStyle = CanvasConfig.BRUSH_STROKE_LARGE_COLOR;
+      ctx.lineWidth = CanvasConfig.BRUSH_STROKE_LARGE_WIDTH;
       ctx.beginPath();
       ctx.arc(mouseX, mouseY, radius, 0, 2 * Math.PI);
       ctx.stroke();
       ctx.strokeStyle = ColorLibrary.hexToRgb(brushColor); // Orange à 100%
-      ctx.lineWidth = 4;
+      ctx.lineWidth = CanvasConfig.BRUSH_STROKE_WIDTH;
       ctx.beginPath();
       ctx.arc(mouseX, mouseY, radius, 0, 2 * Math.PI);
       ctx.stroke();
