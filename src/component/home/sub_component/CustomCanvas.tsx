@@ -16,6 +16,7 @@ import PresetService from '../../../service/PresetService';
 import LocalStorageService from '../../../service/LocalStorageService';
 import BrushSettings from "./BrushSettings";
 import Settings from "./Settings";
+import ColorLibrary from "../../../library/ColorLibrary";
 
 interface ICustomCanvasProps {
   displayToast: (toast: IToast) => void,
@@ -27,7 +28,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [isRunning, setIsRunning] = useState(false);
-    //const [isMouseOver, setIsMouseOver] = useState(false);
+    const [isMouseOver, setIsMouseOver] = useState(false);
     const [virtTimeCounter, setVirtTimeCounter] = useState(0);
     const [coords, handleCoords] = UseMousePosition(true);
     const width = CanvasConfig.CANVAS_WIDTH;
@@ -128,6 +129,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
           drawCells();
           setVirtTimeCounter((prev: number) => prev + cellEvolutionDeltaT);
           intervalRef.current = setTimeout(fct, delay);
+          //if(isMouseOver) drawBrush();
         };
   
         if (isRunning) {
@@ -160,6 +162,12 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       handleFillCells();
       drawCells();
     }, [cellSize]);
+
+    /*
+    useEffect(() => {
+      if(isMouseOver) drawBrush();
+    }, [isMouseOver]);
+    */
 
     const initCells = () => {
         cellsRef.current = cellServiceRef.current.initCells();
@@ -425,81 +433,83 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
 
     // librairie ?
 
-    const handleMouseDown = (e: any) => {
-            handleCoords((e as unknown) as MouseEvent);
-            if (canvasRef.current) {
-                // récupérer les coordonnées du clic
-                const mouseX = coords.x;
-                const mouseY = coords.y;
-                //console.log("MouseX : ", mouseX, " MouseY : ", mouseY);
-                const mouseI = Math.floor(mouseX / cellSize);
-                const mouseJ = Math.floor(mouseY / cellSize);
-                //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
-                const radius = Math.floor(brushSize/2);
-                if(mouseI >= 0 && mouseI <= maxIRef.current && mouseJ >= 0 && mouseJ <= maxJRef.current){
-                    //console.log('e.button :', e.button);
-                    if (e.button === 0) {
-                        //const ctx = canvasRef.current.getContext("2d");
-                        //ctx?.ellipse(mouseX, mouseY, radius * cellSize, radius * cellSize, 0, 0, 2 * Math.PI);
-                        //console.log('clic')
-                        if(brushIsRandom){
-                            cellsRef.current = cellServiceRef.current.drawRandowCircle(mouseI, mouseJ);
-                        }
-                        else {
-                          //console.log('colored brush');
-                          // drawGaussianBlur
-                          cellsRef.current = cellServiceRef.current.drawColoredCircle(mouseI, mouseJ);
-                          //cellsRef.current = cellServiceRef.current.drawGaussianBlur(mouseI, mouseJ);
-                          
-                        }
-                        //cellsRef.current = cellServiceRef.current.drawRandowCircle(mouseI, mouseJ);
-                        drawCells();
-                    }
-                    else if (e.button === 2) {
-                        //e.preventDefault();
-                        //console.log('clic droit')
-                        cellsRef.current = cellServiceRef.current.clearCircle(mouseI, mouseJ);
-                        drawCells();
-                    }
-                    
+  const handleMouseDown = (e: any) => {
+    handleCoords((e as unknown) as MouseEvent);
+    if (canvasRef.current) {
+        // récupérer les coordonnées du clic
+        const mouseX = coords.x;
+        const mouseY = coords.y;
+        //console.log("MouseX : ", mouseX, " MouseY : ", mouseY);
+        const mouseI = Math.floor(mouseX / cellSize);
+        const mouseJ = Math.floor(mouseY / cellSize);
+        //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
+        const radius = Math.floor(brushSize/2);
+        if(mouseI >= 0 && mouseI <= maxIRef.current && mouseJ >= 0 && mouseJ <= maxJRef.current){
+            //console.log('e.button :', e.button);
+            if (e.button === 0) {
+                //const ctx = canvasRef.current.getContext("2d");
+                //ctx?.ellipse(mouseX, mouseY, radius * cellSize, radius * cellSize, 0, 0, 2 * Math.PI);
+                //console.log('clic')
+                if(brushIsRandom){
+                    cellsRef.current = cellServiceRef.current.drawRandowCircle(mouseI, mouseJ);
                 }
-                
-                //cellsRef.current = cellServiceRef.current.getCells();
-            }
-          }
-
-    const drawBrush = (e: any) => {
-        handleCoords((e as unknown) as MouseEvent);
-        if (canvasRef.current) {
-            const ctx = canvasRef.current.getContext("2d");
-
-            const mouseX = coords.x;
-            const mouseY = coords.y;
-            //console.log("MouseX : ", mouseX, " MouseY : ", mouseY);
-            const mouseI = Math.floor(mouseX / cellSize);
-            const mouseJ = Math.floor(mouseY / cellSize);
-            //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
-            const radius = Math.floor(brushSize/2);
-            if(mouseI >= radius && mouseI <= maxIRef.current - radius && mouseJ >= radius && mouseJ <= maxJRef.current - radius){
-                    //const ctx = canvasRef.current.getContext("2d");
-                    if(ctx){
-                        ctx.ellipse(mouseX, mouseY, radius * cellSize, radius * cellSize, 0, 0, 2 * Math.PI); // Dessinez l'ellipse
-
-                        // Définissez la couleur de remplissage
-                        ctx.fillStyle = 'rgba(255, 165, 0, 0.4)'; // Orange transparent à 40%
-                        ctx.fill(); // Remplissez l'ellipse avec la couleur de remplissage
-
-                        // Définissez la couleur du trait
-                        ctx.strokeStyle = 'rgba(255, 165, 0, 1)'; // Orange à 100%
-                        ctx.lineWidth = 2; // Définissez l'épaisseur du trait (ajustez selon vos besoins)
-                        ctx.stroke(); // Dessinez le contour de l'ellipse avec la couleur du trait
-
+                else {
+                  //console.log('colored brush');
+                  // drawGaussianBlur
+                  cellsRef.current = cellServiceRef.current.drawColoredCircle(mouseI, mouseJ);
+                  //cellsRef.current = cellServiceRef.current.drawGaussianBlur(mouseI, mouseJ);
+                  
                 }
-
+                //cellsRef.current = cellServiceRef.current.drawRandowCircle(mouseI, mouseJ);
+                drawCells();
             }
-        
+            else if (e.button === 2) {
+                //e.preventDefault();
+                //console.log('clic droit')
+                cellsRef.current = cellServiceRef.current.clearCircle(mouseI, mouseJ);
+                drawCells();
+            }
+            if(isMouseOver) drawBrush(e);
         }
+        
+        //cellsRef.current = cellServiceRef.current.getCells();
     }
+  }
+
+
+
+const drawBrush =(e: any) => {
+  const radius = Math.floor((brushSize/2) * cellSize);
+  const canvas = document.getElementById('app-canvas') as HTMLCanvasElement | null;
+  if (canvas) {
+    canvas.style.cursor = 'crosshair';
+  }
+  //console.log('drawBrush');
+  handleCoords((e as unknown) as MouseEvent);
+  if (canvasRef.current && !isRunning) {
+    drawCells();
+    const ctx = canvasRef.current.getContext("2d");
+
+    const mouseX = coords.x;
+    const mouseY = coords.y;
+    //console.log("MouseX : ", mouseX, " MouseY : ", mouseY);
+    
+    // TODO améliorer : utiliser une Config
+    if (ctx) {
+      ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, radius, 0, 2 * Math.PI);
+      ctx.stroke();
+      ctx.strokeStyle = ColorLibrary.hexToRgb(brushColor); // Orange à 100%
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, radius, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+  }
+}
+
 
 const updateSliders = () => {
     setCellSize(cellServiceRef.current.getCellSize());
@@ -759,10 +769,10 @@ const updateSliders = () => {
       cellServiceRef.current.setCellEvolutionDeltaT(value);
   }
 
-  /*
+  
   const handleMouseEnter = () => {
     setIsMouseOver((prev) => {
-      console.log('isMouseOver :', !prev);
+      //console.log('isMouseOver :', !prev);
       return !prev;
     });
     //drawBrush();
@@ -770,40 +780,26 @@ const updateSliders = () => {
 
   const handleMouseLeave = () => {
     setIsMouseOver((prev) => {
-      console.log('isMouseOver :', !prev);
+      //console.log('isMouseOver :', !prev);
       return !prev;
     });
+    if(!isRunning) drawCells();
   }
-*/
 
-  const handleMouseOver = (e: any) => {
-    console.log('mouseOver');
-    //drawBrush(e);
-    const radius = 150;
-      const cx = radius;
-      const cy = radius;
-      const svgCode = '<svg xmlns="http://www.w3.org/2000/svg" width="' + radius*2 + '" height="' + radius*2 + '"><circle cx="' + cx + '" cy="' + cy + '" r="' + radius + '" fill="none" stroke="orange" stroke-width="4"/></svg>';
-      console.log('svgCode :', svgCode);
-      const canvas = document.getElementById('app-canvas') as HTMLCanvasElement | null;
-      if (canvas) {
-        canvas.style.cursor = 'url(data:image/svg+xml;utf8,' + encodeURIComponent(svgCode) + '), auto';
-        canvas.style.cursor = 'crosshair';
-      }
-  }
 
     return (
         <div className="d-flex flex-column align-items-center gap-1">
            
             <canvas
-            ref={canvasRef}
-            width={width}
-            height={height}
-            id="app-canvas"
-            onMouseDown={handleMouseDown}
-            //onMouseOver={handleMouseOver}
-            //onMouseMove={handleMouseOver}
-            //onMouseEnter={handleMouseEnter}
-            //onMouseLeave={handleMouseLeave}
+              ref={canvasRef}
+              width={width}
+              height={height}
+              id="app-canvas"
+              onMouseDown={handleMouseDown}
+              //onMouseOver={handleMouseOver}
+              onMouseMove={drawBrush}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             />
             <p>left-click : add circle / right-click : clear circle</p>
 
