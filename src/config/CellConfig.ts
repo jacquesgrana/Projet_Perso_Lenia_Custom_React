@@ -6,7 +6,7 @@ export default class CellConfig {
 
     public static readonly CELL_BRUSH_SIZE = 32; // nombre pair !!!
     public static readonly CELL_BRUSH_SIZE_MIN = 8;
-    public static readonly CELL_BRUSH_SIZE_MAX = 64;
+    public static readonly CELL_BRUSH_SIZE_MAX = 96;
     public static readonly CELL_BRUSH_SIZE_STEP = 2;
 
     public static readonly CELL_BRUSH_HARDNESS = 0.5;
@@ -22,7 +22,7 @@ export default class CellConfig {
     public static readonly CELL_CONV_FILTER_RADIUS_GREEN = 7;
     public static readonly CELL_CONV_FILTER_RADIUS_BLUE = 7;
     public static readonly CELL_CONV_FILTER_RADIUS_MIN = 6;
-    public static readonly CELL_CONV_FILTER_RADIUS_MAX = 16;
+    public static readonly CELL_CONV_FILTER_RADIUS_MAX = 24;
     public static readonly CELL_CONV_FILTER_RADIUS_STEP = 1;
 
     public static readonly CELL_CONV_FILTER_MU_RED = 0.5;
@@ -77,4 +77,5 @@ export default class CellConfig {
     public static readonly CELL_COLOR_SENSIBILITY_MIN: number = 0;
     public static readonly CELL_COLOR_SENSIBILITY_MAX: number = 24;
     public static readonly CELL_COLOR_SENSIBILITY_STEP: number = 0.25;
+    public static readonly CELL_COLOR_SENSIBILITY_MIN_NOT_NULL = this.CELL_COLOR_SENSIBILITY_STEP;
 }

@@ -666,54 +666,89 @@ const updateSliders = () => {
   }*/
 
   const handleOnChangeSensibilitySliderRR = (value: any) => {
+    //value = makeSensibilityCorrectionR(value);
+    if(value == 0 && cellServiceRef.current.getColorSensibilityR()[1] == 0 && cellServiceRef.current.getColorSensibilityR()[2] == 0) {
+      value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
+    }
     const tab: [number, number, number] = [value, cellServiceRef.current.getColorSensibilityR()[1], cellServiceRef.current.getColorSensibilityR()[2]];
     setColorSensibilityR(tab);
     cellServiceRef.current.setColorSensibilityR(tab);
   }
 
   const handleOnChangeSensibilitySliderRG = (value: any) => {
+    //value = makeSensibilityCorrectionR(value);
+    if(value == 0 && cellServiceRef.current.getColorSensibilityR()[0] == 0 && cellServiceRef.current.getColorSensibilityR()[2] == 0) {
+      value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
+    }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityR()[0], value, cellServiceRef.current.getColorSensibilityR()[2]];
     setColorSensibilityR(tab);
     cellServiceRef.current.setColorSensibilityR(tab);
   }
 
   const handleOnChangeSensibilitySliderRB = (value: any) => {
+    //value = makeSensibilityCorrectionR(value);
+    if(value == 0 && cellServiceRef.current.getColorSensibilityR()[0] == 0 && cellServiceRef.current.getColorSensibilityR()[1] == 0) {
+      value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
+    }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityR()[0], cellServiceRef.current.getColorSensibilityR()[1], value];
     setColorSensibilityR(tab);
     cellServiceRef.current.setColorSensibilityR(tab);
   }
 
   const handleOnChangeSensibilitySliderGR = (value: any) => {
+      //value = makeSensibilityCorrectionG(value);
+      if(value == 0 && cellServiceRef.current.getColorSensibilityG()[1] == 0 && cellServiceRef.current.getColorSensibilityG()[2] == 0) {
+        value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
+      }
       const tab: [number, number, number] = [value, cellServiceRef.current.getColorSensibilityG()[1], cellServiceRef.current.getColorSensibilityG()[2]];
       setColorSensibilityG(tab);
       cellServiceRef.current.setColorSensibilityG(tab);
   }
 
   const handleOnChangeSensibilitySliderGG = (value: any) => {
+    //value = makeSensibilityCorrectionG(value);
+    if(value == 0 && cellServiceRef.current.getColorSensibilityG()[0] == 0 && cellServiceRef.current.getColorSensibilityG()[2] == 0) {
+      value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
+    }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityG()[0], value, cellServiceRef.current.getColorSensibilityG()[2]];
     setColorSensibilityG(tab);
     cellServiceRef.current.setColorSensibilityG(tab);
   }
 
   const handleOnChangeSensibilitySliderGB = (value: any) => {
+    //value = makeSensibilityCorrectionG(value);
+    if(value == 0 && cellServiceRef.current.getColorSensibilityG()[0] == 0 && cellServiceRef.current.getColorSensibilityG()[1] == 0) {
+      value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
+    }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityG()[0], cellServiceRef.current.getColorSensibilityG()[1], value];
     setColorSensibilityG(tab);
     cellServiceRef.current.setColorSensibilityG(tab);
   }
 
+  
+
   const handleOnChangeSensibilitySliderBR = (value: any) => {
+    if(value == 0 && cellServiceRef.current.getColorSensibilityB()[1] == 0 && cellServiceRef.current.getColorSensibilityB()[2] == 0) {
+      value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
+    }
     const tab: [number, number, number] = [value, cellServiceRef.current.getColorSensibilityB()[1], cellServiceRef.current.getColorSensibilityB()[2]];
     setColorSensibilityB(tab);
     cellServiceRef.current.setColorSensibilityB(tab);
   }
 
   const handleOnChangeSensibilitySliderBG = (value: any) => {
+    if(value == 0 && cellServiceRef.current.getColorSensibilityB()[0] == 0 && cellServiceRef.current.getColorSensibilityB()[2] == 0) {
+      value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
+    }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityB()[0], value, cellServiceRef.current.getColorSensibilityB()[2]];
     setColorSensibilityB(tab);
     cellServiceRef.current.setColorSensibilityB(tab);
   }
 
   const handleOnChangeSensibilitySliderBB = (value: any) => {
+    if(value == 0 && cellServiceRef.current.getColorSensibilityB()[0] == 0 && cellServiceRef.current.getColorSensibilityB()[1] == 0) {
+      value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
+    }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityB()[0], cellServiceRef.current.getColorSensibilityB()[1], value];
     setColorSensibilityB(tab);
     cellServiceRef.current.setColorSensibilityB(tab);
@@ -888,7 +923,7 @@ const updateSliders = () => {
                     handleOnChangeNewPresetPseudo={handleOnChangeNewPresetPseudo}
                     isNewPresetDivFieldsNotEmpty={isNewPresetDivFieldsNotEmpty}
                   />
-                  </Accordion.Body>
+                </Accordion.Body>
               </Accordion.Item>
               <Accordion.Item eventKey="2" >
                 <Accordion.Header>Brush & fill settings</Accordion.Header>
