@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/Projet_Perso_Lenia_Custom_React/static/css/main.edd549f7.css",
-    "main.js": "/Projet_Perso_Lenia_Custom_React/static/js/main.092c8449.js",
+    "main.css": "/Projet_Perso_Lenia_Custom_React/static/css/main.b0b54c15.css",
+    "main.js": "/Projet_Perso_Lenia_Custom_React/static/js/main.3b908dea.js",
     "index.html": "/Projet_Perso_Lenia_Custom_React/index.html",
-    "main.edd549f7.css.map": "/Projet_Perso_Lenia_Custom_React/static/css/main.edd549f7.css.map",
-    "main.092c8449.js.map": "/Projet_Perso_Lenia_Custom_React/static/js/main.092c8449.js.map"
+    "main.b0b54c15.css.map": "/Projet_Perso_Lenia_Custom_React/static/css/main.b0b54c15.css.map",
+    "main.3b908dea.js.map": "/Projet_Perso_Lenia_Custom_React/static/js/main.3b908dea.js.map"
   },
   "entrypoints": [
-    "static/css/main.edd549f7.css",
-    "static/js/main.092c8449.js"
+    "static/css/main.b0b54c15.css",
+    "static/js/main.3b908dea.js"
   ]
 }
