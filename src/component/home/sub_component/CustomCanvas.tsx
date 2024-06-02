@@ -479,13 +479,10 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
 
 const drawBrush =(e: any) => {
   const radius = Math.floor((brushSize/2) * cellSize);
-  const canvas = document.getElementById('app-canvas') as HTMLCanvasElement | null;
-  if (canvas) {
-    canvas.style.cursor = 'crosshair';
-  }
-  //console.log('drawBrush');
   handleCoords((e as unknown) as MouseEvent);
   if (canvasRef.current) {
+    const canvasWidth = canvasRef.current.width;
+    const canvasHeight = canvasRef.current.height;
     if(!isRunning) drawCells();
     const ctx = canvasRef.current.getContext("2d");
 
@@ -495,18 +492,59 @@ const drawBrush =(e: any) => {
     
     // TODO améliorer : utiliser une Config
     if (ctx) {
-      ctx.strokeStyle = CanvasConfig.BRUSH_STROKE_LARGE_COLOR;
-      ctx.lineWidth = CanvasConfig.BRUSH_STROKE_LARGE_WIDTH;
-      ctx.beginPath();
-      ctx.arc(mouseX, mouseY, radius, 0, 2 * Math.PI);
-      ctx.stroke();
-      ctx.strokeStyle = ColorLibrary.hexToRgb(brushColor); // Orange à 100%
-      ctx.lineWidth = CanvasConfig.BRUSH_STROKE_WIDTH;
-      ctx.beginPath();
-      ctx.arc(mouseX, mouseY, radius, 0, 2 * Math.PI);
-      ctx.stroke();
+      canvasRef.current.style.cursor = 'crosshair';
+      const isMouseNearEast = mouseX - radius < 0;
+      const isMouseNearWest = mouseX + radius > canvasWidth;
+      const isMouseNearNorth = mouseY - radius < 0;
+      const isMouseNearSouth = mouseY + radius > canvasHeight;
+      drawBrushCircle(ctx, mouseX, mouseY, radius);
+
+      if (isMouseNearEast ) {
+        drawBrushCircle(ctx, canvasWidth + mouseX, mouseY, radius);
+      }
+
+      if (isMouseNearWest) {
+        drawBrushCircle(ctx, mouseX - canvasWidth, mouseY, radius);
+      }
+
+      if (isMouseNearNorth) {
+        drawBrushCircle(ctx, mouseX, canvasHeight + mouseY, radius);
+      }
+
+      if (isMouseNearSouth) {
+        drawBrushCircle(ctx, mouseX, mouseY - canvasHeight, radius);
+      }
+
+      if(isMouseNearEast && isMouseNearNorth) {
+        drawBrushCircle(ctx, canvasWidth + mouseX, canvasHeight + mouseY, radius);
+      }
+
+      if(isMouseNearEast && isMouseNearSouth) {
+        drawBrushCircle(ctx, canvasWidth + mouseX, mouseY - canvasHeight, radius);
+      }
+
+      if(isMouseNearWest && isMouseNearNorth) {
+        drawBrushCircle(ctx, mouseX - canvasWidth, canvasHeight + mouseY, radius);
+      }
+
+      if(isMouseNearWest && isMouseNearSouth) {
+        drawBrushCircle(ctx, mouseX - canvasWidth, mouseY - canvasHeight, radius);
+      }
     }
   }
+}
+
+const drawBrushCircle = (ctx: CanvasRenderingContext2D, mouseX: number, mouseY: number, radius: number) => {
+  ctx.strokeStyle = CanvasConfig.BRUSH_STROKE_LARGE_COLOR;
+  ctx.lineWidth = CanvasConfig.BRUSH_STROKE_LARGE_WIDTH;
+  ctx.beginPath();
+  ctx.arc(mouseX, mouseY, radius, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.strokeStyle = ColorLibrary.hexToRgb(brushColor); // Orange à 100%
+  ctx.lineWidth = CanvasConfig.BRUSH_STROKE_WIDTH;
+  ctx.beginPath();
+  ctx.arc(mouseX, mouseY, radius, 0, 2 * Math.PI);
+  ctx.stroke();
 }
 
 
