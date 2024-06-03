@@ -533,7 +533,7 @@ const drawBrush =(e: any) => {
 }
 */
 
-const drawBrushUsingRef =() => {
+const drawBrushUsingRef = () => {
   const radius = Math.floor((brushSize/2) * cellSize);
   if (canvasRef.current) {
     const canvasWidth = canvasRef.current.width;
@@ -542,14 +542,16 @@ const drawBrushUsingRef =() => {
 
     const mousePosX = mousePositionRef.current.x;
     const mousePosY = mousePositionRef.current.y;
+
     if(!isRunning) drawCells();
     
-    if (ctx) {
+    if (ctx && canvasRef.current) {
       canvasRef.current.style.cursor = 'crosshair';
       const isMouseNearEast = mousePosX - radius < 0;
       const isMouseNearWest = mousePosX + radius > canvasWidth;
       const isMouseNearNorth = mousePosY - radius < 0;
       const isMouseNearSouth = mousePosY + radius > canvasHeight;
+
       drawBrushCircle(ctx, mousePosX, mousePosY, radius);
 
       if (isMouseNearEast ) {
@@ -862,11 +864,12 @@ const updateSliders = () => {
 
   const handleMouseMove = (e: any) => {
     updateMousePosition(e);
-    if(!isRunning) drawBrushUsingRef();
+    if(!isRunning && isMouseOver) drawBrushUsingRef();
   }
 
   
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (e: any) => {
+    updateMousePosition(e);
     setIsMouseOver((prev) => {
       //console.log('isMouseOver :', !prev);
       return !prev;
@@ -874,7 +877,8 @@ const updateSliders = () => {
     //drawBrush();
   }
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (e: any) => {
+    updateMousePosition(e);
     setIsMouseOver((prev) => {
       //console.log('isMouseOver :', !prev);
       return !prev;
