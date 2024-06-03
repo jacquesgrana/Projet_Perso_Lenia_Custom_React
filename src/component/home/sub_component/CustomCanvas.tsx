@@ -87,6 +87,8 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     const localStorageServiceRef = useRef<any>(null);
     const cellServiceRef = useRef<any>(CellService.getInstance());
 
+    const mousePositionRef = useRef<{x: number, y: number}>({x: 0, y: 0});
+
     useEffect(() => {
 
       const fct = async () => {
@@ -122,11 +124,9 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     useEffect(() => {    
         const fct = () => {
           setIsNewPresetDivOpen(false);
-            //initCells();
-            //generateRandomImage();
-            //handleFillCells();
           generateNext();
           drawCells();
+          if(isMouseOver) drawBrushUsingRef();
           setVirtTimeCounter((prev: number) => prev + cellEvolutionDeltaT);
           intervalRef.current = setTimeout(fct, delay);
         };
@@ -140,7 +140,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
             clearTimeout(intervalRef.current);
         };
         
-    }, [isRunning, delay]);
+    }, [isRunning, delay, cellEvolutionDeltaT, isMouseOver]); //isMouseOver
 
     useEffect(() => {
       const savePresetBtn = document.getElementById("save-preset-button");
@@ -468,7 +468,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
                 cellsRef.current = cellServiceRef.current.clearCircle(mouseI, mouseJ);
                 drawCells();
             }
-            if(isMouseOver) drawBrush(e);
+            if(isMouseOver) drawBrushUsingRef();
         }
         
         //cellsRef.current = cellServiceRef.current.getCells();
@@ -476,7 +476,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
   }
 
 
-
+/*
 const drawBrush =(e: any) => {
   const radius = Math.floor((brushSize/2) * cellSize);
   handleCoords((e as unknown) as MouseEvent);
@@ -533,6 +533,68 @@ const drawBrush =(e: any) => {
     }
   }
 }
+*/
+
+const drawBrushUsingRef =() => {
+  const radius = Math.floor((brushSize/2) * cellSize);
+  //handleCoords((e as unknown) as MouseEvent);
+  if (canvasRef.current) {
+    const canvasWidth = canvasRef.current.width;
+    const canvasHeight = canvasRef.current.height;
+    //const canvasPosX = canvasRef.current.offsetLeft;
+    //const canvasPosY = canvasRef.current.offsetTop;
+    const ctx = canvasRef.current.getContext("2d");
+
+
+    const mousePosX = mousePositionRef.current.x;
+    const mousePosY = mousePositionRef.current.y;
+    //console.log("MouseX : ", mousePosX, " MouseY : ", mousePosY);
+    if(!isRunning) drawCells();
+    
+    // TODO améliorer : utiliser une Config
+    if (ctx) {
+      canvasRef.current.style.cursor = 'crosshair';
+      const isMouseNearEast = mousePosX - radius < 0;
+      const isMouseNearWest = mousePosX + radius > canvasWidth;
+      const isMouseNearNorth = mousePosY - radius < 0;
+      const isMouseNearSouth = mousePosY + radius > canvasHeight;
+      drawBrushCircle(ctx, mousePosX, mousePosY, radius);
+
+      if (isMouseNearEast ) {
+        drawBrushCircle(ctx, canvasWidth + mousePosX, mousePosY, radius);
+      }
+
+      if (isMouseNearWest) {
+        drawBrushCircle(ctx, mousePosX - canvasWidth, mousePosY, radius);
+      }
+
+      if (isMouseNearNorth) {
+        drawBrushCircle(ctx, mousePosX, canvasHeight + mousePosY, radius);
+      }
+
+      if (isMouseNearSouth) {
+        drawBrushCircle(ctx, mousePosX, mousePosY - canvasHeight, radius);
+      }
+
+      if(isMouseNearEast && isMouseNearNorth) {
+        drawBrushCircle(ctx, canvasWidth + mousePosX, canvasHeight + mousePosY, radius);
+      }
+
+      if(isMouseNearEast && isMouseNearSouth) {
+        drawBrushCircle(ctx, canvasWidth + mousePosX, mousePosY - canvasHeight, radius);
+      }
+
+      if(isMouseNearWest && isMouseNearNorth) {
+        drawBrushCircle(ctx, mousePosX - canvasWidth, canvasHeight + mousePosY, radius);
+      }
+
+      if(isMouseNearWest && isMouseNearSouth) {
+        drawBrushCircle(ctx, mousePosX - canvasWidth, mousePosY - canvasHeight, radius);
+      }
+    }
+  }
+}
+
 
 const drawBrushCircle = (ctx: CanvasRenderingContext2D, mouseX: number, mouseY: number, radius: number) => {
   ctx.strokeStyle = CanvasConfig.BRUSH_STROKE_LARGE_COLOR;
@@ -823,6 +885,12 @@ const updateSliders = () => {
     if(!isRunning) drawCells();
   }
 
+  const updateMousePosition = (e: any) => {
+    handleCoords((e as unknown) as MouseEvent);
+    mousePositionRef.current.x = coords.x;
+    mousePositionRef.current.y = coords.y;
+  }
+
 
     return (
         <div className="d-flex flex-column align-items-center gap-1">
@@ -834,9 +902,13 @@ const updateSliders = () => {
               id="app-canvas"
               onMouseDown={handleMouseDown}
               //onMouseOver={handleMouseOver}
-              onMouseMove={drawBrush}
+              onMouseMove={(e: any) => {
+                updateMousePosition(e);
+                drawBrushUsingRef();
+              }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
+              //onMouseOver={drawBrush}
             />
             <p>left-click : add circle / right-click : clear circle</p>
 

@@ -1,4 +1,4 @@
-import { cp } from "fs";
+//import { cp } from "fs";
 import CanvasConfig from "../config/CanvasConfig";
 import CellConfig from "../config/CellConfig";
 import ICell from "../interface/ICell";
@@ -189,7 +189,7 @@ export default class CellService {
                 let b = randomValues.blue;
 
                 // cas du background en 'blanc'
-                if(bgValues.red == 1 && bgValues.green == 1 && bgValues.blue == 1) {
+                if(bgValues.red === 1 && bgValues.green === 1 && bgValues.blue === 1) {
                     r = Math.random();
                     g = Math.random();
                     b = Math.random();
@@ -503,11 +503,21 @@ export default class CellService {
                     let newBlue = randomValues.blue;
 
                     // cas de la brosse colorée en 'blanc'
-                    if(brushValues.red == 1 && brushValues.green == 1 && brushValues.blue == 1) {
+                    if(brushValues.red === 1 && brushValues.green === 1 && brushValues.blue === 1) {
                         newRed = Math.random();
                         newGreen = Math.random();
                         newBlue = Math.random();
                     }
+
+                    
+                    // bords flous
+                    const n = this._brushHardness / 2;
+                    const b = (1 - this._brushHardness) / 2;
+                    const p = dist >= n ?  (1 -  ((dist - n) / b)) : 1;
+                    newRed = p * newRed;
+                    newGreen = p * newGreen;
+                    newBlue = p * newBlue;
+                    
 
                     newRed = newRed > 1 ? 1 : newRed;
                     newGreen = newGreen > 1 ? 1 : newGreen;
@@ -522,9 +532,9 @@ export default class CellService {
                     */
                     x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
                     y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
-                    this._cells[x1][y1].stateR = newRed;
-                    this._cells[x1][y1].stateG = newGreen;
-                    this._cells[x1][y1].stateB = newBlue;  
+                    this._cells[x1][y1].stateR += newRed;
+                    this._cells[x1][y1].stateG += newGreen;
+                    this._cells[x1][y1].stateB += newBlue;  
                 }
             }
         }
