@@ -904,7 +904,7 @@ const updateSliders = () => {
               //onMouseOver={handleMouseOver}
               onMouseMove={(e: any) => {
                 updateMousePosition(e);
-                drawBrushUsingRef();
+                if(!isRunning) drawBrushUsingRef();
               }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
