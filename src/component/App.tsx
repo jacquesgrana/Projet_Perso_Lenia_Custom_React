@@ -6,7 +6,6 @@ import Header from './template/Header';
 import { useRef, useState } from 'react';
 import CustomToast from './common/CustomToast';
 import IToast from '../interface/IToast';
-//import './../scss/App.scss';
 
 function App() {
   const [showToast, setShowToast] = useState(false);
@@ -30,8 +29,6 @@ function App() {
     toastRef.current = toast;
     toggleShowToast();
   }
-
-  //console.log('toggleShowToast :', toggleShowToast);
 
   return (
     <div className="App"  id="container_all">

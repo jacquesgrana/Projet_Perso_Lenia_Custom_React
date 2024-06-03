@@ -6,7 +6,6 @@ import CellConfig from "../../../config/CellConfig";
 import CellService from "../../../service/CellService";
 import IToast from "../../../interface/IToast";
 import { Accordion, Button } from "react-bootstrap";
-import Slider from 'rc-slider';
 import AppConfig from "../../../config/AppConfig";
 import PresetSelector from "./PresetSelector";
 import IPreset from "../../../interface/IPreset";
@@ -182,17 +181,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     }
 
     const handleFillCells = () => {
-        /*
-        if(brushIsRandom) {
-          cellsRef.current = cellServiceRef.current.getRandomizedCells();
-          ToastLibrary.displayRandomizeToast(props.displayToast);
-        } 
-        else {
-          cellsRef.current = cellServiceRef.current.getColoredCells();
-          // TODO ToastLibrary.displayColorToast(props.displayToast);
-        }*/
         cellsRef.current = cellServiceRef.current.getColoredCells();
-        //cellsRef.current = cellServiceRef.current.getRandomizedCells();
         setVirtTimeCounter(0);
     }
 
@@ -444,7 +433,7 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         const mouseI = Math.floor(mouseX / cellSize);
         const mouseJ = Math.floor(mouseY / cellSize);
         //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
-        const radius = Math.floor(brushSize/2);
+        //const radius = Math.floor(brushSize/2);
         if(mouseI >= 0 && mouseI <= maxIRef.current && mouseJ >= 0 && mouseJ <= maxJRef.current){
             //console.log('e.button :', e.button);
             if (e.button === 0) {
@@ -770,7 +759,7 @@ const updateSliders = () => {
 
   const handleOnChangeSensibilitySliderRR = (value: any) => {
     //value = makeSensibilityCorrectionR(value);
-    if(value == 0 && cellServiceRef.current.getColorSensibilityR()[1] == 0 && cellServiceRef.current.getColorSensibilityR()[2] == 0) {
+    if(value === 0 && cellServiceRef.current.getColorSensibilityR()[1] === 0 && cellServiceRef.current.getColorSensibilityR()[2] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
     const tab: [number, number, number] = [value, cellServiceRef.current.getColorSensibilityR()[1], cellServiceRef.current.getColorSensibilityR()[2]];
@@ -780,7 +769,7 @@ const updateSliders = () => {
 
   const handleOnChangeSensibilitySliderRG = (value: any) => {
     //value = makeSensibilityCorrectionR(value);
-    if(value == 0 && cellServiceRef.current.getColorSensibilityR()[0] == 0 && cellServiceRef.current.getColorSensibilityR()[2] == 0) {
+    if(value === 0 && cellServiceRef.current.getColorSensibilityR()[0] === 0 && cellServiceRef.current.getColorSensibilityR()[2] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityR()[0], value, cellServiceRef.current.getColorSensibilityR()[2]];
@@ -790,7 +779,7 @@ const updateSliders = () => {
 
   const handleOnChangeSensibilitySliderRB = (value: any) => {
     //value = makeSensibilityCorrectionR(value);
-    if(value == 0 && cellServiceRef.current.getColorSensibilityR()[0] == 0 && cellServiceRef.current.getColorSensibilityR()[1] == 0) {
+    if(value === 0 && cellServiceRef.current.getColorSensibilityR()[0] === 0 && cellServiceRef.current.getColorSensibilityR()[1] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityR()[0], cellServiceRef.current.getColorSensibilityR()[1], value];
@@ -800,7 +789,7 @@ const updateSliders = () => {
 
   const handleOnChangeSensibilitySliderGR = (value: any) => {
       //value = makeSensibilityCorrectionG(value);
-      if(value == 0 && cellServiceRef.current.getColorSensibilityG()[1] == 0 && cellServiceRef.current.getColorSensibilityG()[2] == 0) {
+      if(value === 0 && cellServiceRef.current.getColorSensibilityG()[1] === 0 && cellServiceRef.current.getColorSensibilityG()[2] === 0) {
         value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
       }
       const tab: [number, number, number] = [value, cellServiceRef.current.getColorSensibilityG()[1], cellServiceRef.current.getColorSensibilityG()[2]];
@@ -810,7 +799,7 @@ const updateSliders = () => {
 
   const handleOnChangeSensibilitySliderGG = (value: any) => {
     //value = makeSensibilityCorrectionG(value);
-    if(value == 0 && cellServiceRef.current.getColorSensibilityG()[0] == 0 && cellServiceRef.current.getColorSensibilityG()[2] == 0) {
+    if(value === 0 && cellServiceRef.current.getColorSensibilityG()[0] === 0 && cellServiceRef.current.getColorSensibilityG()[2] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityG()[0], value, cellServiceRef.current.getColorSensibilityG()[2]];
@@ -820,7 +809,7 @@ const updateSliders = () => {
 
   const handleOnChangeSensibilitySliderGB = (value: any) => {
     //value = makeSensibilityCorrectionG(value);
-    if(value == 0 && cellServiceRef.current.getColorSensibilityG()[0] == 0 && cellServiceRef.current.getColorSensibilityG()[1] == 0) {
+    if(value === 0 && cellServiceRef.current.getColorSensibilityG()[0] === 0 && cellServiceRef.current.getColorSensibilityG()[1] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityG()[0], cellServiceRef.current.getColorSensibilityG()[1], value];
@@ -831,7 +820,7 @@ const updateSliders = () => {
   
 
   const handleOnChangeSensibilitySliderBR = (value: any) => {
-    if(value == 0 && cellServiceRef.current.getColorSensibilityB()[1] == 0 && cellServiceRef.current.getColorSensibilityB()[2] == 0) {
+    if(value === 0 && cellServiceRef.current.getColorSensibilityB()[1] === 0 && cellServiceRef.current.getColorSensibilityB()[2] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
     const tab: [number, number, number] = [value, cellServiceRef.current.getColorSensibilityB()[1], cellServiceRef.current.getColorSensibilityB()[2]];
@@ -840,7 +829,7 @@ const updateSliders = () => {
   }
 
   const handleOnChangeSensibilitySliderBG = (value: any) => {
-    if(value == 0 && cellServiceRef.current.getColorSensibilityB()[0] == 0 && cellServiceRef.current.getColorSensibilityB()[2] == 0) {
+    if(value === 0 && cellServiceRef.current.getColorSensibilityB()[0] === 0 && cellServiceRef.current.getColorSensibilityB()[2] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityB()[0], value, cellServiceRef.current.getColorSensibilityB()[2]];
@@ -849,7 +838,7 @@ const updateSliders = () => {
   }
 
   const handleOnChangeSensibilitySliderBB = (value: any) => {
-    if(value == 0 && cellServiceRef.current.getColorSensibilityB()[0] == 0 && cellServiceRef.current.getColorSensibilityB()[1] == 0) {
+    if(value === 0 && cellServiceRef.current.getColorSensibilityB()[0] === 0 && cellServiceRef.current.getColorSensibilityB()[1] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
     const tab: [number, number, number] = [cellServiceRef.current.getColorSensibilityB()[0], cellServiceRef.current.getColorSensibilityB()[1], value];
@@ -895,7 +884,6 @@ const updateSliders = () => {
 
     return (
         <div className="d-flex flex-column align-items-center gap-1">
-           
             <canvas
               ref={canvasRef}
               width={width}
