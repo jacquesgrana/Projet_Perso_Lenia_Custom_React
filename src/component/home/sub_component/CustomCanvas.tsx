@@ -541,45 +541,46 @@ const drawBrushUsingRef = () => {
       const isMouseNearNorth = mousePosY - radius < 0;
       const isMouseNearSouth = mousePosY + radius > canvasHeight;
 
-      drawBrushCircle(ctx, mousePosX, mousePosY, radius);
+      drawBrushCircle(ctx, mousePosX, mousePosY, radius, brushHardness);
 
       if (isMouseNearEast ) {
-        drawBrushCircle(ctx, canvasWidth + mousePosX, mousePosY, radius);
+        drawBrushCircle(ctx, canvasWidth + mousePosX, mousePosY, radius, brushHardness);
       }
 
       if (isMouseNearWest) {
-        drawBrushCircle(ctx, mousePosX - canvasWidth, mousePosY, radius);
+        drawBrushCircle(ctx, mousePosX - canvasWidth, mousePosY, radius, brushHardness);
       }
 
       if (isMouseNearNorth) {
-        drawBrushCircle(ctx, mousePosX, canvasHeight + mousePosY, radius);
+        drawBrushCircle(ctx, mousePosX, canvasHeight + mousePosY, radius, brushHardness);
       }
 
       if (isMouseNearSouth) {
-        drawBrushCircle(ctx, mousePosX, mousePosY - canvasHeight, radius);
+        drawBrushCircle(ctx, mousePosX, mousePosY - canvasHeight, radius, brushHardness);
       }
 
       if(isMouseNearEast && isMouseNearNorth) {
-        drawBrushCircle(ctx, canvasWidth + mousePosX, canvasHeight + mousePosY, radius);
+        drawBrushCircle(ctx, canvasWidth + mousePosX, canvasHeight + mousePosY, radius, brushHardness);
       }
 
       if(isMouseNearEast && isMouseNearSouth) {
-        drawBrushCircle(ctx, canvasWidth + mousePosX, mousePosY - canvasHeight, radius);
+        drawBrushCircle(ctx, canvasWidth + mousePosX, mousePosY - canvasHeight, radius, brushHardness);
       }
 
       if(isMouseNearWest && isMouseNearNorth) {
-        drawBrushCircle(ctx, mousePosX - canvasWidth, canvasHeight + mousePosY, radius);
+        drawBrushCircle(ctx, mousePosX - canvasWidth, canvasHeight + mousePosY, radius, brushHardness);
       }
 
       if(isMouseNearWest && isMouseNearSouth) {
-        drawBrushCircle(ctx, mousePosX - canvasWidth, mousePosY - canvasHeight, radius);
+        drawBrushCircle(ctx, mousePosX - canvasWidth, mousePosY - canvasHeight, radius, brushHardness);
       }
     }
   }
 }
 
 
-const drawBrushCircle = (ctx: CanvasRenderingContext2D, mouseX: number, mouseY: number, radius: number) => {
+const drawBrushCircle = (ctx: CanvasRenderingContext2D, mouseX: number, mouseY: number, radius: number, hardness: number) => {
+  const radiusHardness = hardness === 0 ? 10 : radius * hardness;
   ctx.strokeStyle = CanvasConfig.BRUSH_STROKE_LARGE_COLOR;
   ctx.lineWidth = CanvasConfig.BRUSH_STROKE_LARGE_WIDTH;
   ctx.beginPath();
@@ -589,6 +590,17 @@ const drawBrushCircle = (ctx: CanvasRenderingContext2D, mouseX: number, mouseY: 
   ctx.lineWidth = CanvasConfig.BRUSH_STROKE_WIDTH;
   ctx.beginPath();
   ctx.arc(mouseX, mouseY, radius, 0, 2 * Math.PI);
+  ctx.stroke();
+
+  ctx.strokeStyle = CanvasConfig.BRUSH_STROKE_MEDIUM_COLOR;
+  ctx.lineWidth = CanvasConfig.BRUSH_STROKE_MEDIUM_WIDTH;
+  ctx.beginPath();
+  ctx.arc(mouseX, mouseY, radiusHardness, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.strokeStyle = ColorLibrary.hexToRgb(brushColor); // Orange à 100%
+  ctx.lineWidth = CanvasConfig.BRUSH_STROKE_SMALL_WIDTH;
+  ctx.beginPath();
+  ctx.arc(mouseX, mouseY, radiusHardness, 0, 2 * Math.PI);
   ctx.stroke();
 }
 

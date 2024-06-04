@@ -63,38 +63,6 @@ export default class CellService {
       }
 
     public initCells() {
-        /*
-        this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / CellConfig.CELL_SIZE);
-        this._maxJ = Math.floor(CanvasConfig.CANVAS_HEIGHT / CellConfig.CELL_SIZE);
-
-        this._convolRadiusR = CellConfig.CELL_CONV_FILTER_RADIUS;
-        this._convolMuR = CellConfig.CELL_CONV_FILTER_MU;
-        this._convolSigmaR = CellConfig.CELL_CONV_FILTER_SIGMA;
-
-        this._convolRadiusG = CellConfig.CELL_CONV_FILTER_RADIUS;
-        this._convolMuG = CellConfig.CELL_CONV_FILTER_MU;
-        this._convolSigmaG = CellConfig.CELL_CONV_FILTER_SIGMA;
-
-        this._convolRadiusB = CellConfig.CELL_CONV_FILTER_RADIUS;
-        this._convolMuB = CellConfig.CELL_CONV_FILTER_MU;
-        this._convolSigmaB = CellConfig.CELL_CONV_FILTER_SIGMA;
-
-        this._brushSize = CellConfig.CELL_BRUSH_SIZE;
-
-        this._countingFloorR = CellConfig.CELL_FILTER_COUNT_FLOOR_RED;
-        this._countingFloorG = CellConfig.CELL_FILTER_COUNT_FLOOR_GREEN;
-        this._countingFloorB = CellConfig.CELL_FILTER_COUNT_FLOOR_BLUE;
-
-        this._colorSensibilityR = CellConfig.CELL_COLOR_SENSIBILITY_RED;
-        this._colorSensibilityG = CellConfig.CELL_COLOR_SENSIBILITY_GREEN;
-        this._colorSensibilityB = CellConfig.CELL_COLOR_SENSIBILITY_BLUE;
-
-        this._cellEvolutionDeltaT = CellConfig.CELL_EVOLUTION_DELTA_T;
-*/
-        //this._cellSize = CellConfig.CELL_SIZE;
-        //this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / CellConfig.CELL_SIZE);
-        //this._maxJ = Math.floor(CanvasConfig.CANVAS_HEIGHT / CellConfig.CELL_SIZE);
-
         for(let i = 0; i < this._maxI; i++){ 
             this._cells[i] = new Array<ICell>(this._maxJ);
         }
