@@ -1,5 +1,26 @@
 #app-home {
-    padding-top: 30px;
+    //padding-top: 30px;
+
+    #app-canvas-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+        width: 100%;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    #app-canvas-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        //gap: 20px;
+        width: auto;
+        margin: 0px;
+    }
 
     #app-canvas {
        border: 1px solid $color-bg-dark;

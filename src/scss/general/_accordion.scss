@@ -1,7 +1,10 @@
 .accordion-container {
-    max-width: 1200px;
-    width: 80vw;
-    margin: auto 40px;
+    //max-width: 600px;
+    width: 640px;
+    //width: 100vw;
+    flex-grow: 1;
+    //min-width: 34%;
+    //margin: auto 40px;
     //border-radius: $radius-1 !important;
     //color: $color-bg !important;
 

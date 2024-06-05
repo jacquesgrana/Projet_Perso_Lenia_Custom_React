@@ -895,7 +895,8 @@ const updateSliders = () => {
 
 
     return (
-        <div className="d-flex flex-column align-items-center gap-1">
+        <div id="app-canvas-container">
+          <div id="app-canvas-wrapper" className="">
             <canvas
               ref={canvasRef}
               width={width}
@@ -910,7 +911,7 @@ const updateSliders = () => {
 
             <p className="text-center"><strong>Virtual time counter : {virtTimeCounter.toFixed(2)} (s)</strong></p>
             <p>Preset : {selectedPreset?.name}</p>
-            <div className="d-flex gap-3 justify-content-center mb-3">
+            <div className="d-flex gap-3 justify-content-center mb-3 w-100">
                 <Button
                 className="btn-1"
                 onClick={() => {
@@ -938,112 +939,114 @@ const updateSliders = () => {
                     RUN
                 </Button>  
             </div>
-            <Accordion 
-            defaultActiveKey={null}
-            className="accordion-container mb-4"
-            >
-              <Accordion.Item eventKey="0" >
-                <Accordion.Header>Presets</Accordion.Header>
-                <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
-                  <PresetSelector 
-                  applyPresetCB={handleChangePresetCB}
-                  presets={props.presets} 
-                  userPresets={props.userPresets}
-                  exportUserPresetsCB={exportUserPresetsCB}
-                  reloadUserPresetsCB={props.reloadUserPresetsCB}
-                  deleteUserPresetCB={deleteUserPresetCB}
-                  displayToast={props.displayToast}
-                  updateStorageCB={updateStorageCB}
+          </div>
+          <Accordion 
+          defaultActiveKey={null}
+          id="app-accordion"
+          className="accordion-container"
+          >
+            <Accordion.Item eventKey="0" >
+              <Accordion.Header>Presets</Accordion.Header>
+              <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+                <PresetSelector 
+                applyPresetCB={handleChangePresetCB}
+                presets={props.presets} 
+                userPresets={props.userPresets}
+                exportUserPresetsCB={exportUserPresetsCB}
+                reloadUserPresetsCB={props.reloadUserPresetsCB}
+                deleteUserPresetCB={deleteUserPresetCB}
+                displayToast={props.displayToast}
+                updateStorageCB={updateStorageCB}
+                />
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="1" >
+              <Accordion.Header>Settings</Accordion.Header>
+              <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+                <Settings 
+                  floorR={floorR}
+                  handleOnChangeFloorSliderR={handleOnChangeFloorSliderR}
+                  convFilterRadiusR={convFilterRadiusR}
+                  handleOnChangeConvFilterRadiusSliderR={handleOnChangeConvFilterRadiusSliderR}
+                  convFilterMuR={convFilterMuR}
+                  handleOnChangeConvFilterMuSliderR={handleOnChangeConvFilterMuSliderR}
+                  convFilterSigmaR={convFilterSigmaR}
+                  handleOnChangeConvFilterSigmaSliderR={handleOnChangeConvFilterSigmaSliderR}
+
+                  floorG={floorG}
+                  handleOnChangeFloorSliderG={handleOnChangeFloorSliderG}
+                  convFilterRadiusG={convFilterRadiusG}
+                  handleOnChangeConvFilterRadiusSliderG={handleOnChangeConvFilterRadiusSliderG}
+                  convFilterMuG={convFilterMuG}
+                  handleOnChangeConvFilterMuSliderG={handleOnChangeConvFilterMuSliderG}
+                  convFilterSigmaG={convFilterSigmaG}
+                  handleOnChangeConvFilterSigmaSliderG={handleOnChangeConvFilterSigmaSliderG}
+
+                  floorB={floorB}
+                  handleOnChangeFloorSliderB={handleOnChangeFloorSliderB}
+                  convFilterRadiusB={convFilterRadiusB}
+                  handleOnChangeConvFilterRadiusSliderB={handleOnChangeConvFilterRadiusSliderB}
+                  convFilterMuB={convFilterMuB}
+                  handleOnChangeConvFilterMuSliderB={handleOnChangeConvFilterMuSliderB}
+                  convFilterSigmaB={convFilterSigmaB}
+                  handleOnChangeConvFilterSigmaSliderB={handleOnChangeConvFilterSigmaSliderB}
+
+                  colorSensibilityR={colorSensibilityR}
+                  handleOnChangeSensibilitySliderRR={handleOnChangeSensibilitySliderRR}
+                  handleOnChangeSensibilitySliderRG={handleOnChangeSensibilitySliderRG}
+                  handleOnChangeSensibilitySliderRB={handleOnChangeSensibilitySliderRB}
+
+                  colorSensibilityG={colorSensibilityG}
+                  handleOnChangeSensibilitySliderGR={handleOnChangeSensibilitySliderGR}
+                  handleOnChangeSensibilitySliderGG={handleOnChangeSensibilitySliderGG}
+                  handleOnChangeSensibilitySliderGB={handleOnChangeSensibilitySliderGB}
+
+                  colorSensibilityB={colorSensibilityB}
+                  handleOnChangeSensibilitySliderBR={handleOnChangeSensibilitySliderBR}
+                  handleOnChangeSensibilitySliderBG={handleOnChangeSensibilitySliderBG}
+                  handleOnChangeSensibilitySliderBB={handleOnChangeSensibilitySliderBB}
+
+                  cellEvolutionDeltaT={cellEvolutionDeltaT}
+                  handleOnChangeCellEvolutionDeltaTSlider={handleOnChangeCellEvolutionDeltaTSlider}
+                  cellGrowthMu={cellGrowthMu}
+                  handleOnChangeCellGrowthMuSlider={handleOnChangeCellGrowthMuSlider}
+                  cellGrowthSigma={cellGrowthSigma}
+                  handleOnChangeCellGrowthSigmaSlider={handleOnChangeCellGrowthSigmaSlider} 
+                  cellSize={cellSize}
+                  handleOnChangeCellSizeSlider={handleOnChangeCellSizeSlider}
+
+                  handleDefaultValues={handleDefaultValues}
+                  handleResetValues={handleResetValues}
+                  handleSaveValues={handleSaveValues}
+
+                  isNewPresetDivOpen={isNewPresetDivOpen}
+                  handleSaveNewPresetValues={handleSaveNewPresetValues}
+
+                  handleOnChangeNewPresetName={handleOnChangeNewPresetName}
+                  handleOnChangeNewPresetDescription={handleOnChangeNewPresetDescription}
+                  handleOnChangeNewPresetPseudo={handleOnChangeNewPresetPseudo}
+                  isNewPresetDivFieldsNotEmpty={isNewPresetDivFieldsNotEmpty}
+                />
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="2" >
+              <Accordion.Header>Brush & fill settings</Accordion.Header>
+              <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+                <BrushSettings 
+                  brushSize = {brushSize}
+                  brushHardness = {brushHardness}
+                  brushIsRandom = {brushIsRandom}
+                  brushColor = {brushColor}
+                  bgColor = {bgColor}
+                  handleOnChangeBrushSizeSlider = {handleOnChangeBrushSizeSlider}
+                  handleOnChangeBrushHardnessSlider = {handleOnChangeBrushHardnessSlider}
+                  handleOnChangeBrushIsRandomCheckbox = {handleOnChangeBrushIsRandomCheckbox}
+                  handleOnChangeBrushColorPicker = {handleOnChangeBrushColorPicker}
+                  handleOnChangeBgColorPicker = {handleOnChangeBgColorPicker}
                   />
-                </Accordion.Body>
-              </Accordion.Item>
-              <Accordion.Item eventKey="1" >
-                <Accordion.Header>Settings</Accordion.Header>
-                <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
-                  <Settings 
-                    floorR={floorR}
-                    handleOnChangeFloorSliderR={handleOnChangeFloorSliderR}
-                    convFilterRadiusR={convFilterRadiusR}
-                    handleOnChangeConvFilterRadiusSliderR={handleOnChangeConvFilterRadiusSliderR}
-                    convFilterMuR={convFilterMuR}
-                    handleOnChangeConvFilterMuSliderR={handleOnChangeConvFilterMuSliderR}
-                    convFilterSigmaR={convFilterSigmaR}
-                    handleOnChangeConvFilterSigmaSliderR={handleOnChangeConvFilterSigmaSliderR}
-
-                    floorG={floorG}
-                    handleOnChangeFloorSliderG={handleOnChangeFloorSliderG}
-                    convFilterRadiusG={convFilterRadiusG}
-                    handleOnChangeConvFilterRadiusSliderG={handleOnChangeConvFilterRadiusSliderG}
-                    convFilterMuG={convFilterMuG}
-                    handleOnChangeConvFilterMuSliderG={handleOnChangeConvFilterMuSliderG}
-                    convFilterSigmaG={convFilterSigmaG}
-                    handleOnChangeConvFilterSigmaSliderG={handleOnChangeConvFilterSigmaSliderG}
-
-                    floorB={floorB}
-                    handleOnChangeFloorSliderB={handleOnChangeFloorSliderB}
-                    convFilterRadiusB={convFilterRadiusB}
-                    handleOnChangeConvFilterRadiusSliderB={handleOnChangeConvFilterRadiusSliderB}
-                    convFilterMuB={convFilterMuB}
-                    handleOnChangeConvFilterMuSliderB={handleOnChangeConvFilterMuSliderB}
-                    convFilterSigmaB={convFilterSigmaB}
-                    handleOnChangeConvFilterSigmaSliderB={handleOnChangeConvFilterSigmaSliderB}
-
-                    colorSensibilityR={colorSensibilityR}
-                    handleOnChangeSensibilitySliderRR={handleOnChangeSensibilitySliderRR}
-                    handleOnChangeSensibilitySliderRG={handleOnChangeSensibilitySliderRG}
-                    handleOnChangeSensibilitySliderRB={handleOnChangeSensibilitySliderRB}
-
-                    colorSensibilityG={colorSensibilityG}
-                    handleOnChangeSensibilitySliderGR={handleOnChangeSensibilitySliderGR}
-                    handleOnChangeSensibilitySliderGG={handleOnChangeSensibilitySliderGG}
-                    handleOnChangeSensibilitySliderGB={handleOnChangeSensibilitySliderGB}
-
-                    colorSensibilityB={colorSensibilityB}
-                    handleOnChangeSensibilitySliderBR={handleOnChangeSensibilitySliderBR}
-                    handleOnChangeSensibilitySliderBG={handleOnChangeSensibilitySliderBG}
-                    handleOnChangeSensibilitySliderBB={handleOnChangeSensibilitySliderBB}
-
-                    cellEvolutionDeltaT={cellEvolutionDeltaT}
-                    handleOnChangeCellEvolutionDeltaTSlider={handleOnChangeCellEvolutionDeltaTSlider}
-                    cellGrowthMu={cellGrowthMu}
-                    handleOnChangeCellGrowthMuSlider={handleOnChangeCellGrowthMuSlider}
-                    cellGrowthSigma={cellGrowthSigma}
-                    handleOnChangeCellGrowthSigmaSlider={handleOnChangeCellGrowthSigmaSlider} 
-                    cellSize={cellSize}
-                    handleOnChangeCellSizeSlider={handleOnChangeCellSizeSlider}
-
-                    handleDefaultValues={handleDefaultValues}
-                    handleResetValues={handleResetValues}
-                    handleSaveValues={handleSaveValues}
-
-                    isNewPresetDivOpen={isNewPresetDivOpen}
-                    handleSaveNewPresetValues={handleSaveNewPresetValues}
-
-                    handleOnChangeNewPresetName={handleOnChangeNewPresetName}
-                    handleOnChangeNewPresetDescription={handleOnChangeNewPresetDescription}
-                    handleOnChangeNewPresetPseudo={handleOnChangeNewPresetPseudo}
-                    isNewPresetDivFieldsNotEmpty={isNewPresetDivFieldsNotEmpty}
-                  />
-                </Accordion.Body>
-              </Accordion.Item>
-              <Accordion.Item eventKey="2" >
-                <Accordion.Header>Brush & fill settings</Accordion.Header>
-                <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
-                 <BrushSettings 
-                    brushSize = {brushSize}
-                    brushHardness = {brushHardness}
-                    brushIsRandom = {brushIsRandom}
-                    brushColor = {brushColor}
-                    bgColor = {bgColor}
-                    handleOnChangeBrushSizeSlider = {handleOnChangeBrushSizeSlider}
-                    handleOnChangeBrushHardnessSlider = {handleOnChangeBrushHardnessSlider}
-                    handleOnChangeBrushIsRandomCheckbox = {handleOnChangeBrushIsRandomCheckbox}
-                    handleOnChangeBrushColorPicker = {handleOnChangeBrushColorPicker}
-                    handleOnChangeBgColorPicker = {handleOnChangeBgColorPicker}
-                    />
-                </Accordion.Body>
-              </Accordion.Item>
-            </Accordion>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
         </div>
     );
 }

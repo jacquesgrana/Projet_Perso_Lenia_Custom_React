@@ -1,0 +1,28 @@
+@media screen and (max-width: 1900px) {
+    
+
+    #app-home {
+        //padding-top: 30px;
+        padding: 0px;
+
+        .accordion-container {
+            //max-width: 600px;
+            width: 90%;
+            
+            //flex-grow: 1;
+            //min-width: 100%;
+        }
+    
+        #app-canvas-container {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            gap: 20px;
+            padding: 20px;
+            margin: 0px;
+        }
+    }
+}
