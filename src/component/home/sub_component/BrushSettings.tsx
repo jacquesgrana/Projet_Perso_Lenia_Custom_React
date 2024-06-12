@@ -19,9 +19,12 @@ interface IBrushSettingsProps {
 const BrushSettings = (props: IBrushSettingsProps) => {
 
     // TODO librairie?
+    /**
+     * Génère un commentaire à afficher selon les valeurs de la couleur 
+     * @param color string
+     * @returns commentaire à afficher : string
+     */
     const getCellValuesComment = (color: string) => {
-        // arrondir a deux chiffres après la virgule
-        //return Math.round(ColorLibrary.rgbToCellValues(ColorLibrary.hexToRgb(color))[0] * 100) / 100
         const r = Math.round(ColorLibrary.rgbToCellValues(ColorLibrary.hexToRgb(color)).red * 100) / 100;
         const g = Math.round(ColorLibrary.rgbToCellValues(ColorLibrary.hexToRgb(color)).green * 100) / 100;
         const b = Math.round(ColorLibrary.rgbToCellValues(ColorLibrary.hexToRgb(color)).blue * 100) / 100;
@@ -82,19 +85,17 @@ const BrushSettings = (props: IBrushSettingsProps) => {
                         id="brushColorInput"
                         value={props.brushColor}
                         onChange={(e) => {
-                            //console.log('brush color :', e.target.value);
                             props.handleOnChangeBrushColorPicker(e.target.value);
                         }}
                         title="Choose brush color" 
                     />
                 </div>
                 <div className="settings-column">
-                    <label>Fill background color : {getCellValuesComment(props.bgColor)}</label>
+                    <label>Bg fill color : {getCellValuesComment(props.bgColor)}</label>
                     <input type="color"
                         id="bgColorInput"
                         value={props.bgColor}
                         onChange={(e) => {
-                            //console.log('bg color :', e.target.value);
                             props.handleOnChangeBgColorPicker(e.target.value);
                         }}
                         title="Choose fill background color" 
@@ -105,18 +106,3 @@ const BrushSettings = (props: IBrushSettingsProps) => {
     )
 };
 export default BrushSettings;
-
-/*
-
-        <ToggleButton
-          id="toggle-check"
-          type="checkbox"
-          variant="secondary"
-          checked={checked}
-          value="1"
-          onChange={(e) => setChecked(e.currentTarget.checked)}
-        >
-          Checked
-        </ToggleButton>
-
-*/

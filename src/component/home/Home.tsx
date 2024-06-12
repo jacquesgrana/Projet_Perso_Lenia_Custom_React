@@ -24,9 +24,7 @@ const Home = () => {
           jsonServiceRef.current = await JsonService.getInstance();
           presetServiceRef.current = await PresetService.getInstance();
           localStorageServiceRef.current = await LocalStorageService.getInstance();
-          //setPresets(await jsonServiceRef.current.findAllPresets());
           setPresets(presetServiceRef.current.getPresets());
-          //setUserPresets(await jsonServiceRef.current.findAllUserPresets());
           setUserPresets(presetServiceRef.current.getUserPresets());
 
           const localStorageUserPresets = await localStorageServiceRef.current.getUserPresets();
@@ -35,15 +33,11 @@ const Home = () => {
           }
         };
         initData();
-        //const value = localStorage.getItem('my-key');
     }, []);
 
-    /*
-    useEffect(() => {
-        console.log('presets :', presets);
-    }, [presets]);
-    */
-
+    /**
+     * callback pour recharger les user presets
+     */
     const reloadUserPresetsCB = async () => {
         setUserPresets(await presetServiceRef.current.getUserPresets());
     }
@@ -59,8 +53,5 @@ const Home = () => {
             />
         </div>
     );
-}
-
+};
 export default Home;
-
-// <h1 className="text-center">Home</h1>

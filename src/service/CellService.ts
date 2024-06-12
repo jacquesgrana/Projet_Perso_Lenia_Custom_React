@@ -4,6 +4,9 @@ import CellConfig from "../config/CellConfig";
 import ICell from "../interface/ICell";
 import ColorLibrary from "../library/ColorLibrary";
 
+/**
+ * Service en pattern singleton
+ */
 export default class CellService {
 
     private static _instance: CellService | null = null;
@@ -51,6 +54,10 @@ export default class CellService {
     
     private constructor() {}
 
+    /**
+     * Renvoi la seule instance de CellService : pattern singleton
+     * @returns CellService
+     */
     public static getInstance(): CellService {
         if (this._instance === null) {
             this._instance = new CellService();
@@ -62,6 +69,10 @@ export default class CellService {
         return this._instance;
       }
 
+    /**
+     * Mets les valeurs des cellules à 0
+     * @returns ICell[][]
+     */
     public initCells() {
         for(let i = 0; i < this._maxI; i++){ 
             this._cells[i] = new Array<ICell>(this._maxJ);
@@ -81,12 +92,18 @@ export default class CellService {
         return this._cells;
     }
 
+    /**
+     * Initialise cellSize et calcule les valeurs de maxI et maxJ
+     */
     public initCellSizeValues(): void {
         this._cellSize = CellConfig.CELL_SIZE;
         this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / CellConfig.CELL_SIZE);
         this._maxJ = Math.floor(CanvasConfig.CANVAS_HEIGHT / CellConfig.CELL_SIZE);
     }
 
+    /**
+     * Initialise les valeurs par défaut
+     */
     public initValues(): void {
 
         this._cellEvolutionDeltaT = CellConfig.CELL_EVOLUTION_DELTA_T;
@@ -124,12 +141,19 @@ export default class CellService {
         this._cellGrowthSigma = CellConfig.CELL_GROWTH_SIGMA;
     }
 
+    /**
+     * Appelle les fonctions qui initialisent les filtres
+     */
     public initConvolFilters(): void {
         this.initConvolFilterR();
         this.initConvolFilterG();
         this.initConvolFilterB();
     }
 
+    /**
+     * Mets un valeur aléatoire pour les valeurs des cellules
+     * @returns ICell[][]
+     */
     public getRandomizedCells(): ICell[][] {
         for(let i = 0; i < this._maxI; i++){ 
             for(let j = 0; j < this._maxJ; j++){
@@ -145,6 +169,10 @@ export default class CellService {
         return this._cells;
     }
 
+    /**
+     * Mets dans les cellules une couleur aleatoire selon la couleur de fond en randomisant la saturation et la luminosité
+     * @returns ICell[][]
+     */
     public getColoredCells(): ICell[][] {
         let rgb = ColorLibrary.hexToRgb(this._bgColor);
         const bgValues = ColorLibrary.rgbToCellValues(rgb);
@@ -174,6 +202,9 @@ export default class CellService {
         return this._cells;
     }
 
+    /**
+     * Initialise le filtre de convolution du Red
+     */
     public initConvolFilterR() {
         const r = this._convolRadiusR;
         const x0 = r;
@@ -191,6 +222,9 @@ export default class CellService {
         }
     }
 
+    /**
+     * Initialise le filtre de convolution du Green
+     */
     public initConvolFilterG() {
         const r = this._convolRadiusG;
         const x0 = r;
@@ -208,6 +242,9 @@ export default class CellService {
         }
     }
 
+     /**
+     * Initialise le filtre de convolution du Blue
+     */
     public initConvolFilterB() {
         const r = this._convolRadiusB;
         const x0 = r;
@@ -225,7 +262,11 @@ export default class CellService {
         }
     }
 
-    // a mettre dans une lib !
+    /**
+     * Calcul de la fonction de croissance
+     * @param u valeur à traiter
+     * @returns résultat de la fonction de croissance
+     */
     private getGrowth(u: number): number {
         const mu = this._cellGrowthMu;
         const sigma = this._cellGrowthSigma;
@@ -233,7 +274,12 @@ export default class CellService {
         return value;
     }
 
-    // a mettre dans une lib !
+    /**
+     * Fonction d'évolution dans le temps, augmente ou diminue x selon la fonction de croissance de u
+     * @param x valeur à traiter
+     * @param u valeur pour la fonction de croissance
+     * @returns nouvelle valeur de x avec la variation dans le temps
+     */
     private getEvolve(x: number, u: number): number {
         const dt = this._cellEvolutionDeltaT;
         x += dt * this.getGrowth(u);
@@ -241,6 +287,13 @@ export default class CellService {
     }
 
     // a mettre dans une lib ?
+    /**
+     * Calcule les nouvelles valeurs de la cellule en fonction des filtres de convolution de chaque couleur
+     * Calcule une moyenne pondéree en tenant compte des filtres de convolution
+     * @param x indice de la cellule
+     * @param y indice de la cellule
+     * @returns nouvelles valeurs de la cellule
+     */
     private getFilterResult(x: number, y: number): any {
         const coefRedRed = this._colorSensibilityR[0];
         const coefRedGreen = this._colorSensibilityR[1];
@@ -270,11 +323,7 @@ export default class CellService {
                 const filterResultR = this._convolFilterR[i][j] ; // * this._countingFloorR
                 let x1 = x0R + i;
                 let y1 = y0R + j;
- 
-                //x1 = x1 < 0 ? this._maxI + x1 : x1; 
-                //x1 = x1 >= this._maxI ? x1 - this._maxI : x1;
-                //y1 = y1 < 0 ? this._maxJ + y1 : y1;
-                //y1 = y1 >= this._maxJ ? y1 - this._maxJ : y1;
+
                 const cyclicCoords = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ);
                 x1 = cyclicCoords.x;
                 y1 = cyclicCoords.y;
@@ -332,15 +381,15 @@ export default class CellService {
         return averages;
     }
 
+    /**
+     * Calcule la génération suivante des cellules
+     * @returns ICell[][]
+     */
     public generateNextCells(): ICell[][] {
-        // faire tableau a renvoyer
         const newCells: ICell[][] = [];
-        // boucle sur i de i =13 à maxI - 13
         for(let i = 0; i < this._maxI; i++) {
-            // boucle sur j de j =13 à maxJ - 13
             newCells[i] = [];
             for(let j = 0; j < this._maxJ; j++) {
-                // boucle sur j de j =13 à maxJ - 13
                 const values = this.getFilterResult(i, j);
                 let newR = this.getEvolve(this._cells[i][j].stateR, values.red);
                 newR = newR < 0 ? 0 : newR;
@@ -351,9 +400,6 @@ export default class CellService {
                 let newB = this.getEvolve(this._cells[i][j].stateB, values.blue);
                 newB = newB < 0 ? 0 : newB;
                 newB = newB > 1 ? 1 : newB;
-                //this._cells[i][j].stateR = newR;
-                //this._cells[i][j].stateG = newG;
-                //this._cells[i][j].stateB = newB;
                 newCells[i][j] = {
                     i: i,
                     j: j,
@@ -367,6 +413,12 @@ export default class CellService {
         return this._cells;
     }
     
+    /**
+     * Inutilisée : dessine une flou gaussien
+     * @param i indice horizontal de la cellule
+     * @param j indice vertical de la cellule
+     * @returns ICell[][]
+     */
     public drawGaussianBlur(i: number, j: number): ICell[][] {
         const blurSize = Math.floor(this._brushSize/2);
         const x0 = Math.floor(i - blurSize / 2);
@@ -377,7 +429,6 @@ export default class CellService {
                 let value = (1 - Math.exp( -1 * ((dist - 0.5) * (dist - 0.5)) / (2 * 0.25 * 0.25) ))/2;
                 value = value > 1 ? 1 : value;
                 value = value < 0 ? 0 : value;
-                //console.log('value :', value);
                 let newRed = this._cells[x0 + x][y0 + y].stateR + value ;
                 let newGreen = this._cells[x0 + x][y0 + y].stateG + value;
                 let newBlue = this._cells[x0 + x][y0 + y].stateB + value;
@@ -393,6 +444,14 @@ export default class CellService {
     }
     
 
+    /**
+     * Calcule les coordonnées cycliques
+     * @param x1 indice horizontal
+     * @param y1 indice vertical
+     * @param maxI taille horizontale
+     * @param maxJ taille verticale
+     * @returns {x: number, y: number}
+     */
     private getCyclicCoords(x1: number, y1: number, maxI: number, maxJ: number): any {
         x1 = x1 < 0 ? maxI + x1 : x1; 
         x1 = x1 >= maxI ? x1 - maxI : x1;
@@ -401,16 +460,18 @@ export default class CellService {
         return {x: x1, y: y1};
     }
 
+    /**
+     * 'Dessine' la brosse selon sa couleur et sa dureté centrée sur une cellule
+     * @param i indice horizontal de la cellule
+     * @param j indice vertical de la cellule
+     * @returns ICell[][]
+     */
     public drawColoredCircle(i: number, j: number): ICell[][] {
         const size = this._brushSize;
         const x0 = Math.floor(i - size / 2);
         const y0 = Math.floor(j - size / 2);
         const newRgb = ColorLibrary.hexToRgb(this._brushColor);
         const newValues = ColorLibrary.rgbToCellValues(newRgb); 
-        // passer en teinte saturation luminosité
-        // randomiser saturation et luminosité
-        // passer en rgb
-        // calculer les values
         const newR = newValues.red;
         const newG = newValues.green;
         const newB = newValues.blue;
@@ -425,16 +486,9 @@ export default class CellService {
                     let newGreen = p * newG;
                     let newBlue = p * newB;
                     
-
-                    
                     let x1 = x0 + x;
                     let y1 = y0 + y;
-                    /*
-                    x1 = x1 < 0 ? this._maxI + x1 : x1; 
-                    x1 = x1 >= this._maxI ? x1 - this._maxI : x1;
-                    y1 = y1 < 0 ? this._maxJ + y1 : y1;
-                    y1 = y1 >= this._maxJ ? y1 - this._maxJ : y1;
-                    */
+
                     x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
                     y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
                     newRed += this._cells[x1][y1].stateR;
@@ -452,6 +506,12 @@ export default class CellService {
         return this._cells;
     }
 
+    /**
+     * 'Dessine' la brosse selon sa couleur et sa dureté centrée sur une cellule en 'randomisant' la saturation et la luminosite
+     * @param i indice horizontal de la cellule
+     * @param j indice vertical de la cellule
+     * @returns ICell[][]
+     */
     public drawRandowCircle(i: number, j: number): ICell[][] {
         const size = this._brushSize;
         const x0 = Math.floor(i - size / 2);
@@ -477,7 +537,6 @@ export default class CellService {
                         newBlue = Math.random();
                     }
 
-                    
                     // bords flous
                     const n = this._brushHardness / 2;
                     const b = (1 - this._brushHardness) / 2;
@@ -492,12 +551,7 @@ export default class CellService {
                     newBlue = newBlue > 1 ? 1 : newBlue;
                     let x1 = x0 + x;
                     let y1 = y0 + y;
-                    /*
-                    x1 = x1 < 0 ? this._maxI + x1 : x1; 
-                    x1 = x1 >= this._maxI ? x1 - this._maxI : x1;
-                    y1 = y1 < 0 ? this._maxJ + y1 : y1;
-                    y1 = y1 >= this._maxJ ? y1 - this._maxJ : y1;
-                    */
+
                     x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
                     y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
                     this._cells[x1][y1].stateR += newRed;
@@ -509,6 +563,12 @@ export default class CellService {
         return this._cells;
     }
 
+    /**
+     * 'Dessine' la brosse en 'noir' : mets les valeurs des cellules concernées à 0
+     * @param i indice horizontal de la cellule
+     * @param j indice vertical de la cellule
+     * @returns ICell[][]
+     */
     public clearCircle(i: number, j: number): ICell[][] {
         const size = this._brushSize;
         const x0 = Math.floor(i - size / 2);
@@ -519,12 +579,7 @@ export default class CellService {
                 if(dist <= 0.5) {
                     let x1 = x0 + x;
                     let y1 = y0 + y;
-                    /*
-                    x1 = x1 < 0 ? this._maxI + x1 : x1; 
-                    x1 = x1 >= this._maxI ? x1 - this._maxI : x1;
-                    y1 = y1 < 0 ? this._maxJ + y1 : y1;
-                    y1 = y1 >= this._maxJ ? y1 - this._maxJ : y1;
-                    */
+
                     x1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).x;
                     y1 = this.getCyclicCoords(x1, y1, this._maxI, this._maxJ).y;
                     this._cells[x1][y1].stateR = 0;
@@ -536,7 +591,12 @@ export default class CellService {
         return this._cells;
     }
 
-    // génére un image a partir des cellules avec une cellule = n pixel dessine un rectangle de largeur n et de hauteur n
+    /**
+     * Génère une image a partir des cellules, avec une cellule = un carré de n pixels de côté, dessine un rectangle de largeur n et de hauteur n pour chaque cellule
+     * Renvoi une ImageData
+     * @param n du rectancle en pixel pour une cellule
+     * @returns ImageData
+     */
     public getImageData(n: number): ImageData {
         const imageData = new ImageData(this._maxI * n, this._maxJ * n);
         for(let i = 0; i < this._maxI; i++) {
@@ -558,6 +618,11 @@ export default class CellService {
     }
 
     // TODO mettre dans une library?
+    /**
+     * réduit l'image carré, réduit la hauteur ou la largeur selon les proportions de l'image
+     * @param imageData 
+     * @returns ImageData
+     */
     public getSquareImageData(imageData: ImageData): ImageData {
         let newImageData : ImageData = new ImageData(imageData.width, imageData.height);
         if(imageData.width > imageData.height) {
@@ -598,6 +663,11 @@ export default class CellService {
     }
 
     // TODO mettre dans une library?
+    /**
+     * Renvoi le src d'une ImageData
+     * @param imagedata 
+     * @returns 
+     */
     public getImageSrcFromImageData(imagedata: ImageData): string {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -607,22 +677,9 @@ export default class CellService {
         return canvas.toDataURL();
     }
 
-    /*
-    public getImageData(): ImageData {
-        const imageData = new ImageData(this._maxI, this._maxJ);
-        for(let i = 0; i < this._maxI; i++) {
-            for(let j = 0; j < this._maxJ; j++) {
-                const cell = this._cells[i][j];
-                imageData.data[(i * this._maxJ + j) * 4] = Math.floor(255 * cell.stateR);
-                imageData.data[(i * this._maxJ + j) * 4 + 1] = Math.floor(255 * cell.stateG);
-                imageData.data[(i * this._maxJ + j) * 4 + 2] = Math.floor(255 * cell.stateB);
-                imageData.data[(i * this._maxJ + j) * 4 + 3] = 255;
-            }
-        }
-        return imageData;
-    }
-    */
-
+    /**
+     * Setters
+     */
     public setCellSize(cellSize: number) {
         this._cellSize = cellSize;
         this._maxI = Math.floor(CanvasConfig.CANVAS_WIDTH / this._cellSize);
@@ -720,6 +777,10 @@ export default class CellService {
     public setCellEvolutionDeltaT(cellEvolutionDeltaT: number) {
         this._cellEvolutionDeltaT = cellEvolutionDeltaT;
     }
+
+    /**
+     * Getters
+     */
 
     public getCellSize(): number {
         return this._cellSize;

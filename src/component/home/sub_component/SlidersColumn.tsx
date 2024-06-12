@@ -88,5 +88,4 @@ const SlidersColumn = (props: ISettingsColumnProps) => {
         </div>
     );
 };
-
 export default SlidersColumn;

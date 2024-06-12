@@ -2,7 +2,6 @@ import IToast from "../interface/IToast";
 
 export default class ToastLibrary {
     
-    //static
     static displayRunToast = async (displayToast: (toast: IToast) => void) => {
         const toastToDisplay: IToast = {
             title: "RUN",
@@ -13,7 +12,6 @@ export default class ToastLibrary {
         };
         
         displayToast(toastToDisplay);
-        //props.displayToast(toastToDisplay);
     }
 
     static displayStopToast = async (displayToast: (toast: IToast) => void) => {
@@ -26,7 +24,6 @@ export default class ToastLibrary {
         };
 
         displayToast(toastToDisplay);
-        //props.displayToast(toastToDisplay);
     }
 
     static displayResetToast = async (displayToast: (toast: IToast) => void) => {

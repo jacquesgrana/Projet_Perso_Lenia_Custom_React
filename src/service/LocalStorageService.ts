@@ -1,5 +1,8 @@
 import IPreset from "../interface/IPreset";
 
+/**
+ * Service en pattern singleton
+ */
 export default class LocalStorageService {
     private static _instance: LocalStorageService | null = null;
 
@@ -8,15 +11,21 @@ export default class LocalStorageService {
     public static async getInstance(): Promise<LocalStorageService> {
         if (this._instance === null) {
             this._instance = new LocalStorageService();
-            await this._instance.init();
+            //await this._instance.init();
         }
         return this._instance;
     }
 
+    /*
     private async init() {
         
     }
+    */
 
+    /**
+     * Retourne les presets de l'utilisateur depuis le local storage en vérifiant leur type
+     * Remplace le local storage en enlevant les presets non valides
+     */
     public async getUserPresets(): Promise<IPreset[]> {
         let presets: IPreset[] = [];
         const presetsToReturn: IPreset[] = [];
@@ -24,9 +33,6 @@ export default class LocalStorageService {
         let presetsString = localStorage.getItem('userPresets');
         if (presetsString) {
             presets = JSON.parse(presetsString);
-        
-            // TODO tester les presets pour verifier qu'ils sont de type IPreset sinon on omet le preset concerné -> done
-            // TODO améliorer -> refaire le local storage si il contient des erreurs si besoin -> done
             presets.forEach((preset: any) => {
                 if(preset && (preset as IPreset)) {
                     presetsToReturn.push(preset);
@@ -40,12 +46,10 @@ export default class LocalStorageService {
                 await this.setUserPresets(presetsToReturn);
             }
         }
-
-        
         return presetsToReturn;
     }
 
     public async setUserPresets(presets: IPreset[]): Promise<void> {
-        localStorage.setItem('userPresets', JSON.stringify(presets));
+        await localStorage.setItem('userPresets', JSON.stringify(presets));
     }
 }

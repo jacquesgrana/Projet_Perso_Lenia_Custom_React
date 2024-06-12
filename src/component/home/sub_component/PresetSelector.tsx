@@ -22,38 +22,35 @@ interface IPresetSelectorProps {
 
 const PresetSelector = (props : IPresetSelectorProps) => {
 
-    //const [presets, setPresets] = useState<IPreset[]>([]);
-    //const [userPresets, setUserPresets] = useState<IPreset[]>([]);
-    /*
-    useEffect(() => {
-        //console.log('props.presets :', props.presets);
-        //setPresets(props.presets);
-    }, [props.presets]);
-
-    useEffect(() => {
-        //console.log('props.userPresets :', props.userPresets);
-        //setUserPresets(props.userPresets);
-    },  [props.userPresets]);
-*/
-
 const [isImportDivOpen, setIsImportDivOpen] = useState<boolean>(false);
 
 const [file, setFile] = useState<File | null>(null);
 
 const presetServiceRef = useRef<PresetService>();
 
+/**
+ * Initialisation du service
+ */
 useEffect(() => {
     const fct = async () => {
         presetServiceRef.current = await PresetService.getInstance();
-        //console.log('presetServiceRef.current :', presetServiceRef.current);
     };
     fct();
 }, []);
 
+/**
+ * Gère le fichier à importer
+ * @param e event
+ */
 const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) setFile(e.target.files[0]);
 };
 
+// TODO librairie ?
+/**
+ * Gère l'import du fichier
+ * @param e event
+ */
 const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
         if (file) {
@@ -66,11 +63,8 @@ const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
             if (fileContent) {
                 try {
                     const fileObject = JSON.parse(fileContent as string);
-                    //console.log('File object:', fileObject);
                     const userPresetsToAdd: IPreset[] = fileObject.user_presets;
-                    //console.log('User presets to add:', userPresetsToAdd);
                     presetServiceRef.current?.addUserPresets(userPresetsToAdd);
-                    // TODO afficher toast
                     props.reloadUserPresetsCB();
                     ToastLibrary.displayImportPresetDoneToast(props.displayToast);
                     setFile(null);
@@ -80,7 +74,6 @@ const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
                 }
                 catch (error) {
                     console.error('Error parsing JSON:', error);
-                    // TODO afficher toast
                     ToastLibrary.displayImportPresetErrorToast(props.displayToast);
                     setFile(null);
                     setIsImportDivOpen(false);
@@ -154,6 +147,5 @@ const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         )}
         </div> 
     );
-}
-
+};
 export default PresetSelector;

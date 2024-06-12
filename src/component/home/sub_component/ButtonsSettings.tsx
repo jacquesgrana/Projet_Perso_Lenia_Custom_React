@@ -37,5 +37,4 @@ const ButtonsSettings = (props: IButtonsSettingsProps) => {
         </div>
     );
 };
-
 export default ButtonsSettings;

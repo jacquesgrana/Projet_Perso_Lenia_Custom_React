@@ -33,7 +33,6 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     const width = CanvasConfig.CANVAS_WIDTH;
     const height = CanvasConfig.CANVAS_HEIGHT;
     const delay = AppConfig.APP_DELAY;
-    //const cellService = CellService.getInstance();
 
     const [cellSize, setCellSize] = useState<number>(CellConfig.CELL_SIZE);
 
@@ -88,8 +87,10 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
 
     const mousePositionRef = useRef<{x: number, y: number}>({x: 0, y: 0});
 
+    /**
+     * Initialisation : init des services, du tableau des cellules et remplissage des cellules + dessin
+     */
     useEffect(() => {
-
       const fct = async () => {
         presetServiceRef.current = await PresetService.getInstance();
         localStorageServiceRef.current = await LocalStorageService.getInstance();
@@ -106,11 +107,17 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       
     }, []);
 
+    /**
+     * Appliquer le preset sélectionné
+     */
     useEffect(() => {
       setIsNewPresetDivOpen(false);
       if(selectedPreset !== undefined) applyPresetCB(selectedPreset);
     }, [selectedPreset]);
 
+    /**
+     * Appliquer le premier preset de la liste props.presets
+     */
     useEffect(() => {
       if(props.presets.length > 0) {
         setSelectedPreset((prev) => {
@@ -120,6 +127,9 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       }
     }, [props.presets]);
 
+    /**
+     * Evolution des cellules : définition de la fonction d'évolution qui est appelée quand isRunning === true
+     */
     useEffect(() => {    
         const fct = () => {
           setIsNewPresetDivOpen(false);
@@ -141,32 +151,35 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         
     }, [isRunning, delay, cellEvolutionDeltaT, isMouseOver]); //isMouseOver
 
+    /**
+     * Gestion du bouton SAVE
+     */
     useEffect(() => {
       const savePresetBtn = document.getElementById("save-preset-button");
       if (savePresetBtn) savePresetBtn.innerText = !isNewPresetDivOpen ? "SAVE" : "CLOSE";
     }, [isNewPresetDivOpen]);
 
+    /**
+     * pour fermer la div du formulaire de sauvegarde (à intégrer dans un useEffect précédent ?)
+     */
     useEffect(() => {
-        //console.log('firsloadRef.current :', firsloadRef.current);
-        //console.log('load count :', AppConfig.APP_LOAD_COUNT_MAX);
         setIsNewPresetDivOpen(false);
         if(loadCountRef.current > AppConfig.APP_LOAD_COUNT_MAX) isRunning ? ToastLibrary.displayRunToast(props.displayToast) : ToastLibrary.displayStopToast(props.displayToast);
         else loadCountRef.current++;
     }, [isRunning]);
 
+    /**
+     * Gère la modification de la taille des cellules en pixel
+     */
     useEffect(() => {
-      //cellServiceRef.current.setCellSize(cellSize);
       setIsNewPresetDivOpen(false);
       handleFillCells();
       drawCells();
     }, [cellSize]);
 
-    /*
-    useEffect(() => {
-      if(isMouseOver) drawBrush();
-    }, [isMouseOver]);
-    */
-
+    /**
+     * Initialisation des cellules
+     */
     const initCells = () => {
         cellsRef.current = cellServiceRef.current.initCells();
 
@@ -176,22 +189,32 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         updateSliders();
     }
 
+    /**
+     * Wrapper qui appelle la fonction de generation des cellules
+     */
     const generateNext = () => {
         cellsRef.current = cellServiceRef.current.generateNextCells();
     }
 
+    /**
+     * Remplissage des cellules à partir de la couleur de fond
+     */
     const handleFillCells = () => {
         cellsRef.current = cellServiceRef.current.getColoredCells();
         setVirtTimeCounter(0);
     }
 
+    /**
+     * Effacement des cellules
+     */
     const handleClearCells = () => {
         cellsRef.current = cellServiceRef.current.initCells();
-        //cellServiceRef.current.initConvolFilters();
         setVirtTimeCounter(0);
-        //updateSliders();
     }
 
+    /**
+     * Initialisation des valeurs par défaut : utilisation du premier preset
+     */
     const handleDefaultValues = () => {
       const preset: IPreset = {
         id: props.presets[0].id,
@@ -201,14 +224,15 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         date: props.presets[0].date,
         imageSrc: props.presets[0].imageSrc,
         values: props.presets[0].values
-
       }
-        setSelectedPreset(preset);
-        //cellServiceRef.current.initValues();
-        cellServiceRef.current.initConvolFilters();
-        updateSliders();
+      setSelectedPreset(preset);
+      cellServiceRef.current.initConvolFilters();
+      updateSliders();
     }
 
+    /**
+     * Initialisation des valeurs par défaut : utilisation du preset sélectionné
+     */
     const handleResetValues = () => {
       const preset: IPreset = {
         id: selectedPreset.id,
@@ -220,15 +244,20 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         values: selectedPreset.values
       }
         setSelectedPreset(preset); // ????
-        //cellServiceRef.current.initValues();
         cellServiceRef.current.initConvolFilters();
         updateSliders();
     }
 
+    /**
+     * Ouvre / Ferme la div du formulaire de sauvegarde d'un nouveau preset
+     */
     const handleSaveValues = () => {
       setIsNewPresetDivOpen(!isNewPresetDivOpen);
     }
 
+    /**
+     * Sauvegarde du nouveau preset dans la liste des presets de l'utilisateur
+     */
     const handleSaveNewPresetValues = () => {
       const fieldName = document.getElementById("new-preset-name") as HTMLInputElement | null;
       const fieldDescription = document.getElementById("new-preset-description") as HTMLInputElement | null;
@@ -238,12 +267,9 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       const pseudo = fieldPseudo?.value;
       if(name !== undefined && description !== undefined && pseudo !== undefined) {
         ToastLibrary.displaySavePresetToast(name, props.displayToast);
-
         const imageData: ImageData = cellServiceRef.current.getImageData(2);
         const squareImageData: ImageData = cellServiceRef.current.getSquareImageData(imageData);
         const src: string = cellServiceRef.current.getImageSrcFromImageData(squareImageData);
-        //console.log('src :', src);
-
         const newValues: IPresetValues = {
           floorR: floorR,
           floorG: floorG,
@@ -281,18 +307,33 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       }
     }
 
+    /**
+     * Gestion du changement du nom du nouveau preset
+     * @param e event
+     */
     const handleOnChangeNewPresetName = (e: any) => {
       updateSavePresetBtn();
     }
 
+    /**
+     * Gestion du changement de la description du nouveau preset
+     * @param e event
+     */
     const handleOnChangeNewPresetDescription = (e: any) => {
       updateSavePresetBtn();
     }
 
+    /**
+     * Gestion du changement du pseudo du nouveau preset
+     * @param e event
+     */
     const handleOnChangeNewPresetPseudo = (e: any) => {
       updateSavePresetBtn();
     }
 
+    /**
+     * Gère l'activation / désactivation du bouton de sauvegarde du nouveau preset
+     */
     const updateSavePresetBtn = () => {
       const savePresetBtn = document.getElementById("save-preset-form-button") as HTMLButtonElement | null;
       if (savePresetBtn) {
@@ -302,6 +343,10 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
     };
     
 
+    /**
+     * Vérifie si tous les champs du formulaire de sauvegarde du nouveau preset sont remplis
+     * @returns true si tous les champs du formulaire de sauvegarde du nouveau preset sont remplis
+     */
     const isNewPresetDivFieldsNotEmpty = (): boolean => {
       let toReturn: boolean = false;
       const fieldName = document.getElementById("new-preset-name") as HTMLInputElement | null;
@@ -313,6 +358,9 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       return toReturn;
     }
 
+    /**
+     * Dessine les cellules dans le canvas
+     */
     const drawCells = () => {
         const ctx = canvasRef.current?.getContext("2d");
         if(ctx && canvasRef.current){
@@ -333,14 +381,25 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
         }
     }
 
+    /**
+     * Handler du changement du preset selectionné
+     * @param preset 
+     */
     const handleChangePresetCB = (preset: IPreset) => {
       if(preset !== undefined) setSelectedPreset(preset);
     }
 
+    /**
+     * Handler du clic sur le bouton d'exportation de la liste des presets de l'user
+     */
     const exportUserPresetsCB = () => {
       presetServiceRef.current.exportUserPresets();
     }
 
+    /**
+     * Handler du clic sur le bouton de suppression d'un preset
+     * @param preset : preset à supprimer
+     */
     const deleteUserPresetCB = (preset: IPreset) => {
       presetServiceRef.current.deleteUserPreset(preset.id);
       props.reloadUserPresetsCB();
@@ -348,6 +407,9 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       ToastLibrary.displayDeletePresetToast(preset.name, props.displayToast);
     }
 
+    /**
+     * Met à jour la liste des presets de l'user dans le local storage
+     */
     const updateStorageCB = () => {
       const fct = async () => {
         await localStorageServiceRef.current.setUserPresets(presetServiceRef.current.getUserPresets());
@@ -355,6 +417,10 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       fct();
     }
 
+    /**
+     * Applique le preset : met à jour les valeurs des sliders et du service
+     * @param preset : preset à appliquer
+     */
     const applyPresetCB = (preset: IPreset) => {
       setFloorR(preset.values.floorR);
       cellServiceRef.current.setCountingFloorR(preset.values.floorR);
@@ -400,128 +466,59 @@ const CustomCanvas = (props: ICustomCanvasProps) => {
       cellServiceRef.current.setCellGrowthSigma(preset.values.cellGrowthSigma);
 
       cellServiceRef.current.initConvolFilters();
-      //updateSliders();
       setVirtTimeCounter(0);
       handleFillCells();
       drawCells();
       ToastLibrary.displayApplyPresetToast(preset.name, props.displayToast);
     }
 
+    /**
+     * Change la valeur de isRunning et change le texte du bouton RUN / PAUSE
+     */
     const toggleIsRunning = () => {
-        //isRunning.current = !isRunning.current;
         setIsRunning((prev) => {
-            //console.log('isRunning button :', !prev);
             const btn = document.getElementById("button-run");
-            //console.log('btn :', btn);
             if (btn) btn.innerText = !prev ? "PAUSE" : "RUN";
-            //!prev ? displayRunToast() : displayStopToast();
-            //!prev ? displayRunToast() : displayStopToast();
             return !prev;
         });
-        //!isRunning ? displayRunToast() : displayStopToast();
     }
 
-    // librairie ?
-
+  // librairie ?
+  /**
+   * Gère le clic dans le canvas
+   * @param e event
+   */
   const handleMouseDown = (e: any) => {
     handleCoords((e as unknown) as MouseEvent);
     if (canvasRef.current) {
-        // récupérer les coordonnées du clic
         const mouseX = coords.x;
         const mouseY = coords.y;
-        //console.log("MouseX : ", mouseX, " MouseY : ", mouseY);
         const mouseI = Math.floor(mouseX / cellSize);
         const mouseJ = Math.floor(mouseY / cellSize);
-        //console.log("MouseI : ", mouseI, " MouseJ : ", mouseJ);
-        //const radius = Math.floor(brushSize/2);
         if(mouseI >= 0 && mouseI <= maxIRef.current && mouseJ >= 0 && mouseJ <= maxJRef.current){
-            //console.log('e.button :', e.button);
             if (e.button === 0) {
-                //console.log('brushIsRandom :', brushIsRandom);
                 if(brushIsRandom){
-                  //console.log('true');
                   cellsRef.current = cellServiceRef.current.drawRandowCircle(mouseI, mouseJ);
                 }
                 else {
-                  //console.log('false');
                   cellsRef.current = cellServiceRef.current.drawColoredCircle(mouseI, mouseJ);
                 }
                 drawCells();
             }
             else if (e.button === 2) {
-                //e.preventDefault();
-                //console.log('clic droit')
                 cellsRef.current = cellServiceRef.current.clearCircle(mouseI, mouseJ);
                 drawCells();
             }
             updateMousePosition(e);
             if(isMouseOver) drawBrushUsingRef();
         }
-        
-        //cellsRef.current = cellServiceRef.current.getCells();
     }
   }
 
-
-/*
-const drawBrush =(e: any) => {
-  const radius = Math.floor((brushSize/2) * cellSize);
-  handleCoords((e as unknown) as MouseEvent);
-  if (canvasRef.current) {
-    const canvasWidth = canvasRef.current.width;
-    const canvasHeight = canvasRef.current.height;
-    if(!isRunning) drawCells();
-    const ctx = canvasRef.current.getContext("2d");
-
-    const mouseX = coords.x;
-    const mouseY = coords.y;
-    //console.log("MouseX : ", mouseX, " MouseY : ", mouseY);
-    
-    // TODO améliorer : utiliser une Config
-    if (ctx) {
-      canvasRef.current.style.cursor = 'crosshair';
-      const isMouseNearEast = mouseX - radius < 0;
-      const isMouseNearWest = mouseX + radius > canvasWidth;
-      const isMouseNearNorth = mouseY - radius < 0;
-      const isMouseNearSouth = mouseY + radius > canvasHeight;
-      drawBrushCircle(ctx, mouseX, mouseY, radius);
-
-      if (isMouseNearEast ) {
-        drawBrushCircle(ctx, canvasWidth + mouseX, mouseY, radius);
-      }
-
-      if (isMouseNearWest) {
-        drawBrushCircle(ctx, mouseX - canvasWidth, mouseY, radius);
-      }
-
-      if (isMouseNearNorth) {
-        drawBrushCircle(ctx, mouseX, canvasHeight + mouseY, radius);
-      }
-
-      if (isMouseNearSouth) {
-        drawBrushCircle(ctx, mouseX, mouseY - canvasHeight, radius);
-      }
-
-      if(isMouseNearEast && isMouseNearNorth) {
-        drawBrushCircle(ctx, canvasWidth + mouseX, canvasHeight + mouseY, radius);
-      }
-
-      if(isMouseNearEast && isMouseNearSouth) {
-        drawBrushCircle(ctx, canvasWidth + mouseX, mouseY - canvasHeight, radius);
-      }
-
-      if(isMouseNearWest && isMouseNearNorth) {
-        drawBrushCircle(ctx, mouseX - canvasWidth, canvasHeight + mouseY, radius);
-      }
-
-      if(isMouseNearWest && isMouseNearSouth) {
-        drawBrushCircle(ctx, mouseX - canvasWidth, mouseY - canvasHeight, radius);
-      }
-    }
-  }
-}
-*/
-
+  /**
+   * Dessine les contours de la brush dans le canvas en tenant compte des coordonnées 'circulaires'
+   * Appelle la fonction 'drawBrushCircle'
+   */
 const drawBrushUsingRef = () => {
   const radius = Math.floor((brushSize/2) * cellSize);
   if (canvasRef.current) {
@@ -578,7 +575,14 @@ const drawBrushUsingRef = () => {
   }
 }
 
-
+/**
+ * Dessine les contours de la brosse
+ * @param ctx 
+ * @param mouseX 
+ * @param mouseY 
+ * @param radius 
+ * @param hardness 
+ */
 const drawBrushCircle = (ctx: CanvasRenderingContext2D, mouseX: number, mouseY: number, radius: number, hardness: number) => {
   const radiusHardness = hardness === 0 ? 10 : radius * hardness;
   ctx.strokeStyle = CanvasConfig.BRUSH_STROKE_LARGE_COLOR;
@@ -604,7 +608,9 @@ const drawBrushCircle = (ctx: CanvasRenderingContext2D, mouseX: number, mouseY: 
   ctx.stroke();
 }
 
-
+/**
+ * Met à jour les sliders à partir des valeurs du service
+ */
 const updateSliders = () => {
     setCellSize(cellServiceRef.current.getCellSize());
 
@@ -641,6 +647,10 @@ const updateSliders = () => {
     setCellEvolutionDeltaT(cellServiceRef.current.getCellEvolutionDeltaT());
   };
 
+  /**
+   * Handlers des modification des sliders, des color pickers et de la checkbox
+   */
+
   const handleOnChangeCellSizeSlider = (value: any) => {
     setCellSize(value);
     cellServiceRef.current.setCellSize(value);
@@ -648,13 +658,7 @@ const updateSliders = () => {
     maxIRef.current = Math.floor(width / value);
     maxJRef.current = Math.floor(height / value);
     cellsRef.current = cellServiceRef.current.initCells();
-
-    //drawCells();
-    //cellsRef.current = cellServiceRef.current.getRandomizedCells();
     setVirtTimeCounter(0);
-
-    //handleFillCells();
-    //drawCells();
   }
 
   const handleOnChangeConvFilterRadiusSliderR = (value: any) => {
@@ -729,13 +733,11 @@ const updateSliders = () => {
   const handleOnChangeBrushHardnessSlider = (value: any) => {
     setBrushHardness(value);
     cellServiceRef.current.setBrushHardness(value);
-    //console.log('brush hardness :', value);
   }
 
   const handleOnChangeBrushIsRandomCheckbox = (value: any) => {
     setBrushIsRandom(value);
     cellServiceRef.current.setBrushIsRandom(value);
-    //console.log('brush is random :', value);
   }
 
   const handleOnChangeBrushColorPicker = (value: any) => {
@@ -763,14 +765,7 @@ const updateSliders = () => {
     cellServiceRef.current.setCountingFloorB(value);
   };
 
-  /*
-  const handleOnChangeSensibilitySliderR = (value: any) => {
-    setColorSensibilityR(value);
-    cellServiceRef.current.setColorSensibilityR(value);
-  }*/
-
   const handleOnChangeSensibilitySliderRR = (value: any) => {
-    //value = makeSensibilityCorrectionR(value);
     if(value === 0 && cellServiceRef.current.getColorSensibilityR()[1] === 0 && cellServiceRef.current.getColorSensibilityR()[2] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
@@ -780,7 +775,6 @@ const updateSliders = () => {
   }
 
   const handleOnChangeSensibilitySliderRG = (value: any) => {
-    //value = makeSensibilityCorrectionR(value);
     if(value === 0 && cellServiceRef.current.getColorSensibilityR()[0] === 0 && cellServiceRef.current.getColorSensibilityR()[2] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
@@ -790,7 +784,6 @@ const updateSliders = () => {
   }
 
   const handleOnChangeSensibilitySliderRB = (value: any) => {
-    //value = makeSensibilityCorrectionR(value);
     if(value === 0 && cellServiceRef.current.getColorSensibilityR()[0] === 0 && cellServiceRef.current.getColorSensibilityR()[1] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
@@ -800,7 +793,6 @@ const updateSliders = () => {
   }
 
   const handleOnChangeSensibilitySliderGR = (value: any) => {
-      //value = makeSensibilityCorrectionG(value);
       if(value === 0 && cellServiceRef.current.getColorSensibilityG()[1] === 0 && cellServiceRef.current.getColorSensibilityG()[2] === 0) {
         value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
       }
@@ -810,7 +802,6 @@ const updateSliders = () => {
   }
 
   const handleOnChangeSensibilitySliderGG = (value: any) => {
-    //value = makeSensibilityCorrectionG(value);
     if(value === 0 && cellServiceRef.current.getColorSensibilityG()[0] === 0 && cellServiceRef.current.getColorSensibilityG()[2] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
@@ -820,7 +811,6 @@ const updateSliders = () => {
   }
 
   const handleOnChangeSensibilitySliderGB = (value: any) => {
-    //value = makeSensibilityCorrectionG(value);
     if(value === 0 && cellServiceRef.current.getColorSensibilityG()[0] === 0 && cellServiceRef.current.getColorSensibilityG()[1] === 0) {
       value = CellConfig.CELL_COLOR_SENSIBILITY_MIN_NOT_NULL;
     }
@@ -863,21 +853,30 @@ const updateSliders = () => {
       cellServiceRef.current.setCellEvolutionDeltaT(value);
   }
 
+  /**
+   * Handler du mouvement de la souris dans le canvas
+   * @param e event
+   */
   const handleMouseMove = (e: any) => {
     updateMousePosition(e);
     if(!isRunning && isMouseOver) drawBrushUsingRef();
   }
 
-  
+  /**
+   * Handler de l'entrée de la souris dans le canvas
+   * @param e event
+   */
   const handleMouseEnter = (e: any) => {
     updateMousePosition(e);
     setIsMouseOver((prev) => {
-      //console.log('isMouseOver :', !prev);
       return !prev;
     });
-    //drawBrush();
   }
 
+  /**
+   * Handler de la sortie de la souris dans le canvas
+   * @param e event
+   */
   const handleMouseLeave = (e: any) => {
     updateMousePosition(e);
     setIsMouseOver((prev) => {
@@ -887,182 +886,170 @@ const updateSliders = () => {
     if(!isRunning) drawCells();
   }
 
+  /**
+   * Met à jour la ref de la position de la souris
+   * @param e event
+   */
   const updateMousePosition = (e: any) => {
     handleCoords((e as unknown) as MouseEvent);
     mousePositionRef.current.x = coords.x;
     mousePositionRef.current.y = coords.y;
   }
 
+  return (
+    <div id="app-canvas-container">
+      <div id="app-canvas-wrapper" className="">
+        <canvas
+          ref={canvasRef}
+          width={width}
+          height={height}
+          id="app-canvas"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        />
+        <p>left-click : add circle / right-click : clear circle</p>
 
-    return (
-        <div id="app-canvas-container">
-          <div id="app-canvas-wrapper" className="">
-            <canvas
-              ref={canvasRef}
-              width={width}
-              height={height}
-              id="app-canvas"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            />
-            <p>left-click : add circle / right-click : clear circle</p>
-
-            <p className="text-center"><strong>Virtual time counter : {virtTimeCounter.toFixed(2)} (s)</strong></p>
-            <p>Preset : {selectedPreset?.name}</p>
-            <div className="d-flex gap-3 justify-content-center mb-3 w-100">
-                <Button
-                className="btn-1"
-                onClick={() => {
-                    handleFillCells();
-                    drawCells();
-                }}
-                >
-                    FILL
-                </Button>
-                <Button
-                className="btn-1"
-                onClick={() => {
-                    ToastLibrary.displayResetToast(props.displayToast);
-                    handleClearCells();
-                    drawCells();
-                }}
-                >
-                    CLEAR
-                </Button>
-                <Button
-                className="btn-1" 
-                id="button-run"
-                onClick={() => toggleIsRunning()}
-                >
-                    RUN
-                </Button>  
-            </div>
-          </div>
-          <Accordion 
-          defaultActiveKey={null}
-          id="app-accordion"
-          className="accordion-container"
-          >
-            <Accordion.Item eventKey="0" >
-              <Accordion.Header>Presets</Accordion.Header>
-              <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
-                <PresetSelector 
-                applyPresetCB={handleChangePresetCB}
-                presets={props.presets} 
-                userPresets={props.userPresets}
-                exportUserPresetsCB={exportUserPresetsCB}
-                reloadUserPresetsCB={props.reloadUserPresetsCB}
-                deleteUserPresetCB={deleteUserPresetCB}
-                displayToast={props.displayToast}
-                updateStorageCB={updateStorageCB}
-                />
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="1" >
-              <Accordion.Header>Settings</Accordion.Header>
-              <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
-                <Settings 
-                  floorR={floorR}
-                  handleOnChangeFloorSliderR={handleOnChangeFloorSliderR}
-                  convFilterRadiusR={convFilterRadiusR}
-                  handleOnChangeConvFilterRadiusSliderR={handleOnChangeConvFilterRadiusSliderR}
-                  convFilterMuR={convFilterMuR}
-                  handleOnChangeConvFilterMuSliderR={handleOnChangeConvFilterMuSliderR}
-                  convFilterSigmaR={convFilterSigmaR}
-                  handleOnChangeConvFilterSigmaSliderR={handleOnChangeConvFilterSigmaSliderR}
-
-                  floorG={floorG}
-                  handleOnChangeFloorSliderG={handleOnChangeFloorSliderG}
-                  convFilterRadiusG={convFilterRadiusG}
-                  handleOnChangeConvFilterRadiusSliderG={handleOnChangeConvFilterRadiusSliderG}
-                  convFilterMuG={convFilterMuG}
-                  handleOnChangeConvFilterMuSliderG={handleOnChangeConvFilterMuSliderG}
-                  convFilterSigmaG={convFilterSigmaG}
-                  handleOnChangeConvFilterSigmaSliderG={handleOnChangeConvFilterSigmaSliderG}
-
-                  floorB={floorB}
-                  handleOnChangeFloorSliderB={handleOnChangeFloorSliderB}
-                  convFilterRadiusB={convFilterRadiusB}
-                  handleOnChangeConvFilterRadiusSliderB={handleOnChangeConvFilterRadiusSliderB}
-                  convFilterMuB={convFilterMuB}
-                  handleOnChangeConvFilterMuSliderB={handleOnChangeConvFilterMuSliderB}
-                  convFilterSigmaB={convFilterSigmaB}
-                  handleOnChangeConvFilterSigmaSliderB={handleOnChangeConvFilterSigmaSliderB}
-
-                  colorSensibilityR={colorSensibilityR}
-                  handleOnChangeSensibilitySliderRR={handleOnChangeSensibilitySliderRR}
-                  handleOnChangeSensibilitySliderRG={handleOnChangeSensibilitySliderRG}
-                  handleOnChangeSensibilitySliderRB={handleOnChangeSensibilitySliderRB}
-
-                  colorSensibilityG={colorSensibilityG}
-                  handleOnChangeSensibilitySliderGR={handleOnChangeSensibilitySliderGR}
-                  handleOnChangeSensibilitySliderGG={handleOnChangeSensibilitySliderGG}
-                  handleOnChangeSensibilitySliderGB={handleOnChangeSensibilitySliderGB}
-
-                  colorSensibilityB={colorSensibilityB}
-                  handleOnChangeSensibilitySliderBR={handleOnChangeSensibilitySliderBR}
-                  handleOnChangeSensibilitySliderBG={handleOnChangeSensibilitySliderBG}
-                  handleOnChangeSensibilitySliderBB={handleOnChangeSensibilitySliderBB}
-
-                  cellEvolutionDeltaT={cellEvolutionDeltaT}
-                  handleOnChangeCellEvolutionDeltaTSlider={handleOnChangeCellEvolutionDeltaTSlider}
-                  cellGrowthMu={cellGrowthMu}
-                  handleOnChangeCellGrowthMuSlider={handleOnChangeCellGrowthMuSlider}
-                  cellGrowthSigma={cellGrowthSigma}
-                  handleOnChangeCellGrowthSigmaSlider={handleOnChangeCellGrowthSigmaSlider} 
-                  cellSize={cellSize}
-                  handleOnChangeCellSizeSlider={handleOnChangeCellSizeSlider}
-
-                  handleDefaultValues={handleDefaultValues}
-                  handleResetValues={handleResetValues}
-                  handleSaveValues={handleSaveValues}
-
-                  isNewPresetDivOpen={isNewPresetDivOpen}
-                  handleSaveNewPresetValues={handleSaveNewPresetValues}
-
-                  handleOnChangeNewPresetName={handleOnChangeNewPresetName}
-                  handleOnChangeNewPresetDescription={handleOnChangeNewPresetDescription}
-                  handleOnChangeNewPresetPseudo={handleOnChangeNewPresetPseudo}
-                  isNewPresetDivFieldsNotEmpty={isNewPresetDivFieldsNotEmpty}
-                />
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="2" >
-              <Accordion.Header>Brush & fill settings</Accordion.Header>
-              <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
-                <BrushSettings 
-                  brushSize = {brushSize}
-                  brushHardness = {brushHardness}
-                  brushIsRandom = {brushIsRandom}
-                  brushColor = {brushColor}
-                  bgColor = {bgColor}
-                  handleOnChangeBrushSizeSlider = {handleOnChangeBrushSizeSlider}
-                  handleOnChangeBrushHardnessSlider = {handleOnChangeBrushHardnessSlider}
-                  handleOnChangeBrushIsRandomCheckbox = {handleOnChangeBrushIsRandomCheckbox}
-                  handleOnChangeBrushColorPicker = {handleOnChangeBrushColorPicker}
-                  handleOnChangeBgColorPicker = {handleOnChangeBgColorPicker}
-                  />
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
+        <p className="text-center"><strong>Virtual time counter : {virtTimeCounter.toFixed(2)} (s)</strong></p>
+        <p>Preset : {selectedPreset?.name}</p>
+        <div className="d-flex gap-3 justify-content-center mb-3 w-100">
+            <Button
+            className="btn-1"
+            onClick={() => {
+                handleFillCells();
+                drawCells();
+            }}
+            >
+                FILL
+            </Button>
+            <Button
+            className="btn-1"
+            onClick={() => {
+                ToastLibrary.displayResetToast(props.displayToast);
+                handleClearCells();
+                drawCells();
+            }}
+            >
+                CLEAR
+            </Button>
+            <Button
+            className="btn-1" 
+            id="button-run"
+            onClick={() => toggleIsRunning()}
+            >
+                RUN
+            </Button>  
         </div>
-    );
-}
+      </div>
+      <Accordion 
+      defaultActiveKey={null}
+      id="app-accordion"
+      className="accordion-container"
+      >
+        <Accordion.Item eventKey="0" >
+          <Accordion.Header>Presets</Accordion.Header>
+          <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+            <PresetSelector 
+            applyPresetCB={handleChangePresetCB}
+            presets={props.presets} 
+            userPresets={props.userPresets}
+            exportUserPresetsCB={exportUserPresetsCB}
+            reloadUserPresetsCB={props.reloadUserPresetsCB}
+            deleteUserPresetCB={deleteUserPresetCB}
+            displayToast={props.displayToast}
+            updateStorageCB={updateStorageCB}
+            />
+          </Accordion.Body>
+        </Accordion.Item>
+        <Accordion.Item eventKey="1" >
+          <Accordion.Header>Settings</Accordion.Header>
+          <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+            <Settings 
+              floorR={floorR}
+              handleOnChangeFloorSliderR={handleOnChangeFloorSliderR}
+              convFilterRadiusR={convFilterRadiusR}
+              handleOnChangeConvFilterRadiusSliderR={handleOnChangeConvFilterRadiusSliderR}
+              convFilterMuR={convFilterMuR}
+              handleOnChangeConvFilterMuSliderR={handleOnChangeConvFilterMuSliderR}
+              convFilterSigmaR={convFilterSigmaR}
+              handleOnChangeConvFilterSigmaSliderR={handleOnChangeConvFilterSigmaSliderR}
 
+              floorG={floorG}
+              handleOnChangeFloorSliderG={handleOnChangeFloorSliderG}
+              convFilterRadiusG={convFilterRadiusG}
+              handleOnChangeConvFilterRadiusSliderG={handleOnChangeConvFilterRadiusSliderG}
+              convFilterMuG={convFilterMuG}
+              handleOnChangeConvFilterMuSliderG={handleOnChangeConvFilterMuSliderG}
+              convFilterSigmaG={convFilterSigmaG}
+              handleOnChangeConvFilterSigmaSliderG={handleOnChangeConvFilterSigmaSliderG}
+
+              floorB={floorB}
+              handleOnChangeFloorSliderB={handleOnChangeFloorSliderB}
+              convFilterRadiusB={convFilterRadiusB}
+              handleOnChangeConvFilterRadiusSliderB={handleOnChangeConvFilterRadiusSliderB}
+              convFilterMuB={convFilterMuB}
+              handleOnChangeConvFilterMuSliderB={handleOnChangeConvFilterMuSliderB}
+              convFilterSigmaB={convFilterSigmaB}
+              handleOnChangeConvFilterSigmaSliderB={handleOnChangeConvFilterSigmaSliderB}
+
+              colorSensibilityR={colorSensibilityR}
+              handleOnChangeSensibilitySliderRR={handleOnChangeSensibilitySliderRR}
+              handleOnChangeSensibilitySliderRG={handleOnChangeSensibilitySliderRG}
+              handleOnChangeSensibilitySliderRB={handleOnChangeSensibilitySliderRB}
+
+              colorSensibilityG={colorSensibilityG}
+              handleOnChangeSensibilitySliderGR={handleOnChangeSensibilitySliderGR}
+              handleOnChangeSensibilitySliderGG={handleOnChangeSensibilitySliderGG}
+              handleOnChangeSensibilitySliderGB={handleOnChangeSensibilitySliderGB}
+
+              colorSensibilityB={colorSensibilityB}
+              handleOnChangeSensibilitySliderBR={handleOnChangeSensibilitySliderBR}
+              handleOnChangeSensibilitySliderBG={handleOnChangeSensibilitySliderBG}
+              handleOnChangeSensibilitySliderBB={handleOnChangeSensibilitySliderBB}
+
+              cellEvolutionDeltaT={cellEvolutionDeltaT}
+              handleOnChangeCellEvolutionDeltaTSlider={handleOnChangeCellEvolutionDeltaTSlider}
+              cellGrowthMu={cellGrowthMu}
+              handleOnChangeCellGrowthMuSlider={handleOnChangeCellGrowthMuSlider}
+              cellGrowthSigma={cellGrowthSigma}
+              handleOnChangeCellGrowthSigmaSlider={handleOnChangeCellGrowthSigmaSlider} 
+              cellSize={cellSize}
+              handleOnChangeCellSizeSlider={handleOnChangeCellSizeSlider}
+
+              handleDefaultValues={handleDefaultValues}
+              handleResetValues={handleResetValues}
+              handleSaveValues={handleSaveValues}
+
+              isNewPresetDivOpen={isNewPresetDivOpen}
+              handleSaveNewPresetValues={handleSaveNewPresetValues}
+
+              handleOnChangeNewPresetName={handleOnChangeNewPresetName}
+              handleOnChangeNewPresetDescription={handleOnChangeNewPresetDescription}
+              handleOnChangeNewPresetPseudo={handleOnChangeNewPresetPseudo}
+              isNewPresetDivFieldsNotEmpty={isNewPresetDivFieldsNotEmpty}
+            />
+          </Accordion.Body>
+        </Accordion.Item>
+        <Accordion.Item eventKey="2" >
+          <Accordion.Header>Brush & fill settings</Accordion.Header>
+          <Accordion.Body className="d-flex flex-column gap-3 align-items-center w-100 min-w-100">
+            <BrushSettings 
+              brushSize = {brushSize}
+              brushHardness = {brushHardness}
+              brushIsRandom = {brushIsRandom}
+              brushColor = {brushColor}
+              bgColor = {bgColor}
+              handleOnChangeBrushSizeSlider = {handleOnChangeBrushSizeSlider}
+              handleOnChangeBrushHardnessSlider = {handleOnChangeBrushHardnessSlider}
+              handleOnChangeBrushIsRandomCheckbox = {handleOnChangeBrushIsRandomCheckbox}
+              handleOnChangeBrushColorPicker = {handleOnChangeBrushColorPicker}
+              handleOnChangeBgColorPicker = {handleOnChangeBgColorPicker}
+              />
+          </Accordion.Body>
+        </Accordion.Item>
+      </Accordion>
+    </div>
+  );
+};
 export default CustomCanvas;
-
-/*                            
-<div className="settings-column">
-    <label>Brush size : {brushSize} (cell)</label>
-    <Slider 
-      min = {CellConfig.CELL_BRUSH_SIZE_MIN}
-      max = {CellConfig.CELL_BRUSH_SIZE_MAX}
-      step = {CellConfig.CELL_BRUSH_SIZE_STEP}
-      value= {brushSize}
-      onChange={handleOnChangeBrushSizeSlider}
-      className="slider-settings"
-    />
-</div>
-*/

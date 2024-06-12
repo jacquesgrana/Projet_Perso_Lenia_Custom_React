@@ -59,6 +59,5 @@ const NewPresetDiv = (props: INewPresetDivProps) => {
             </Button>
         </div>
     );
-}
-
+};
 export default NewPresetDiv;

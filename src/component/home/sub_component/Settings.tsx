@@ -1,10 +1,8 @@
 import Slider from "rc-slider";
-import { Button } from "react-bootstrap";
 import CellConfig from "../../../config/CellConfig";
 import SlidersColumn from "./SlidersColumn";
 import SlidersRow from "./SlidersRow";
 import ButtonsSettings from "./ButtonsSettings";
-import { NewLineKind } from "typescript";
 import NewPresetDiv from "./NewPresetDiv";
 
 interface ISettingsProps {
@@ -170,6 +168,5 @@ const Settings = (props: ISettingsProps) => {
             {/* fin settings */}
         </>
     );
-}
-
+};
 export default Settings;

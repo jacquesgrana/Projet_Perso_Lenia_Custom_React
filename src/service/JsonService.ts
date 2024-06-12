@@ -1,6 +1,9 @@
 import JsonConfig from "../config/JsonConfig";
 import IPreset from "../interface/IPreset";
 
+/**
+ * Service en pattern singleton
+ */
 export default class JsonService {
 
     private static _instance: JsonService | null = null;

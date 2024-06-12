@@ -1,8 +1,9 @@
 import IPreset from "../interface/IPreset";
 import JsonService from "./JsonService";
 
-
-
+/**
+ * Service en pattern singleton
+ */
 export default class PresetService {
 
     private static _instance: PresetService | null = null;
@@ -24,12 +25,10 @@ export default class PresetService {
     private async init() {
         this._jsonService = await (await JsonService).getInstance();
         this._presets = await this._jsonService.findAllPresets();
-        //this._user_presets = await this._jsonService.findAllUserPresets();
     }
 
     public async saveNewUserPreset(newPreset: IPreset): Promise<void> {
       this._userPresets.push(newPreset);
-      //await this._jsonService?.saveUserPresets(this._user_presets);
     }
 
     public getPresets(): IPreset[] {
@@ -40,6 +39,9 @@ export default class PresetService {
         return this._userPresets;
     }
 
+    /**
+     * Exporte les presets de l'user dans un fichier JSON
+     */
     public exportUserPresets(): void {
       if(this._userPresets.length === 0) return;
       const json = "{ \n" + "  \"user_presets\": " + JSON.stringify(this._userPresets, null, 2) + "\n" + "}";
@@ -60,12 +62,15 @@ export default class PresetService {
       URL.revokeObjectURL(url);
     }
 
+    /**
+     * Ajoute des presets à la liste des presets de l'user
+     * @param userPresetsToAdd Liste des presets à ajouter
+     */
     public addUserPresets(userPresetsToAdd: IPreset[]): void {
       for (let i = 0; i < userPresetsToAdd.length; i++) {
         const id = this._userPresets.length > 0 ? Math.max(...this._userPresets.map(preset => preset.id)) + 1: 0;
         userPresetsToAdd[i].id = id;
         // TODO ajouter tests pour valider le preset
-        // si id pas deja present
         const isPresetAlreadyPresent = this._userPresets.some(preset => 
           preset.name === userPresetsToAdd[i].name
           && preset.description === userPresetsToAdd[i].description
@@ -73,15 +78,14 @@ export default class PresetService {
         );
         if (!isPresetAlreadyPresent) this._userPresets.push(userPresetsToAdd[i]);
       }
-
-      //this._user_presets = this._user_presets.concat(userPresets);
-      //console.log('user_presets :', this._user_presets);
     }
 
+    /**
+     * Supprime un preset de la liste des presets de l'user
+     * @param id L'id du preset à supprimer
+     */
     public deleteUserPreset(id: number): void {
       this._userPresets = this._userPresets.filter(preset => preset.id !== id);
       //console.log('user_presets :', this._user_presets);
     }
-    
-    
 }

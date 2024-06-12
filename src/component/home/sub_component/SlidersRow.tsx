@@ -48,6 +48,5 @@ const SlidersRow = (props: ISlidersRowProps) => {
             </div>
         </div>
     );
-}
-
+};
 export default SlidersRow;

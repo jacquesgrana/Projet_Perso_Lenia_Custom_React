@@ -14,6 +14,9 @@ interface IPresetProps {
 const Preset = (props : IPresetProps) => {
     const titleHoverRef = useRef<string>("");
 
+    /**
+     * Initialisation du titre du hover : apparaît au survol
+     */
     useEffect(() => {
         titleHoverRef.current = props.preset.name + "\n"  + props.preset.description + "\n" 
         + format(props.preset.date, 'dd MMMM yyyy') + "\n by " + props.preset.pseudo;
@@ -27,7 +30,6 @@ const Preset = (props : IPresetProps) => {
       {props.preset.imageSrc.length > 0 && <Card.Img variant="top" src={props.preset.imageSrc} />}
       <Card.Body className="d-flex flex-column">
         <Card.Title><span className="text-color-bg-dark">{props.preset.name}</span></Card.Title>
-
         <div className="flex-grow-1"></div>
         <div className="d-flex justify-content-center gap-2">
           <Button 
@@ -40,19 +42,9 @@ const Preset = (props : IPresetProps) => {
           {props.isDeletable && <Button 
             className="btn-sm-2" onClick={() => props.deleteUserPresetCB(props.preset)} variant="danger">Delete</Button>}
         </div>
-
       </Card.Body>
-    </Card>
-        
+    </Card>  
     );
     
 };
 export default Preset;
-
-/*
-        <Card.Text>
-        {props.preset.description}<br/>
-        <i><span className="text-color-bg">{format(props.preset.date, 'dd MMMM yyyy')}</span></i><br/>
-        By <strong><span className="text-color-bg-dark">{props.preset.pseudo}</span></strong>
-        </Card.Text>
-*/
